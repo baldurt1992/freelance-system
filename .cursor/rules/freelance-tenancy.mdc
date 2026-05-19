@@ -1,0 +1,12 @@
+---
+description: Stancl tenancy — central vs tenant routes and models
+globs: api/**/*
+alwaysApply: false
+---
+
+# Tenancy rules
+
+1. Tenant routes: `routes/tenant.php` with Stancl middleware initialized.
+2. Central routes: `routes/api.php` — no tenant Eloquent without `$tenant->run()`.
+3. Run `docs/main/TENANCY.md` patterns for local dev (`personal.localhost`).
+4. Load skill `freelance-tenancy-stancl` for provision, migrate, and job work.

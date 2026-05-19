@@ -1,0 +1,13 @@
+---
+description: Freelance System — capas, contratos y Nuxt/Laravel boundaries
+alwaysApply: true
+---
+
+# Freelance architecture
+
+1. Read `docs/main/ARCHITECTURE.md` and `AGENTS.md` before structural changes.
+2. Business logic lives in Laravel `Application/`; Nuxt composables orchestrate UI only.
+3. API shape changes start in `packages/contracts`.
+4. Do not add tenant business logic to Nuxt `server/api` routes.
+5. Money: integer cents; optional VAT via `tax_enabled` and `MoneyMath` only.
+6. MySQL: central DB + one DB per tenant (Stancl). Do not use single-DB `tenant_id` column pattern for core entities.

@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Environment
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Laravel
+api/storage/*.key
+api/storage/logs/
+api/storage/framework/
+api/bootstrap/cache/*.php
+!api/bootstrap/cache/.gitkeep
+
+# Nuxt
+apps/web/.nuxt/
+apps/web/.output/
+apps/web/dist/
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+
+# Test / coverage
+coverage/
+.phpunit.result.cache
+playwright-report/
+test-results/
+
+# Docker volumes (local)
+.docker/
