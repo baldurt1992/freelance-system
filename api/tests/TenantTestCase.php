@@ -7,6 +7,7 @@ namespace Tests;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -39,7 +40,12 @@ abstract class TenantTestCase extends TestCase
 
         Cache::flush();
 
-        if (self::$tenantBootstrapped) {
+        $tenant = Tenant::query()->find('test');
+
+        if ($tenant !== null) {
+            self::$sharedTenant = $tenant;
+            self::$tenantBootstrapped = true;
+
             return;
         }
 
@@ -58,6 +64,8 @@ abstract class TenantTestCase extends TestCase
         ]);
 
         self::$sharedTenant->domains()->create(['domain' => 'test.localhost']);
+
+        Artisan::call('tenants:migrate', ['--tenants' => ['test']]);
 
         self::$sharedTenant->run(function (): void {
             User::query()->create([

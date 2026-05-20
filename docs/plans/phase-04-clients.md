@@ -59,17 +59,18 @@ cd packages/contracts && pnpm exec tsc --noEmit
 
 En `packages/contracts/src/clients.ts` definir:
 
-| Campo        | Tipo Zod                          |
-| ------------ | --------------------------------- |
-| `id`         | `z.string().uuid()`               |
-| `name`       | `z.string().min(1).max(255)`      |
-| `email`      | `z.string().email().nullable()`   |
-| `phone`      | `z.string().max(50).nullable()`   |
-| `tax_id`     | `z.string().max(50).nullable()`   |
-| `address`    | `z.string().max(500).nullable()`  |
-| `notes`      | `z.string().max(2000).nullable()` |
-| `created_at` | `z.string().datetime()`           |
-| `updated_at` | `z.string().datetime()`           |
+| Campo        | Tipo Zod                                        |
+| ------------ | ----------------------------------------------- |
+| `id`         | `z.number().int().positive()` (como `users.id`) |
+| `name`       | `z.string().min(1).max(255)`                    |
+| `email`      | `z.string().email().nullable()`                 |
+| `phone`      | `z.string().max(50).nullable()`                 |
+| `tax_id`     | `z.string().max(50).nullable()`                 |
+| `address`    | `z.string().max(500).nullable()`                |
+| `notes`      | `z.string().max(2000).nullable()`               |
+| `avatar`     | `z.string().max(2048).nullable()`               |
+| `created_at` | `z.string().datetime()`                         |
+| `updated_at` | `z.string().datetime()`                         |
 
 Exportar también:
 
@@ -81,9 +82,9 @@ Exportar también:
 
 ## Paso 3 — Migración tenant `clients`
 
-1. Crear migración en `api/database/migrations/tenant/`:
-   - tabla `clients`
-   - columnas alineadas al schema (UUID `id` o bigIncrements según convención del proyecto; **usar la misma convención que `users`**)
+1. Crear migraciones en `api/database/migrations/tenant/`:
+   - `create_clients_table` — `$table->id()` como `users`
+   - `add_avatar_to_clients_table` — columna `avatar` nullable
    - `timestamps`
 2. Ejecutar en dev:
    ```bash
@@ -109,14 +110,15 @@ Exportar también:
 
 ### 4.3 HTTP
 
-- `StoreClientRequest` / `UpdateClientRequest` — reglas espejo de Zod
+- `StoreClientRequest` / `UpdateClientRequest` / `UploadClientAvatarRequest`
 - `ClientResource` — JSON igual que `ClientSchema`
 - `ClientController` en `Api/Tenant/`:
-  - `GET /clients` (paginado)
+  - `GET /clients` (paginado + `?search=` + `?page=`)
   - `POST /clients`
   - `GET /clients/{id}`
   - `PUT /clients/{id}`
   - `DELETE /clients/{id}`
+  - `POST /clients/{id}/avatar`
 
 ### 4.4 Rutas
 
@@ -133,6 +135,7 @@ En Service/Controller puntos clave: create/update/delete con `client_id` (format
 1. `api/tests/Feature/Tenant/ClientApiTest.php` extends `TenantTestCase`
 2. Casos mínimos:
    - list requiere auth
+   - list autenticado devuelve `data` + `meta`
    - create + show + update + delete con token
    - validación 422 en email inválido
 3. Usar host `http://test.localhost` como `TenantAuthTest`.
@@ -147,25 +150,27 @@ cd api && php artisan test --filter=ClientApiTest
 
 ### 6.1 Composables
 
-- `apps/web/app/composables/clients/useClientsApi.ts` — CRUD HTTP con `useApi()`
-- `apps/web/app/composables/clients/useClientForm.ts` — estado form create/edit
+- `composables/clients/useClientsApi.ts` — CRUD HTTP + `uploadAvatar`
+- `composables/clients/useClientForm.ts` — estado form create/edit
+- `composables/clients/useClientsTableColumns.ts` — columnas UTable
 - Tipos importados de `@freelance/contracts`
 
 ### 6.2 Páginas (páginas completas, no modal principal)
 
-- `pages/clients/index.vue` — tabla UTable + link a new + fila → detail
+- `pages/clients/index.vue` — orquestador delgado; **solo paginación servidor** (`UPagination`, sin `getPaginationRowModel`)
 - `pages/clients/new.vue` — formulario crear
-- `pages/clients/[id].vue` — detalle + editar inline o link a edit
-- `pages/clients/[id]/edit.vue` — opcional si no editas en [id]
+- `pages/clients/[id].vue` — detalle + editar inline (`?mode=edit`)
 
 ### 6.3 Navegación
 
-- Actualizar menú lateral del dashboard: entrada **Clientes** → `/clients`
-- Deprecar o redirigir `pages/customers.vue` → `/clients` (redirect en `nuxt.config` o reemplazar archivo)
+- Menú lateral: **Clientes** → `/clients`
+- `pages/customers.vue` → redirect a `/clients`
 
 ### 6.4 Componentes
 
-- `components/Clients/ui/ClientFormFields.vue` — campos tontos (props/emits)
+- `components/clients/ui/ClientFormFields.vue` — campos (props/emits)
+- `components/clients/ClientsListToolbar.vue` — búsqueda + acciones batch
+- `components/clients/ClientsDeleteModal.vue` — confirmación borrado
 
 **Verificación:**
 
@@ -194,6 +199,12 @@ pnpm typecheck:web
 - [ ] CRUD clientes funciona en UI con Bearer tenant
 - [ ] Sin `.env` commiteado
 - [ ] Merge a `main` aprobado
+
+---
+
+## Correcciones post-auditoría
+
+Antes de cerrar el PR, ejecutar [phase-04-clients-fixes.md](./phase-04-clients-fixes.md) (doble paginación, SRP frontend, tests, `.gitignore` tenant storage).
 
 ---
 
