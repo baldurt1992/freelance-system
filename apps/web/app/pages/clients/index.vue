@@ -13,11 +13,22 @@
 
   const page = ref(1);
   const searchQuery = ref("");
+  /** Valor enviado a la API; el input usa searchQuery con debounce para no disparar doble fetch. */
+  const debouncedSearch = ref("");
+
+  watchDebounced(
+    searchQuery,
+    (value) => {
+      debouncedSearch.value = value;
+      page.value = 1;
+    },
+    { debounce: 300 },
+  );
 
   const { data, status, refresh } = useAsyncData(
-    () => `clients-list-${page.value}-${searchQuery.value}`,
-    () => list(page.value, searchQuery.value),
-    { watch: [page] },
+    () => `clients-list-${page.value}-${debouncedSearch.value}`,
+    () => list(page.value, debouncedSearch.value),
+    { watch: [page, debouncedSearch] },
   );
 
   const clients = computed(() => data.value?.data ?? []);
@@ -26,11 +37,6 @@
 
   const columnVisibility = ref();
   const rowSelection = ref<Record<string, boolean>>({});
-
-  watch(searchQuery, () => {
-    page.value = 1;
-    refresh();
-  });
 
   function navigateToDetail(id: number) {
     router.push(`/clients/${id}`);
