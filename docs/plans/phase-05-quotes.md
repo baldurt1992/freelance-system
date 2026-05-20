@@ -1,7 +1,8 @@
 # Fase 5 — Cotizaciones + PDF básico
 
 **Rama:** `feature/quotes-fase-5`  
-**Prerrequisito:** Fase 4 mergeada en `main` (`clients` + `packages/contracts`).
+**Prerrequisito:** Fase 4 mergeada en `main` (`clients` + `packages/contracts`).  
+**Recomendado antes o al inicio:** [Fase 4.5 — Manejo de errores](./phase-04.5-error-handling.md) (evita repetir toasts genéricos en cotizaciones).
 
 ---
 
