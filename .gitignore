@@ -37,3 +37,6 @@ test-results/
 .docker/
 api/database/tenanttest
 .codegraph/
+
+# Ruta accidental (git add con path absoluto desde cwd incorrecto)
+ /home/
