@@ -1,6 +1,13 @@
 # Plan de bootstrap
 
-Checklist para pasar de documentación (fase 0) a desarrollo feature. **No saltar fases.**
+Índice histórico de fases 0–2 (completadas). **Runbooks ejecutables por fase:** [README.md](./README.md).
+
+| Siguiente trabajo | Plan                                         |
+| ----------------- | -------------------------------------------- |
+| Git en cada fase  | [WORKFLOW.md](./WORKFLOW.md)                 |
+| Fase 4            | [phase-04-clients.md](./phase-04-clients.md) |
+
+**No saltar fases.** UI polish global después de fase 9.
 
 ---
 
@@ -74,25 +81,17 @@ Checklist para pasar de documentación (fase 0) a desarrollo feature. **No salta
 
 ---
 
-## Fase 4 — Contratos + Clients (patrón dorado)
+## Fases 4–9 — Ver planes detallados
 
-- [ ] Schema Zod `Client` en `packages/contracts`
-- [ ] Migración `clients` tenant
-- [ ] `ClientService`, controller, resource
-- [ ] Composables + página CRUD
-- [ ] Test feature tenant + test unit composable
-
----
-
-## Fases 5–9 — Dominio
-
-| Fase | Módulo                                                       |
-| ---- | ------------------------------------------------------------ |
-| 5    | Quotes + PDF básico                                          |
-| 6    | Quote → Project + payments + `/projects/[id]` vista completa |
-| 7    | Finanzas (ingresos auto + manual, gastos, balance mensual)   |
-| 8    | Billing on complete + email job                              |
-| 9    | Plantillas custom + UI `tax_enabled`                         |
+| Fase     | Plan                                                             |
+| -------- | ---------------------------------------------------------------- |
+| 3 (opc.) | [phase-03-infra-docker.md](./phase-03-infra-docker.md)           |
+| 4        | [phase-04-clients.md](./phase-04-clients.md)                     |
+| 5        | [phase-05-quotes.md](./phase-05-quotes.md)                       |
+| 6        | [phase-06-projects-payments.md](./phase-06-projects-payments.md) |
+| 7        | [phase-07-finances.md](./phase-07-finances.md)                   |
+| 8        | [phase-08-billing.md](./phase-08-billing.md)                     |
+| 9        | [phase-09-templates-tax.md](./phase-09-templates-tax.md)         |
 
 ---
 

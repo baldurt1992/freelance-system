@@ -35,7 +35,8 @@ bash scripts/setup-dev-hosts.sh
 - [Finanzas](docs/main/FINANCES.md)
 - [Tenancy (Stancl)](docs/main/TENANCY.md)
 - [Guardrails](docs/main/ENGINEERING_GUARDRAILS.md)
-- [Plan de bootstrap](docs/plans/bootstrap.md)
+- [Planes por fase](docs/plans/README.md) · [Flujo Git](docs/plans/WORKFLOW.md)
+- [Bootstrap 0–2](docs/plans/bootstrap.md)
 - [AGENTS.md](AGENTS.md)
 
 ## Estado
