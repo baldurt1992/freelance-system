@@ -9,7 +9,7 @@ description: Use for quote-to-project conversion, advances and balance_due, proj
 
 - Quotes (cotizaciones) lifecycle
 - Convert quote → project
-- Payments: advance, partial, final
+- Payments: partial until `balance_due_cents === 0` (UI: siempre “Registrar pago parcial”)
 - `balance_due_cents`
 - Billing documents on project complete
 - PDF/email templates per client
@@ -26,9 +26,16 @@ description: Use for quote-to-project conversion, advances and balance_due, proj
 
 1. **Conversion** is a single Application transaction: quote locked → project created → quote marked `converted`.
 2. **Payments** update `balance_due_cents`; never negative without explicit write-off rule.
-3. **Ledger income** requires `source_type` + `source_id` (project, billing_document, etc.).
+3. **Finanzas income (automático):** al registrar pago → `finance_entry` con `source_type=project_payment`. Cuenta de cobro enviada **no** crea ingreso. Ingresos **manuales** (`source_type=manual`) desde UI Finanzas. Ver `docs/main/FINANCES.md`.
 4. **On `project.completed`:** enqueue job → build billing document → PDF → email (idempotent).
 5. **Templates** are HTML/Blade (or equivalent) per tenant/client; money from `MoneyMath`, not template math.
+
+## UI — cobros (v1)
+
+- **Ubicación:** tarjeta **Cobros** visible en `/projects/[id]` (ver `docs/main/PROJECTS.md`).
+- **Flujo A:** monto + **Registrar pago parcial** → historial “Pago parcial”.
+- **Flujo B:** **Marcar como pagado** (sin monto) → registra solo el pendiente (o total si no hubo parciales) + historial “Pagado totalmente”. Ver `docs/main/PROJECTS.md`.
+- Tres cifras siempre: total / cobrado / por cobrar.
 
 ## Anti-patterns
 

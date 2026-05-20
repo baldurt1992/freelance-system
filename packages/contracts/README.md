@@ -22,7 +22,7 @@ packages/contracts/
 │   ├── quotes.ts
 │   ├── projects.ts
 │   ├── payments.ts
-│   ├── ledger.ts
+│   ├── finances.ts
 │   ├── billing.ts
 │   └── index.ts
 ├── package.json
@@ -31,13 +31,13 @@ packages/contracts/
 
 ## Convenciones de campos
 
-| Concepto       | Convención                                                                        |
-| -------------- | --------------------------------------------------------------------------------- |
-| Dinero         | `*_cents` (integer)                                                               |
-| IVA            | `tax_rate` (number, 0 si disabled), `tax_cents`, `tax_enabled` en tenant settings |
-| IDs            | `id` string/uuid según Laravel                                                    |
-| Fechas         | ISO 8601 string en JSON                                                           |
-| Fuente ingreso | `source_type`, `source_id`                                                        |
+| Concepto          | Convención                                                                            |
+| ----------------- | ------------------------------------------------------------------------------------- |
+| Dinero            | `*_cents` (integer)                                                                   |
+| IVA               | `tax_rate` (number, 0 si disabled), `tax_cents`, `tax_enabled` en tenant settings     |
+| IDs               | `id` string/uuid según Laravel                                                        |
+| Fechas            | ISO 8601 string en JSON                                                               |
+| Fuente movimiento | `source_type`, `source_id` (obligatorio en ingresos de proyecto; `manual` sin enlace) |
 
 ## Ejemplo (futuro)
 

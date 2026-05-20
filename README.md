@@ -1,6 +1,6 @@
 # Freelance System
 
-Sistema de gestión para trabajo freelance: clientes, cotizaciones, proyectos, pagos, libro con fuente de ingresos y cuentas de cobro.
+Sistema de gestión para trabajo freelance: clientes, cotizaciones, proyectos, pagos, finanzas (ingresos/gastos y balance mensual) y cuentas de cobro.
 
 ## Stack
 
@@ -31,6 +31,8 @@ bash scripts/setup-dev-hosts.sh
 ## Documentación
 
 - [Arquitectura](docs/main/ARCHITECTURE.md)
+- [UI y rutas](docs/main/UI_ROUTES.md)
+- [Finanzas](docs/main/FINANCES.md)
 - [Tenancy (Stancl)](docs/main/TENANCY.md)
 - [Guardrails](docs/main/ENGINEERING_GUARDRAILS.md)
 - [Plan de bootstrap](docs/plans/bootstrap.md)

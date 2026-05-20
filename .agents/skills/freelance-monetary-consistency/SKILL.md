@@ -1,6 +1,6 @@
 ---
 name: freelance-monetary-consistency
-description: Use when implementing or reviewing money, cents, optional VAT (tax_enabled), quote/project totals, ledger amounts, or PDF monetary output in Freelance System.
+description: Use when implementing or reviewing money, cents, optional VAT (tax_enabled), quote/project totals, finance entries, or PDF monetary output in Freelance System.
 ---
 
 # Freelance Monetary Consistency

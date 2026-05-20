@@ -23,7 +23,7 @@
 ```
 
 - **Central (landlord):** metadatos del tenant, dominios, futuro billing SaaS.
-- **Tenant:** clientes, cotizaciones, proyectos, pagos, ledger, usuarios del workspace.
+- **Tenant:** clientes, cotizaciones, proyectos, pagos, finanzas, usuarios del workspace.
 
 ---
 
@@ -72,7 +72,7 @@ Prefijo: `/api/v1` en `routes/tenant.php`
 | Cotizaciones | `/quotes`                                               |
 | Proyectos    | `/projects`                                             |
 | Pagos        | `/projects/{id}/payments`                               |
-| Libro        | `/ledger`                                               |
+| Finanzas     | `/finances` (entries, summary)                          |
 | Cobros       | `/billing-documents`                                    |
 
 Middleware típico Stancl (ajustar en scaffold):

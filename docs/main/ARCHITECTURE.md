@@ -12,8 +12,8 @@ Gestión integral para un desarrollador freelance (y futuras empresas/tenants):
 - **Clientes** con datos para plantillas (cotización, cuenta de cobro).
 - **Cotizaciones** con PDF custom.
 - **Proyectos** (desde cotización aceptada; tipos: freelance, fijo, retainer).
-- **Pagos** (adelanto, parciales, saldo pendiente).
-- **Libro** (ingresos/egresos; ingresos **siempre** con `source_type` + `source_id`).
+- **Pagos** (parciales hasta saldo cero; ver [PROJECTS.md](./PROJECTS.md)).
+- **Finanzas** — ingresos (proyecto al cobrar + **manuales**) y gastos; balance mensual ([FINANCES.md](./FINANCES.md)).
 - **Cuentas de cobro** al completar proyecto → PDF + cola de email.
 
 **v1:** un usuario real, tenant `personal`. **ADN:** multi-tenant listo para empresa constituida o SaaS futuro.
@@ -105,7 +105,7 @@ api/app/
 │   ├── Quotes/
 │   ├── Projects/
 │   ├── Payments/
-│   ├── Ledger/
+│   ├── Finances/
 │   └── Billing/
 ├── Http/
 │   ├── Controllers/Api/Central/
@@ -134,6 +134,8 @@ api/app/
 
 Basado en [Nuxt UI Dashboard](https://github.com/nuxt-ui-templates/dashboard), `ssr: false`.
 
+**UX:** entidades en **vistas dedicadas** (`/projects/[id]`, `/clients/[id]`, …), no modales como pantalla principal. Ver [UI_ROUTES.md](./UI_ROUTES.md). Skills de diseño: `modern-web-guidance`, `frontend-design`, `accessibility`.
+
 ### Taxonomía
 
 | Artefacto                                  | Rol                            |
@@ -143,11 +145,12 @@ Basado en [Nuxt UI Dashboard](https://github.com/nuxt-ui-templates/dashboard), `
 | `hydrateXForm.ts` / `serializeXPayload.ts` | API ↔ UI                       |
 | `useXSubmit.ts`                            | Submit + errores               |
 | `useX.ts`                                  | Orquestador delgado            |
-| Componentes `ui/`, `forms/`, `modals/`     | Presentación; props/emits      |
+| Componentes `ui/`, `forms/`, `sections/`   | Presentación; props/emits      |
+| `modals/` o `<dialog>`                     | Solo confirmaciones breves     |
 
 ### Módulos
 
-`clients`, `quotes`, `projects`, `payments`, `ledger`, `billing`
+`clients`, `quotes`, `projects`, `payments`, `finances`, `billing`
 
 ### Pinia (mínimo)
 
@@ -199,8 +202,9 @@ stateDiagram-v2
   billing_issued --> billing_sent: email_job
 ```
 
-- Pagos en `project_active` actualizan `balance_due_cents`.
-- Cada ingreso en ledger referencia `source_type` + `source_id` (proyecto, billing_document, etc.).
+- Pagos en `project_active` actualizan `balance_due_cents` y pueden generar ingreso en **Finanzas** (ver [FINANCES.md](./FINANCES.md)).
+- Cuenta de cobro al completar proyecto **no** es ingreso hasta que haya cobro (pago) o ingreso manual.
+- Ingresos automáticos: `source_type` + `source_id` (ej. `project_payment`). Ingresos manuales (rifa, etc.): `source_type=manual`, CRUD desde Finanzas.
 
 ---
 
@@ -235,5 +239,8 @@ Usuarios en **BD tenant** (recomendado con Stancl). Central: `tenants`, `domains
 - [TENANCY.md](./TENANCY.md)
 - [ENGINEERING_GUARDRAILS.md](./ENGINEERING_GUARDRAILS.md)
 - [ONBOARDING.md](./ONBOARDING.md)
+- [FINANCES.md](./FINANCES.md)
+- [UI_ROUTES.md](./UI_ROUTES.md) — rutas y vistas completas
+- [PROJECTS.md](./PROJECTS.md) — pagos parciales en detalle de proyecto
 - [bootstrap.md](../plans/bootstrap.md)
 - [AGENTS.md](../../AGENTS.md)

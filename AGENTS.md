@@ -15,7 +15,8 @@ Mantener Freelance System coherente: multi-tenant (Stancl), dinero en centavos, 
 2. `docs/main/TENANCY.md`
 3. `docs/main/ENGINEERING_GUARDRAILS.md`
 4. `docs/plans/bootstrap.md`
-5. `packages/contracts/README.md`
+5. `docs/main/UI_ROUTES.md` — rutas y vistas (no modales como CRUD principal)
+6. `packages/contracts/README.md`
 
 ## Mandatory skill routing
 
@@ -28,6 +29,9 @@ Cargar y seguir cuando aplique:
 | `freelance-monetary-consistency` | Dinero, centavos, IVA opcional, totales, PDF monetario   |
 | `freelance-tenancy-stancl`       | Stancl, rutas central/tenant, migrate, jobs, provision   |
 | `freelance-document-workflow`    | Cotización → proyecto → pagos → cuenta de cobro          |
+| `modern-web-guidance`            | HTML/CSS, forms, dialogs, layout — **antes** de UI nueva |
+| `frontend-design`                | Dirección visual y calidad de interfaces                 |
+| `accessibility`                  | a11y en formularios, contraste, teclado                  |
 | `typescript-advanced-types`      | Contratos en `packages/contracts`, bordes de composables |
 
 ## Stack decisions (do not contradict)

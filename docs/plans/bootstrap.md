@@ -86,13 +86,13 @@ Checklist para pasar de documentación (fase 0) a desarrollo feature. **No salta
 
 ## Fases 5–9 — Dominio
 
-| Fase | Módulo                                  |
-| ---- | --------------------------------------- |
-| 5    | Quotes + PDF básico                     |
-| 6    | Quote → Project + payments              |
-| 7    | Ledger (fuente obligatoria en ingresos) |
-| 8    | Billing on complete + email job         |
-| 9    | Plantillas custom + UI `tax_enabled`    |
+| Fase | Módulo                                                       |
+| ---- | ------------------------------------------------------------ |
+| 5    | Quotes + PDF básico                                          |
+| 6    | Quote → Project + payments + `/projects/[id]` vista completa |
+| 7    | Finanzas (ingresos auto + manual, gastos, balance mensual)   |
+| 8    | Billing on complete + email job                              |
+| 9    | Plantillas custom + UI `tax_enabled`                         |
 
 ---
 
