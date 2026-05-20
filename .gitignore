@@ -9,6 +9,7 @@ vendor/
 !.env.*.example
 
 # Laravel
+api/storage/tenant*/
 api/storage/*.key
 api/storage/logs/
 api/storage/framework/
@@ -34,3 +35,5 @@ test-results/
 
 # Docker volumes (local)
 .docker/
+api/database/tenanttest
+.codegraph/

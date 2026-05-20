@@ -15,8 +15,7 @@ const links = [[{
 }, {
   label: 'Clientes',
   icon: 'i-lucide-users',
-  to: '/customers',
-  badge: 'pronto',
+  to: '/clients',
   onSelect: () => {
     open.value = false
   }
