@@ -50,6 +50,7 @@ Cargar y seguir cuando aplique:
 3. No romper contratos públicos (API, props, DB semantics).
 4. Cambio de contrato → primero `packages/contracts`.
 5. Ediciones inesperadas en archivos → detenerse y preguntar.
+6. **No hacer push a la rama remota sin validar funcionamiento.** Ejecutar `nuxi typecheck` / `php artisan test` / `validate-touched-files.sh` antes de cada push.
 
 ## Tenancy boundary (Stancl + central/tenant)
 
