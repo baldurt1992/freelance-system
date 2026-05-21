@@ -35,7 +35,7 @@ packages/contracts/
 | ----------------- | ------------------------------------------------------------------------------------- |
 | Dinero            | `*_cents` (integer)                                                                   |
 | IVA               | `tax_rate` (number, 0 si disabled), `tax_cents`, `tax_enabled` en tenant settings     |
-| IDs               | `id` string/uuid según Laravel                                                        |
+| IDs               | Seguir el tipo real del recurso; hoy en tenant predomina `int` positivo. No asumir `uuid` sin decisión explícita |
 | Fechas            | ISO 8601 string en JSON                                                               |
 | Fuente movimiento | `source_type`, `source_id` (obligatorio en ingresos de proyecto; `manual` sin enlace) |
 

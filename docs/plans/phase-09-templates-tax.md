@@ -5,6 +5,24 @@
 
 ---
 
+## Decisiones obligatorias de diseño
+
+1. **Cambiar IVA no reescribe historia.**
+   - El toggle afecta cotizaciones nuevas y, como máximo, cotizaciones en `draft`.
+   - Cotizaciones `sent|accepted|rejected|converted`, proyectos con pagos y billing ya emitido permanecen inmutables.
+
+2. **Templates se almacenan en BD tenant en v1.**
+   - No dejar ambigua la elección DB vs filesystem en esta fase.
+   - Facilita resolución, edición, preview, defaults e integridad multi-tenant.
+
+3. **El renderer PDF recibe variables, no lógica de negocio.**
+   - `MoneyMath` calcula antes; la plantilla solo presenta.
+
+4. **HTML de templates es capacidad de owner, no de usuario público.**
+   - Preview y update van autenticados por tenant.
+
+---
+
 ## Leer primero
 
 1. [WORKFLOW.md](./WORKFLOW.md)
@@ -21,6 +39,8 @@ git checkout -b feature/templates-tax-fase-9
 git push -u origin feature/templates-tax-fase-9
 ```
 
+> Si el trabajo lo ejecuta un agente, `commit`/`push`/PR los hace el usuario, no el agente.
+
 ---
 
 ## Paso 1 — Tenant settings IVA
@@ -28,10 +48,14 @@ git push -u origin feature/templates-tax-fase-9
 1. Asegurar `tax_enabled` y `currency` en tenant `data` (ya existe provision).
 2. Endpoint: `PATCH /settings` o `PATCH /tenant/settings` (tenant auth):
    - body `{ tax_enabled: boolean }`
-3. Al activar IVA: quotes/projects recalculan con `MoneyMath` y `tax_rate` > 0 según reglas.
-4. Al desactivar: forzar `tax_rate = 0` en cálculos (no confiar en totales guardados viejos sin recalcular).
+3. Al activar IVA:
+   - afecta quotes nuevas
+   - puede recalcular solo quotes en `draft`
+4. Al desactivar:
+   - forzar `tax_rate = 0` para quotes nuevas y `draft`
+   - **no** reescribir documentos históricos ya emitidos/aceptados/convertidos/completados
 
-Tests: quote con tax on/off.
+Tests: quote `draft` con tax on/off + assert de inmutabilidad histórica.
 
 ---
 
@@ -39,8 +63,15 @@ Tests: quote con tax on/off.
 
 ### Modelo / storage
 
-- `document_templates` tenant: `type` (`quote` | `billing`), `client_id` nullable (null = default tenant), `html_body`, `is_default`
-- o archivos en `storage/app/tenant-{id}/templates/` si prefieres filesystem — documentar elección en PR
+- `document_templates` tenant:
+  - `id` int positivo
+  - `type` (`quote` | `billing`)
+  - `client_id` nullable
+  - `name`
+  - `html_body`
+  - `is_default`
+  - timestamps
+- Almacenamiento oficial v1: **base de datos tenant**
 
 ### Resolución
 
@@ -57,6 +88,7 @@ Refactor `QuotePdfGenerator` y `BillingPdfGenerator` para inyectar HTML resuelto
 - `GET /document-templates?type=quote`
 - `PUT /document-templates/{id}` — actualizar HTML (owner only v1)
 - Preview: `POST /document-templates/preview` con sample data
+- Validar que exista solo un default activo por `type` en v1
 
 ---
 
@@ -65,7 +97,10 @@ Refactor `QuotePdfGenerator` y `BillingPdfGenerator` para inyectar HTML resuelto
 En `pages/settings/index.vue` (o nueva `settings/billing.vue`):
 
 - Toggle **Activar IVA** → llama PATCH settings
-- Aviso cuando cambia (recalcular cotizaciones abiertas — mensaje UX simple)
+- Aviso cuando cambia:
+  - afecta nuevas cotizaciones
+  - puede recalcular drafts
+  - no modifica documentos históricos
 
 Editor plantilla (v1 simple):
 
@@ -83,6 +118,8 @@ pnpm typecheck:web
 - tax_enabled false → tax_cents 0 en quote nueva
 - tax_enabled true → cálculo con MoneyMath coherente
 - template por cliente usado en PDF quote
+- toggle IVA no altera quote histórica aceptada / billing emitido
+- fallback template default cuando no hay template por cliente
 
 ```bash
 cd api && php artisan test

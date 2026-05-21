@@ -2,7 +2,7 @@
 
 Los cobros viven en el **proyecto**, no en Finanzas. Finanzas refleja el ingreso al registrar un pago o al **marcar como pagado** ([FINANCES.md](./FINANCES.md)).
 
-**Presentación:** detalle en **vista completa** [`/projects/[id]`](./UI_ROUTES.md) — no modal. Ej.: proyecto “Cali” → `/projects/{uuid}` con secciones y espacio para cobros, documentos y resumen.
+**Presentación:** detalle en **vista completa** [`/projects/[id]`](./UI_ROUTES.md) — no modal. Ej.: proyecto “Cali” → `/projects/{id}` con secciones y espacio para cobros, documentos y resumen.
 
 ---
 

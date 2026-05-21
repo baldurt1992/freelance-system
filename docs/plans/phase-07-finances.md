@@ -5,6 +5,24 @@
 
 ---
 
+## Decisiones obligatorias de diseño
+
+1. **Finanzas es libro cash-basis derivado de pagos reales.**
+   - `occurred_on` de ingresos automáticos sale de `paid_at` del pago.
+   - Cuenta de cobro emitida no genera ingreso.
+
+2. **IDs siguen convención tenant actual.**
+   - `finance_entries.id` y `source_id` usan enteros positivos cuando referencian recursos internos.
+
+3. **Entradas automáticas son inmutables.**
+   - Si `is_manual = false`, no editar ni borrar desde UI.
+   - Correcciones futuras se resuelven con reversión explícita del origen, no con edición contable manual.
+
+4. **Idempotencia es obligatoria.**
+   - Un `project_payment` produce como máximo una `finance_entry`.
+
+---
+
 ## Leer primero
 
 1. [WORKFLOW.md](./WORKFLOW.md)
@@ -22,6 +40,8 @@ git checkout -b feature/finances-fase-7
 git push -u origin feature/finances-fase-7
 ```
 
+> Si el trabajo lo ejecuta un agente, `commit`/`push`/PR los hace el usuario, no el agente.
+
 ---
 
 ## Paso 1 — Contratos Zod
@@ -32,6 +52,8 @@ git push -u origin feature/finances-fase-7
 - `FinanceEntryCreateSchema` — manual: `type`, `amount_cents`, `occurred_on`, `description`, `category`
 - `FinanceSummarySchema` — `month`, `total_income_cents`, `total_expense_cents`, `net_cents`, label `surplus|shortfall|balanced`
 - Filtros listado: `month`, `type` optional
+- `id` y `source_id` tipados según convención actual de enteros positivos
+- `is_manual` expuesto explícitamente en el contrato
 
 ---
 
@@ -39,7 +61,14 @@ git push -u origin feature/finances-fase-7
 
 Tabla `finance_entries` según FINANCES.md.
 
-Índice único condicional: evitar duplicar `(source_type, source_id)` cuando no null.
+Índice único: evitar duplicar `(source_type, source_id)` cuando no null.
+
+Campos clave:
+
+- `id` int positivo
+- `source_id` unsigned bigint nullable
+- `is_manual` bool
+- índices: `(occurred_on)`, `(type, occurred_on)`, unique `(source_type, source_id)`
 
 ```bash
 cd api && php artisan tenants:migrate
@@ -55,6 +84,7 @@ Métodos:
 - `createFromProjectPayment(ProjectPayment $payment)` — income, `source_type=project_payment`, idempotente
 - `updateManualEntry`, `deleteManualEntry` — solo si `is_manual`
 - `summaryForMonth(YYYY-MM)` — agregaciones SQL
+- `createFromProjectPayment` debe usar `paid_at` como `occurred_on`
 
 ---
 
@@ -96,6 +126,8 @@ Controller delgado → Service.
 - gasto manual en mes → summary net correcto
 - ingreso manual (rifa) en summary
 - no duplicar finance entry mismo payment id
+- auto entry no editable / no borrable
+- `occurred_on` de auto income = `paid_at`
 
 ```bash
 cd api && php artisan test --filter=Finance
@@ -138,6 +170,8 @@ Título: `feat: finances module with monthly summary (phase 7)`
 - [ ] `finance_entries` + integración pagos proyecto
 - [ ] Ingresos manuales y gastos CRUD
 - [ ] Summary mensual correcto
+- [ ] Entradas automáticas inmutables
+- [ ] Idempotencia por `project_payment`
 - [ ] Tests + typecheck + manual OK
 - [ ] Merge a `main`
 

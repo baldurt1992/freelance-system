@@ -50,7 +50,9 @@ Cargar y seguir cuando aplique:
 3. No romper contratos públicos (API, props, DB semantics).
 4. Cambio de contrato → primero `packages/contracts`.
 5. Ediciones inesperadas en archivos → detenerse y preguntar.
-6. **No hacer push a la rama remota sin validar funcionamiento.** Ejecutar `nuxi typecheck` / `php artisan test` / `validate-touched-files.sh` antes de cada push.
+6. **Prohibido ejecutar `git commit`, `git push`, o abrir PRs desde un agente.** El agente solo prepara cambios locales y evidencia de validación; la publicación la hace el usuario.
+7. **No pedir excepción para publicar cambios.** Aunque la validación esté en verde, el agente no debe commitear ni pushear.
+8. **La validación sigue siendo obligatoria antes de dar un cambio por listo.** Ejecutar `nuxi typecheck` / `php artisan test` / `validate-touched-files.sh` según aplique.
 
 ## Tenancy boundary (Stancl + central/tenant)
 

@@ -45,7 +45,7 @@ Antes de implementar UI nueva, consultar skills:
 | `/finances/entries/new` | Nuevo ingreso o gasto manual | Página (no modal)                         |
 | `/settings/*`           | Config tenant                | Ya en template                            |
 
-Parámetro `[id]` = UUID del recurso (ej. proyecto Cali → `/projects/550e8400-e29b-...`).
+Parámetro `[id]` = identificador del recurso según el dominio vigente. Hoy en tenant predomina `int` positivo; no asumir `uuid`.
 
 ---
 

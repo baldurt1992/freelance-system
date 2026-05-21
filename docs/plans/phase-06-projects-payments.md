@@ -5,6 +5,28 @@
 
 ---
 
+## Decisiones obligatorias de diseño
+
+1. **Proyecto hereda historia documental desde quote.**
+   - Al convertir quote → project, persistir snapshot mínimo de cliente y referencia de origen (`quote_id`, `quote_number` o equivalente).
+   - Billing en Fase 8 debe poder salir del proyecto sin depender del cliente vivo ni de una quote mutable.
+
+2. **IDs siguen convención tenant actual.**
+   - `id`, `client_id`, `quote_id`, `project_id` como enteros positivos.
+
+3. **Conversión quote → project debe ser idempotente y exclusiva.**
+   - Un `quote_id` solo puede producir un proyecto.
+   - `projects.quote_id` debe ser único nullable.
+
+4. **Pagos no crean ingresos en esta fase.**
+   - Solo emitir evento o hook idempotente para Fase 7.
+   - No insertar `finance_entries` todavía.
+
+5. **Completar proyecto con side effect documental se reserva para Fase 8.**
+   - En Fase 6 no exponer una semántica parcial de `complete` que luego cambie contrato.
+
+---
+
 ## Leer primero
 
 1. [WORKFLOW.md](./WORKFLOW.md)
@@ -22,6 +44,8 @@ git checkout -b feature/projects-fase-6
 git push -u origin feature/projects-fase-6
 ```
 
+> Si el trabajo lo ejecuta un agente, `commit`/`push`/PR los hace el usuario, no el agente.
+
 ---
 
 ## Paso 1 — Contratos Zod
@@ -30,9 +54,13 @@ git push -u origin feature/projects-fase-6
 
 ### Project
 
-- `id`, `client_id`, `quote_id` nullable
+- `id`, `client_id`, `quote_id` nullable (int positivos)
 - `name`, `type` enum: `freelance` | `fixed` | `retainer`
 - `status` enum: `active` | `on_hold` | `completed` | `cancelled`
+- snapshot/referencia:
+  - `quote_number` nullable
+  - `client_name`, `client_email`, `client_tax_id`, `client_address`
+  - `currency`
 - `agreed_total_cents`, `paid_total_cents`, `balance_due_cents`
 - `is_fully_paid` boolean (derivado)
 - fechas: `started_at`, `completed_at` nullable
@@ -42,10 +70,11 @@ git push -u origin feature/projects-fase-6
 
 ### ProjectPayment
 
-- `id`, `project_id`
+- `id`, `project_id` (int positivos)
 - `amount_cents`, `paid_at` (date)
 - `kind` enum: `partial` | `closure` (interno)
 - label UI no expuesto — historial usa copy de PROJECTS.md
+- `created_at`
 
 Schemas: `RegisterPartialPaymentInput`, `MarkProjectPaidResponse`.
 
@@ -54,7 +83,13 @@ Schemas: `RegisterPartialPaymentInput`, `MarkProjectPaidResponse`.
 ## Paso 2 — Migraciones tenant
 
 1. `projects`
+   - FK `client_id` → `clients` con `restrictOnDelete`
+   - FK `quote_id` → `quotes` nullable con `restrictOnDelete`
+   - `quote_id` único nullable para impedir doble conversión
+   - snapshot cliente + `quote_number` + `currency`
 2. `project_payments`
+   - FK `project_id` → `projects` con `cascadeOnDelete`
+   - índices sugeridos: `(project_id, paid_at)`, `(project_id, kind)`
 
 FK a `clients`, `quotes` (nullable).
 
@@ -69,7 +104,10 @@ cd api && php artisan tenants:migrate
 `QuoteToProjectService` (transacción):
 
 1. Quote status debe ser `accepted`
-2. Crear `Project` con `agreed_total_cents` = quote `total_cents`
+2. Verificar que la quote no tenga proyecto previo
+3. Crear `Project` con:
+   - `agreed_total_cents` = quote `total_cents`
+   - snapshot de cliente y referencia de quote
 3. `paid_total_cents` = 0, `balance_due_cents` = agreed_total
 4. Quote → `converted`
 5. Idempotencia: no convertir dos veces
@@ -88,7 +126,7 @@ Endpoint: `POST /quotes/{id}/convert-to-project` → devuelve Project.
 2. Insertar `project_payments` kind `partial`
 3. Recalcular `paid_total_cents`, `balance_due_cents`
 4. Si `balance_due_cents === 0` → `is_fully_paid` true
-5. **No** crear `finance_entry` aún (Fase 7); dejar hook/comentario `// FinanceEntryListener phase 7` o evento `ProjectPaymentRecorded`
+5. **No** crear `finance_entry` aún (Fase 7); emitir evento `ProjectPaymentRecorded` o hook equivalente, idempotente
 
 ### `markProjectPaid(project, paid_at?)`
 
@@ -96,6 +134,7 @@ Endpoint: `POST /quotes/{id}/convert-to-project` → devuelve Project.
 2. Si 0 y ya fully paid → return idempotente
 3. Insertar payment kind `closure` por `amount_to_book`
 4. Poner paid = agreed, balance = 0
+5. Emitir el mismo evento/hook para Fase 7 sin duplicación
 
 Endpoints:
 
@@ -108,7 +147,9 @@ Endpoints:
 ## Paso 5 — Project CRUD + list
 
 - `GET/POST /projects`, `GET/PUT /projects/{id}`
-- `POST /projects/{id}/complete` → status `completed` (billing Fase 8 después)
+
+**No exponer `POST /projects/{id}/complete` en esta fase.**  
+La transición con side effect documental queda cerrada en Fase 8 para no partir el contrato.
 
 ---
 
@@ -121,6 +162,9 @@ Endpoints:
 - mark-paid sin parciales → paid_total = agreed
 - mark-paid con parciales → solo restante
 - convert quote → project
+- convert quote → project idempotente
+- project copia snapshot de cliente/quote
+- pagos no crean `finance_entries` en Fase 6
 
 ```bash
 cd api && php artisan test --filter=Project
@@ -167,6 +211,9 @@ Título: `feat: projects and partial payments (phase 6)`
 - [ ] Convert quote → project
 - [ ] Pagos parciales + mark-paid según PROJECTS.md
 - [ ] Vista `/projects/[id]` completa (no modal)
+- [ ] Snapshot de cliente/quote persistido en project
+- [ ] Conversión idempotente (1 quote = 1 project)
+- [ ] Sin `finance_entries` creados en Fase 6
 - [ ] Tests verdes
 - [ ] Merge a `main`
 

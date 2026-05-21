@@ -46,14 +46,14 @@ Rutas API sugeridas (tenant, prefijo `/api/v1`):
 
 | Campo          | Tipo                  | Notas                                                                                 |
 | -------------- | --------------------- | ------------------------------------------------------------------------------------- |
-| `id`           | uuid                  |                                                                                       |
+| `id`           | int                   | Sigue la convención actual tenant de IDs enteros positivos                            |
 | `type`         | `income` \| `expense` |                                                                                       |
 | `amount_cents` | int                   | Siempre positivo; el signo lo da `type`                                               |
 | `occurred_on`  | date                  | Fecha contable → agrupa por mes                                                       |
 | `description`  | string                | Obligatorio en manuales; opcional en automáticos                                      |
 | `category`     | string/enum           | Gastos: `subscriptions`, `ai_tools`, … Ingresos manuales: `prize`, `gift`, `other`, … |
 | `source_type`  | string nullable       | Ver §4                                                                                |
-| `source_id`    | uuid nullable         | Enlace al origen si aplica                                                            |
+| `source_id`    | int nullable          | Enlace al origen si aplica; debe seguir el tipo real del recurso origen               |
 | `is_manual`    | bool                  | `true` = creado desde Finanzas; editable/borrable                                     |
 | `created_at`   | datetime              |                                                                                       |
 
