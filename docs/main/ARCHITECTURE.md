@@ -174,7 +174,38 @@ Versión URL: `/api/v1`. Breaking → `/api/v2`.
 
 ---
 
-## 8. Motor monetario e IVA
+## 8. Errores API (fase 4.5)
+
+Contrato único para errores en todas las respuestas JSON: `ApiErrorSchema` en `packages/contracts`.
+
+### Formato
+
+```json
+{
+  "message": "The given data was invalid.",
+  "errors": {
+    "email": ["The email field must be a valid email address."]
+  }
+}
+```
+
+### Frontend — capa de parsing
+
+- `parseApiError(error)` → `ParsedApiError` con `kind`, `status`, `message`, `fieldErrors`.
+- `useApiError()` → helpers UI: `toastApiError`, `getFieldError`, `logApiError`.
+- Los catch de todos los formularios y acciones usan `toastApiError` con `fallback` contextual.
+
+### Backend — consistencia
+
+- Siempre Form Request (nunca `$request->validate()` en controller).
+- `attributes()` en Form Requests para nombres de campo en español.
+- 404 → `ModelNotFoundException` o excepción de dominio con mensaje claro.
+
+Ver plan detallado: [`docs/plans/phase-04.5-error-handling.md`](../plans/phase-04.5-error-handling.md).
+
+---
+
+## 9. Motor monetario e IVA
 
 | Regla                     | Valor                                               |
 | ------------------------- | --------------------------------------------------- |
@@ -189,7 +220,7 @@ Campos de línea (tenant DB): `unit_amount_cents`, `quantity`, `tax_rate`, `tax_
 
 ---
 
-## 9. Flujos de negocio
+## 10. Flujos de negocio
 
 ```mermaid
 stateDiagram-v2
@@ -208,7 +239,7 @@ stateDiagram-v2
 
 ---
 
-## 10. Permisos (evolución)
+## 11. Permisos (evolución)
 
 | Fase   | Enfoque                                                |
 | ------ | ------------------------------------------------------ |
@@ -220,7 +251,7 @@ Usuarios en **BD tenant** (recomendado con Stancl). Central: `tenants`, `domains
 
 ---
 
-## 11. Decisiones cerradas
+## 12. Decisiones cerradas
 
 | Tema        | Decisión                                          |
 | ----------- | ------------------------------------------------- |
@@ -234,7 +265,7 @@ Usuarios en **BD tenant** (recomendado con Stancl). Central: `tenants`, `domains
 
 ---
 
-## 12. Referencias
+## 13. Referencias
 
 - [TENANCY.md](./TENANCY.md)
 - [ENGINEERING_GUARDRAILS.md](./ENGINEERING_GUARDRAILS.md)

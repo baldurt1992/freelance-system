@@ -19,6 +19,8 @@ const state = reactive({
   password: ''
 })
 
+const { parseApiError } = useApiError()
+
 const errorMessage = ref<string | null>(null)
 
 async function onSubmit() {
@@ -39,25 +41,14 @@ async function onSubmit() {
     })
     await navigateTo('/')
   } catch (error: unknown) {
-    const message = extractApiErrorMessage(error)
-    errorMessage.value = message
-    console.error('[AuthLogin] Error al iniciar sesión', { email: state.email, message })
+    const parsed = parseApiError(error)
+    errorMessage.value = parsed.message
+    console.error('[AuthLogin] Error al iniciar sesión', {
+      email: state.email,
+      kind: parsed.kind,
+      message: parsed.message
+    })
   }
-}
-
-function extractApiErrorMessage(error: unknown): string {
-  if (error && typeof error === 'object' && 'data' in error) {
-    const data = (error as { data?: { message?: string, errors?: Record<string, string[]> } }).data
-    const firstField = data?.errors ? Object.values(data.errors)[0]?.[0] : undefined
-    if (firstField) {
-      return firstField
-    }
-    if (data?.message) {
-      return data.message
-    }
-  }
-
-  return 'No se pudo iniciar sesión. Revisa email y contraseña.'
 }
 </script>
 

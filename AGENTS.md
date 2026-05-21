@@ -81,6 +81,7 @@ Cargar y seguir cuando aplique:
 3. Sin negocio monetario definitivo en composables.
 4. Hub HTTP: `composables/api/useApi.ts`.
 5. Composable > ~250 LOC → revisar split; > ~500 → plan obligatorio.
+6. **Nunca toast genérico sin parsear error API.** Usar `useApiError().toastApiError(error, { fallback })` en todo catch.
 
 ## API contract rules
 

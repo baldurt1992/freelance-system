@@ -9,6 +9,7 @@ const { create, uploadAvatar } = useClientsApi();
 const toast = useToast();
 const router = useRouter();
 const form = useClientForm();
+const { toastApiError } = useApiError();
 
 const saving = ref(false);
 const avatarFile = ref<File | null>(null);
@@ -34,8 +35,8 @@ async function onSubmit() {
     }
     toast.add({ title: "Cliente creado" });
     await router.push("/clients");
-  } catch {
-    toast.add({ title: "Error al crear cliente", color: "error" });
+  } catch (error) {
+    toastApiError(error, { fallback: "No se pudo crear el cliente." });
   } finally {
     saving.value = false;
     avatarFile.value = null;

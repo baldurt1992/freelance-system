@@ -7,6 +7,7 @@
 
   const toast = useToast();
   const router = useRouter();
+  const { toastApiError } = useApiError();
   const table = useTemplateRef<ClientsTableExpose>("table");
 
   const { list, remove } = useClientsApi();
@@ -47,8 +48,8 @@
       await remove(row.original.id);
       toast.add({ title: "Cliente eliminado" });
       await refresh();
-    } catch {
-      toast.add({ title: "Error al eliminar cliente", color: "error" });
+    } catch (error) {
+      toastApiError(error, { fallback: "No se pudo eliminar el cliente." });
     }
   }
 
@@ -78,8 +79,8 @@
       toast.add({ title: `${ids.length} cliente(s) eliminado(s)` });
       rowSelection.value = {};
       await refresh();
-    } catch {
-      toast.add({ title: "Error al eliminar clientes", color: "error" });
+    } catch (error) {
+      toastApiError(error, { fallback: "Error al eliminar clientes." });
     }
   }
 </script>
