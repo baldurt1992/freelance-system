@@ -6,7 +6,9 @@ namespace App\Application\Clients;
 
 use App\Models\Client;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
 final class ClientService
 {
@@ -59,7 +61,17 @@ final class ClientService
     {
         $clientId = $client->id;
 
-        $client->delete();
+        try {
+            $client->delete();
+        } catch (QueryException $e) {
+            if (str_contains($e->getMessage(), 'FOREIGN KEY')) {
+                throw new ConflictHttpException(
+                    'No se puede eliminar el cliente porque tiene cotizaciones asociadas.',
+                );
+            }
+
+            throw $e;
+        }
 
         Log::info('[Clients] deleted', ['client_id' => $clientId]);
     }

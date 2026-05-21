@@ -17,7 +17,8 @@ Mantener Freelance System coherente: multi-tenant (Stancl), dinero en centavos, 
 4. `docs/plans/README.md` — plan activo de la fase; `docs/plans/WORKFLOW.md` para Git
 5. `docs/plans/bootstrap.md` — índice histórico fases 0–2
 6. `docs/main/UI_ROUTES.md` — rutas y vistas (no modales como CRUD principal)
-7. `packages/contracts/README.md`
+7. `docs/main/FRONTEND_ARCHITECTURE.md` — patrón obligatorio frontend/Nuxt UI
+8. `packages/contracts/README.md`
 
 ## Mandatory skill routing
 
@@ -84,7 +85,10 @@ Cargar y seguir cuando aplique:
 3. Sin negocio monetario definitivo en composables.
 4. Hub HTTP: `composables/api/useApi.ts`.
 5. Composable > ~250 LOC → revisar split; > ~500 → plan obligatorio.
-6. **Nunca toast genérico sin parsear error API.** Usar `useApiError().toastApiError(error, { fallback })` en todo catch.
+6. Antes de UI nueva, leer `docs/main/FRONTEND_ARCHITECTURE.md`.
+7. No usar `UInput type="date"`; para fechas usar `UInputDate` de Nuxt UI.
+8. No introducir componentes Nuxt UI “de memoria”; validar en docs oficiales o MCP primero.
+9. **Nunca toast genérico sin parsear error API.** Usar `useApiError().toastApiError(error, { fallback })` en todo catch.
 
 ## API contract rules
 

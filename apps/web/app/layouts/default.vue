@@ -19,6 +19,13 @@ const links = [[{
   onSelect: () => {
     open.value = false
   }
+}, {
+  label: 'Cotizaciones',
+  icon: 'i-lucide-file-text',
+  to: '/quotes',
+  onSelect: () => {
+    open.value = false
+  }
 }], [{
   label: 'Configuración',
   icon: 'i-lucide-settings',
