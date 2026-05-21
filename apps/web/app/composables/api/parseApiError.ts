@@ -1,7 +1,7 @@
 import type { ParsedApiError, ParsedApiErrorKind } from "@freelance/contracts";
 import { parseApiErrorBody } from "@freelance/contracts";
 
-const FALLBACK_MESSAGES: Record<ParsedApiErrorKind, string> = {
+export const FALLBACK_MESSAGES: Record<ParsedApiErrorKind, string> = {
   network: "No se pudo conectar con el servidor. Intenta de nuevo.",
   unauthorized: "Sesión expirada. Vuelve a iniciar sesión.",
   forbidden: "No tienes permiso para esta acción.",
@@ -17,6 +17,7 @@ function mapStatusToKind(status: number | null): ParsedApiErrorKind {
   if (status === 403) return "forbidden";
   if (status === 404) return "not_found";
   if (status === 422) return "validation";
+  if (status === 429) return "server";
   if (status >= 500) return "server";
   return "unknown";
 }

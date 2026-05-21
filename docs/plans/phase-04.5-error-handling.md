@@ -220,13 +220,47 @@ cd api && php artisan test --filter=ClientApiTest
 
 ## Criterios de aceptación (fase cerrada)
 
-- [ ] Un solo `parseApiError` usado en login + clientes (sin duplicar helpers).
-- [ ] 422 en crear/editar cliente muestra al menos un mensaje del backend (toast o campo).
-- [ ] Avatar inválido o > 2 MB muestra mensaje derivado de `errors.avatar` o equivalente.
-- [ ] Delete de cliente inexistente (404) muestra mensaje de recurso no encontrado, no genérico vacío.
-- [ ] Sin conexión / 500 muestran fallback de red/servidor definidos en la tabla global.
-- [ ] `pnpm exec nuxi typecheck` en `apps/web` OK.
-- [ ] Tests API tenant sin regresiones.
+- [x] Un solo `parseApiError` usado en login + clientes (sin duplicar helpers).
+- [x] 422 en crear/editar cliente muestra al menos un mensaje del backend (toast o campo).
+- [x] Avatar inválido o > 2 MB muestra mensaje derivado de `errors.avatar` o equivalente.
+- [x] Delete de cliente inexistente (404) muestra mensaje de recurso no encontrado, no genérico vacío.
+- [x] Sin conexión / 500 muestran fallback de red/servidor definidos en la tabla global.
+- [x] `pnpm exec nuxi typecheck` en `apps/web` OK.
+- [x] Tests API tenant sin regresiones.
+
+---
+
+## Cierre real — resumen de ajustes aplicados
+
+Estado: **cerrada**.
+
+### Ajustes completados
+
+1. **Mapeo `429` corregido en `parseApiError`.**
+   - Ahora mapea a `server` según la tabla global.
+
+2. **Lógica de `fallback` corregida en `toastApiError`.**
+   - Usa `fallback` contextual solo cuando `parseApiError` no entregue un mensaje útil del backend (detectado comparando con `FALLBACK_MESSAGES`).
+
+3. **Criterio de avatar cerrado con evidencia.**
+   - `toastApiError` ya prioriza `fieldErrors` (incluyendo `avatar`) por encima del fallback genérico.
+
+4. **Cobertura de tests tenant para errores añadida.**
+   - `show_returns_404_for_missing_client`
+   - `delete_returns_404_for_missing_client`
+   - `upload_avatar_422_for_invalid_file_type`
+   - `upload_avatar_422_for_file_too_large`
+
+5. **Índice de planes actualizado.**
+   - Fase 4.5 marcada como `✅ Hecho` en `docs/plans/README.md`.
+
+### Verificación final ejecutada
+
+- `parseApiError` cubre explícitamente `401`, `403`, `404`, `422`, `429`, `5xx`, red y unknown.
+- `toastApiError` respeta prioridad: mensaje backend → primer error de campo → fallback contextual.
+- `ClientApiTest` cubre `422`, `404` y avatar inválido / > 2 MB.
+- `nuxi typecheck` OK.
+- `php artisan test` OK.
 
 ---
 

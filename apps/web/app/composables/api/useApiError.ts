@@ -1,6 +1,6 @@
 import type { ParsedApiError } from "@freelance/contracts";
 import { getFieldError, parseApiErrorBody } from "@freelance/contracts";
-import { parseApiError } from "./parseApiError";
+import { parseApiError, FALLBACK_MESSAGES } from "./parseApiError";
 
 interface ToastApiErrorOptions {
   title?: string;
@@ -12,14 +12,12 @@ export function useApiError() {
 
   /**
    * Muestra un toast con el error parseado de la API.
-   * Prefiere el mensaje del backend; usa fallback si no hay.
+   * Prioridad: mensaje backend → primer error de campo → fallback contextual → fallback global.
    */
   function toastApiError(error: unknown, options: ToastApiErrorOptions = {}) {
     const parsed = parseApiError(error);
-    const message =
-      options.fallback && parsed.message === parsed.raw
-        ? options.fallback
-        : parsed.message;
+    const isGenericFallback = Object.values(FALLBACK_MESSAGES).includes(parsed.message);
+    const message = isGenericFallback && options.fallback ? options.fallback : parsed.message;
 
     toast.add({
       title: options.title ?? "Error",
