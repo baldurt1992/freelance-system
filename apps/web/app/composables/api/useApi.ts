@@ -27,8 +27,8 @@ export function useApi() {
     return await client<T>(path, {
       ...options,
       headers,
-      responseType: "json",
-    } as FetchOptions<"json">);
+      responseType: options.responseType ?? "json",
+    } as any);
   }
 
   return { api };

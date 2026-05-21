@@ -23,7 +23,7 @@ final class MoneyMath
      * }
      */
     public static function computeLineTotals(
-        int $quantity,
+        float|int $quantity,
         int $unitAmountCents,
         float $taxRatePercent,
         int $discountCents = 0,
@@ -50,12 +50,12 @@ final class MoneyMath
      * }
      */
     public static function computeFromNet(
-        int $quantity,
+        float|int $quantity,
         int $unitAmountCents,
         float $taxRatePercent,
         int $discountCents = 0,
     ): array {
-        $lineNetCents = $quantity * $unitAmountCents;
+        $lineNetCents = (int) round((float) $quantity * $unitAmountCents);
         $discountedNet = max(0, $lineNetCents - $discountCents);
         $taxCents = (int) round($discountedNet * $taxRatePercent / 100, 0, PHP_ROUND_HALF_UP);
         $lineGrossCents = $discountedNet + $taxCents;
@@ -77,12 +77,12 @@ final class MoneyMath
      * }
      */
     public static function computeFromGross(
-        int $quantity,
+        float|int $quantity,
         int $unitAmountInclTaxCents,
         float $taxRatePercent,
         int $discountCents = 0,
     ): array {
-        $lineGrossCents = $quantity * $unitAmountInclTaxCents;
+        $lineGrossCents = (int) round((float) $quantity * $unitAmountInclTaxCents);
         $lineGrossAfterDiscount = max(0, $lineGrossCents - $discountCents);
 
         if ($taxRatePercent <= 0) {

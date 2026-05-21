@@ -5,3 +5,4 @@ export * from "./common/api-error.js";
 
 // domain
 export * from "./clients.js";
+export * from "./quotes.js";
