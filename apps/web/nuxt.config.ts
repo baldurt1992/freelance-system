@@ -4,6 +4,10 @@ export default defineNuxtConfig({
 
   ssr: false,
 
+  imports: {
+    dirs: ["composables/**"],
+  },
+
   devtools: {
     enabled: true,
   },

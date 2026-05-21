@@ -10,6 +10,7 @@ const route = useRoute();
 const router = useRouter();
 const { find, update, uploadAvatar } = useClientsApi();
 const toast = useToast();
+const { toastApiError } = useApiError();
 
 const id = computed(() => Number(route.params.id));
 
@@ -52,8 +53,8 @@ async function onFileChange(event: Event) {
     toast.add({ title: "Avatar actualizado" });
     form.avatar.value = updated.avatar ?? "";
     await refresh();
-  } catch {
-    toast.add({ title: "Error al subir avatar", color: "error" });
+  } catch (error) {
+    toastApiError(error, { fallback: "No se pudo subir la imagen." });
   }
   if (target) target.value = "";
 }
@@ -75,8 +76,8 @@ async function onSave() {
     toast.add({ title: "Cliente actualizado" });
     editing.value = false;
     await refresh();
-  } catch {
-    toast.add({ title: "Error al actualizar", color: "error" });
+  } catch (error) {
+    toastApiError(error, { fallback: "No se pudo guardar los cambios." });
   } finally {
     saving.value = false;
   }

@@ -28,4 +28,20 @@ final class UpdateClientRequest extends FormRequest
             'avatar' => ['sometimes', 'nullable', 'string', 'max:2048'],
         ];
     }
+
+    /**
+     * @return array<string, string>
+     */
+    public function attributes(): array
+    {
+        return [
+            'name' => 'nombre',
+            'email' => 'correo electrónico',
+            'phone' => 'teléfono',
+            'tax_id' => 'NIT / CC',
+            'address' => 'dirección',
+            'notes' => 'notas',
+            'avatar' => 'avatar',
+        ];
+    }
 }

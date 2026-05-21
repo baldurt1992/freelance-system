@@ -22,4 +22,14 @@ final class UploadClientAvatarRequest extends FormRequest
             'avatar' => ['required', 'image', 'max:2048'],
         ];
     }
+
+    /**
+     * @return array<string, string>
+     */
+    public function attributes(): array
+    {
+        return [
+            'avatar' => 'avatar',
+        ];
+    }
 }

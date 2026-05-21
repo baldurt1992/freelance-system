@@ -151,4 +151,71 @@ final class ClientApiTest extends TenantTestCase
         $response->assertUnprocessable()
             ->assertJsonValidationErrors(['email']);
     }
+
+    #[Test]
+    public function show_returns_404_for_missing_client(): void
+    {
+        $this->getJson(
+            self::TENANT_BASE . '/api/v1/clients/99999',
+            $this->authHeader(),
+        )->assertNotFound()
+         ->assertJsonPath('message', 'Client not found');
+    }
+
+    #[Test]
+    public function delete_returns_404_for_missing_client(): void
+    {
+        $this->deleteJson(
+            self::TENANT_BASE . '/api/v1/clients/99999',
+            [],
+            $this->authHeader(),
+        )->assertNotFound()
+         ->assertJsonPath('message', 'Client not found');
+    }
+
+    #[Test]
+    public function upload_avatar_422_for_invalid_file_type(): void
+    {
+        $create = $this->postJson(
+            self::TENANT_BASE . '/api/v1/clients',
+            ['name' => 'Avatar Test'],
+            $this->authHeader(),
+        );
+
+        $id = $create->json('id');
+
+        $response = $this->postJson(
+            self::TENANT_BASE . "/api/v1/clients/{$id}/avatar",
+            [
+                'avatar' => \Illuminate\Http\UploadedFile::fake()->create('document.pdf', 100, 'application/pdf'),
+            ],
+            $this->authHeader(),
+        );
+
+        $response->assertUnprocessable()
+            ->assertJsonValidationErrors(['avatar']);
+    }
+
+    #[Test]
+    public function upload_avatar_422_for_file_too_large(): void
+    {
+        $create = $this->postJson(
+            self::TENANT_BASE . '/api/v1/clients',
+            ['name' => 'Avatar Test Large'],
+            $this->authHeader(),
+        );
+
+        $id = $create->json('id');
+
+        $response = $this->postJson(
+            self::TENANT_BASE . "/api/v1/clients/{$id}/avatar",
+            [
+                'avatar' => \Illuminate\Http\UploadedFile::fake()->image('avatar.jpg')->size(3000),
+            ],
+            $this->authHeader(),
+        );
+
+        $response->assertUnprocessable()
+            ->assertJsonValidationErrors(['avatar']);
+    }
 }

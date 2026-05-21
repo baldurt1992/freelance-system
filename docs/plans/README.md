@@ -8,7 +8,7 @@ Seguir **en orden**. No saltar fases.
 | 0–2          | [bootstrap.md](./bootstrap.md)                                                      | —                                 | ✅ Hecho           |
 | 3 (opcional) | [phase-03-infra-docker.md](./phase-03-infra-docker.md)                              | `feature/infra-docker-fase-3`     | Parcial / opcional |
 | 4            | [phase-04-clients.md](./phase-04-clients.md) · [fixes](./phase-04-clients-fixes.md) | `feature/clients-fase-4`          | ✅ Hecho           |
-| 4.5          | [phase-04.5-error-handling.md](./phase-04.5-error-handling.md)                      | `feature/error-handling-fase-4-5` | Pendiente          |
+| 4.5          | [phase-04.5-error-handling.md](./phase-04.5-error-handling.md)                      | `feature/error-handling-fase-4-5` | ✅ Hecho           |
 | 5            | [phase-05-quotes.md](./phase-05-quotes.md)                                          | `feature/quotes-fase-5`           | Pendiente          |
 | 6            | [phase-06-projects-payments.md](./phase-06-projects-payments.md)                    | `feature/projects-fase-6`         | Pendiente          |
 | 7            | [phase-07-finances.md](./phase-07-finances.md)                                      | `feature/finances-fase-7`         | Pendiente          |
