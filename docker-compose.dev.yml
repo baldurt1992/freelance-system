@@ -33,6 +33,17 @@ services:
       timeout: 5s
       retries: 5
 
+  mailpit:
+    image: axllent/mailpit:v1.20
+    ports:
+      - "${MAILPIT_SMTP_PUBLISH_PORT:-1025}:1025"
+      - "${MAILPIT_UI_PUBLISH_PORT:-8025}:8025"
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1:8025"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 volumes:
   freelance_redis_data:
   freelance_mysql_data:

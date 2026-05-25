@@ -176,12 +176,12 @@ Título: `feat: billing document on project complete (phase 8)`
 
 ## Definition of Done
 
-- [ ] Complete → PDF + job email
-- [ ] Sin ingreso Finanzas al emitir (solo al cobrar — ya Fase 7)
-- [ ] UI muestra documento en detalle proyecto
-- [ ] Snapshot persistido usado en PDF
-- [ ] `number` único por tenant
-- [ ] Tests verdes
+- [x] Complete → PDF + job email
+- [x] Sin ingreso Finanzas al emitir (solo al cobrar — ya Fase 7)
+- [x] UI muestra documento en detalle proyecto
+- [x] Snapshot persistido usado en PDF
+- [x] `number` único por tenant
+- [x] Tests verdes
 - [ ] Merge a `main`
 
 ---

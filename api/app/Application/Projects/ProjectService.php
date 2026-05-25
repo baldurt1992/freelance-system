@@ -29,7 +29,7 @@ final class ProjectService
 
     public function find(string|int $id): ?Project
     {
-        return Project::query()->with('quote', 'payments')->find($id);
+        return Project::query()->with('quote', 'payments', 'billingDocument')->find($id);
     }
 
     /**
