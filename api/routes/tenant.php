@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Api\Tenant\AuthController;
+use App\Http\Controllers\Api\Tenant\BillingDocumentController;
 use App\Http\Controllers\Api\Tenant\ClientController;
 use App\Http\Controllers\Api\Tenant\FinanceController;
 use App\Http\Controllers\Api\Tenant\ProjectController;
@@ -54,6 +55,11 @@ Route::middleware([
         Route::post('/projects/{id}/payments', [ProjectController::class, 'registerPayment']);
         Route::post('/projects/{id}/mark-paid', [ProjectController::class, 'markPaid']);
         Route::get('/projects/{id}/payments', [ProjectController::class, 'payments']);
+        Route::post('/projects/{id}/complete', [ProjectController::class, 'complete']);
+        Route::get('/projects/{id}/billing-documents', [ProjectController::class, 'billingDocuments']);
+
+        Route::get('/billing-documents/{id}/pdf', [BillingDocumentController::class, 'pdf']);
+        Route::post('/billing-documents/{id}/mark-sent', [BillingDocumentController::class, 'markSent']);
 
         Route::get('/finances/summary', [FinanceController::class, 'summary']);
         Route::get('/finances/entries', [FinanceController::class, 'index']);

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 #[Fillable([
     'client_id',
@@ -53,5 +54,10 @@ class Project extends Model
     public function payments(): HasMany
     {
         return $this->hasMany(ProjectPayment::class)->orderBy('paid_at')->orderBy('created_at');
+    }
+
+    public function billingDocument(): HasOne
+    {
+        return $this->hasOne(BillingDocument::class);
     }
 }

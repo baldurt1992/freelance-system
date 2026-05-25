@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\Tenant;
 
+use App\Application\Projects\CompleteProjectService;
 use App\Application\Projects\ProjectPaymentService;
 use App\Application\Projects\ProjectService;
 use App\Http\Controllers\Controller;
@@ -11,6 +12,7 @@ use App\Http\Requests\Project\MarkProjectPaidRequest;
 use App\Http\Requests\Project\RegisterPaymentRequest;
 use App\Http\Requests\Project\StoreProjectRequest;
 use App\Http\Requests\Project\UpdateProjectRequest;
+use App\Http\Resources\BillingDocumentResource;
 use App\Http\Resources\ProjectPaymentResource;
 use App\Http\Resources\ProjectResource;
 use Illuminate\Http\JsonResponse;
@@ -22,6 +24,7 @@ final class ProjectController extends Controller
     public function __construct(
         private readonly ProjectService $projectService,
         private readonly ProjectPaymentService $paymentService,
+        private readonly CompleteProjectService $completeProjectService,
     ) {}
 
     public function index(Request $request): JsonResponse
@@ -142,6 +145,39 @@ final class ProjectController extends Controller
 
         return response()->json([
             'data' => ProjectPaymentResource::collection($project->payments),
+        ]);
+    }
+
+    public function complete(string $id): JsonResponse
+    {
+        $project = $this->projectService->find($id);
+
+        if ($project === null) {
+            return response()->json(['message' => 'Proyecto no encontrado'], HttpResponse::HTTP_NOT_FOUND);
+        }
+
+        $result = $this->completeProjectService->complete($project);
+
+        return response()->json([
+            'project' => new ProjectResource($result['project']),
+            'billing_document' => new BillingDocumentResource($result['billing_document']),
+        ]);
+    }
+
+    public function billingDocuments(string $id): JsonResponse
+    {
+        $project = $this->projectService->find($id);
+
+        if ($project === null) {
+            return response()->json(['message' => 'Proyecto no encontrado'], HttpResponse::HTTP_NOT_FOUND);
+        }
+
+        $documents = $project->billingDocument !== null
+            ? collect([$project->billingDocument])
+            : collect();
+
+        return response()->json([
+            'data' => BillingDocumentResource::collection($documents),
         ]);
     }
 }

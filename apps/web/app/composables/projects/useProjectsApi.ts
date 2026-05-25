@@ -9,6 +9,7 @@ import type {
   MarkProjectPaidResponse,
   ProjectUpdateInput,
   ConvertQuoteToProjectResponse,
+  CompleteProjectResponse,
 } from "@freelance/contracts";
 
 export function useProjectsApi() {
@@ -74,5 +75,11 @@ export function useProjectsApi() {
     return api<{ data: ProjectPayment[] }>(`/projects/${projectId}/payments`);
   }
 
-  return { list, find, create, update, remove, convertQuoteToProject, registerPayment, markPaid, getPayments };
+  async function complete(projectId: number): Promise<CompleteProjectResponse> {
+    return api<CompleteProjectResponse>(`/projects/${projectId}/complete`, {
+      method: "POST",
+    });
+  }
+
+  return { list, find, create, update, remove, convertQuoteToProject, registerPayment, markPaid, getPayments, complete };
 }
