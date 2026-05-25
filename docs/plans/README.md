@@ -15,6 +15,8 @@ Seguir **en orden**. No saltar fases.
 | 8            | [phase-08-billing.md](./phase-08-billing.md)                                        | `feature/billing-fase-8`          | Pendiente          |
 | 9            | [phase-09-templates-tax.md](./phase-09-templates-tax.md)                            | `feature/templates-tax-fase-9`    | Pendiente          |
 
+**Nota de alineación (2026-05-25):** fases 6–9 fueron reforzadas con guardrails transversales obligatorios (tenancy boundary, contracts-first, manejo de errores API en UI, consistencia UX baseline `clients` y compuerta `validate-touched-files.sh` + tests + `nuxi typecheck`).
+
 **Git (todas las fases):** [WORKFLOW.md](./WORKFLOW.md)
 
 **Docs de dominio:** `docs/main/ARCHITECTURE.md`, `TENANCY.md`, `UI_ROUTES.md`, `FINANCES.md`, `PROJECTS.md`
