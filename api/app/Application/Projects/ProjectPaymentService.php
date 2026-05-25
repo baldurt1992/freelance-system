@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Projects;
 
+use App\Application\Finances\FinanceEntryService;
 use App\Models\Project;
 use App\Models\ProjectPayment;
 use Carbon\Carbon;
@@ -12,6 +13,10 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 final class ProjectPaymentService
 {
+    public function __construct(
+        private readonly FinanceEntryService $financeEntryService,
+    ) {}
+
     /**
      * @return array{project: Project, payment: ProjectPayment}
      */
@@ -38,6 +43,8 @@ final class ProjectPaymentService
                 'kind' => 'partial',
                 'paid_at' => $paidDate,
             ]);
+
+            $this->financeEntryService->createFromProjectPayment($payment);
 
             $paidTotal = $project->paid_total_cents + $amountCents;
             $balance = $project->agreed_total_cents - $paidTotal;
@@ -94,6 +101,8 @@ final class ProjectPaymentService
                 'kind' => 'closure',
                 'paid_at' => $paidDate,
             ]);
+
+            $this->financeEntryService->createFromProjectPayment($payment);
 
             $project->update([
                 'paid_total_cents' => $project->agreed_total_cents,

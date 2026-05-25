@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Application\Projects;
 
-use App\Application\Quotes\QuoteSnapshotFactory;
 use App\Models\Project;
 use App\Models\Quote;
 use Illuminate\Support\Facades\DB;
@@ -33,6 +32,7 @@ final class QuoteToProjectService
                 'client_id' => $quote->client_id,
                 'quote_id' => $quote->id,
                 'name' => $quote->title ?? "Proyecto {$quote->number}",
+                'notes' => $quote->notes,
                 'type' => 'freelance',
                 'status' => 'active',
                 'quote_number' => $quote->number,

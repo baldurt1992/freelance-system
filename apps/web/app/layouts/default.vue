@@ -33,6 +33,13 @@ const links = [[{
   onSelect: () => {
     open.value = false
   }
+}, {
+  label: 'Finanzas',
+  icon: 'i-lucide-wallet',
+  to: '/finances',
+  onSelect: () => {
+    open.value = false
+  }
 }], [{
   label: 'Configuración',
   icon: 'i-lucide-settings',

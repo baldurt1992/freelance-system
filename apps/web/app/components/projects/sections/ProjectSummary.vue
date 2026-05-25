@@ -41,6 +41,10 @@ defineProps<{
         <dt class="text-sm text-muted">Cotización origen</dt>
         <dd>{{ project.quote_number }}</dd>
       </div>
+      <div v-if="project.notes" class="sm:col-span-2">
+        <dt class="text-sm text-muted">Alcance / notas</dt>
+        <dd class="whitespace-pre-line break-words leading-6">{{ project.notes }}</dd>
+      </div>
     </dl>
   </UCard>
 </template>

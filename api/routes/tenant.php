@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Api\Tenant\AuthController;
 use App\Http\Controllers\Api\Tenant\ClientController;
+use App\Http\Controllers\Api\Tenant\FinanceController;
 use App\Http\Controllers\Api\Tenant\ProjectController;
 use App\Http\Controllers\Api\Tenant\QuoteController;
 use Illuminate\Support\Facades\Route;
@@ -53,5 +54,12 @@ Route::middleware([
         Route::post('/projects/{id}/payments', [ProjectController::class, 'registerPayment']);
         Route::post('/projects/{id}/mark-paid', [ProjectController::class, 'markPaid']);
         Route::get('/projects/{id}/payments', [ProjectController::class, 'payments']);
+
+        Route::get('/finances/summary', [FinanceController::class, 'summary']);
+        Route::get('/finances/entries', [FinanceController::class, 'index']);
+        Route::post('/finances/entries', [FinanceController::class, 'store']);
+        Route::get('/finances/entries/{id}', [FinanceController::class, 'show']);
+        Route::patch('/finances/entries/{id}', [FinanceController::class, 'update']);
+        Route::delete('/finances/entries/{id}', [FinanceController::class, 'destroy']);
     });
 });

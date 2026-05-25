@@ -10,8 +10,8 @@ Seguir **en orden**. No saltar fases.
 | 4            | [phase-04-clients.md](./phase-04-clients.md) · [fixes](./phase-04-clients-fixes.md) | `feature/clients-fase-4`          | ✅ Hecho           |
 | 4.5          | [phase-04.5-error-handling.md](./phase-04.5-error-handling.md)                      | `feature/error-handling-fase-4-5` | ✅ Hecho           |
 | 5            | [phase-05-quotes.md](./phase-05-quotes.md)                                          | `feature/quotes-fase-5`           | ✅ Hecho (local)   |
-| 6            | [phase-06-projects-payments.md](./phase-06-projects-payments.md)                    | `feature/projects-fase-6`         | Pendiente          |
-| 7            | [phase-07-finances.md](./phase-07-finances.md)                                      | `feature/finances-fase-7`         | Pendiente          |
+| 6            | [phase-06-projects-payments.md](./phase-06-projects-payments.md)                    | `feature/projects-fase-6`         | ✅ Hecho (local)   |
+| 7            | [phase-07-finances.md](./phase-07-finances.md)                                      | `feature/finances-fase-7`         | ✅ Hecho (local)   |
 | 8            | [phase-08-billing.md](./phase-08-billing.md)                                        | `feature/billing-fase-8`          | Pendiente          |
 | 9            | [phase-09-templates-tax.md](./phase-09-templates-tax.md)                            | `feature/templates-tax-fase-9`    | Pendiente          |
 

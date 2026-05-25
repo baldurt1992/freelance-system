@@ -15,6 +15,7 @@ final class UpdateProjectRequest extends FormRequest
     {
         return [
             'name' => ['sometimes', 'string', 'max:255'],
+            'notes' => ['sometimes', 'nullable', 'string'],
             'type' => ['sometimes', 'string', 'in:freelance,fixed,retainer'],
             'status' => ['sometimes', 'string', 'in:active,on_hold,completed,cancelled'],
             'started_at' => ['nullable', 'date_format:Y-m-d'],
@@ -29,6 +30,7 @@ final class UpdateProjectRequest extends FormRequest
     {
         return [
             'name' => 'nombre',
+            'notes' => 'notas',
             'type' => 'tipo',
             'status' => 'estado',
             'started_at' => 'fecha de inicio',

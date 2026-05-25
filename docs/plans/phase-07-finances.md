@@ -191,13 +191,28 @@ Título: `feat: finances module with monthly summary (phase 7)`
 
 ## Definition of Done
 
-- [ ] `finance_entries` + integración pagos proyecto
-- [ ] Ingresos manuales y gastos CRUD
-- [ ] Summary mensual correcto
-- [ ] Entradas automáticas inmutables
-- [ ] Idempotencia por `project_payment`
-- [ ] Tests + typecheck + manual OK
+- [x] `finance_entries` + integración pagos proyecto
+- [x] Ingresos manuales y gastos CRUD
+- [x] Summary mensual correcto
+- [x] Entradas automáticas inmutables
+- [x] Idempotencia por `project_payment`
+- [x] Tests + typecheck + validación OK en local
 - [ ] Merge a `main`
+
+## Estado actual
+
+Implementado localmente en `feature/finances-fase-7` a fecha **2026-05-25**.
+
+Validación ejecutada en local:
+
+```bash
+bash scripts/validate-touched-files.sh <archivos_fase7...>
+cd api && php artisan test --filter=Finance
+cd api && php artisan test --filter=Project
+pnpm --filter @freelance/web exec nuxi typecheck
+```
+
+Pendiente únicamente el merge a `main` por parte del usuario.
 
 ---
 

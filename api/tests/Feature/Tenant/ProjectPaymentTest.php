@@ -51,6 +51,7 @@ final class ProjectPaymentTest extends TenantTestCase
             [
                 'client_id' => $client->id,
                 'title' => 'Sitio Web Cali',
+                'notes' => 'Incluye alcance, entregables y condiciones del proyecto.',
                 'lines' => [
                     [
                         'description' => 'Diseño UI',
@@ -106,6 +107,7 @@ final class ProjectPaymentTest extends TenantTestCase
             ->assertJsonPath('balance_due_cents', 3400_00)
             ->assertJsonPath('is_fully_paid', false)
             ->assertJsonPath('status', 'active')
+            ->assertJsonPath('notes', 'Incluye alcance, entregables y condiciones del proyecto.')
             ->assertJsonPath('quote_number', $quote->number)
             ->assertJsonPath('client_name', 'Acme Corp');
 
@@ -150,6 +152,7 @@ final class ProjectPaymentTest extends TenantTestCase
         $response->assertCreated()
             ->assertJsonPath('quote_id', $quote->id)
             ->assertJsonPath('quote_number', $quote->number)
+            ->assertJsonPath('notes', 'Incluye alcance, entregables y condiciones del proyecto.')
             ->assertJsonPath('client_name', 'Acme Corp')
             ->assertJsonPath('client_email', 'contact@acme.test')
             ->assertJsonPath('client_tax_id', '900123456-7');
@@ -407,7 +410,9 @@ final class ProjectPaymentTest extends TenantTestCase
             [
                 'client_id' => $client->id,
                 'name' => 'Proyecto Manual',
+                'notes' => 'Landing page y formulario de leads.',
                 'type' => 'fixed',
+                'agreed_total_cents' => 2500_00,
                 'started_at' => '2026-05-01',
             ],
             $this->authHeader(),
@@ -417,15 +422,17 @@ final class ProjectPaymentTest extends TenantTestCase
             ->assertJsonPath('name', 'Proyecto Manual')
             ->assertJsonPath('type', 'fixed')
             ->assertJsonPath('status', 'active')
+            ->assertJsonPath('notes', 'Landing page y formulario de leads.')
+            ->assertJsonPath('agreed_total_cents', 2500_00)
             ->assertJsonPath('client_name', 'Acme Corp')
             ->assertJsonPath('started_at', '2026-05-01')
-            ->assertJsonPath('is_fully_paid', true)
-            ->assertJsonPath('balance_due_cents', 0)
+            ->assertJsonPath('is_fully_paid', false)
+            ->assertJsonPath('balance_due_cents', 2500_00)
             ->assertJsonPath('paid_total_cents', 0);
     }
 
     #[Test]
-    public function manual_project_is_fully_paid_when_balance_is_zero(): void
+    public function manual_project_requires_agreed_total(): void
     {
         $client = $this->createClient();
 
@@ -439,58 +446,8 @@ final class ProjectPaymentTest extends TenantTestCase
             $this->authHeader(),
         );
 
-        $response->assertCreated()
-            ->assertJsonPath('is_fully_paid', true)
-            ->assertJsonPath('balance_due_cents', 0);
-
-        $projectId = $response->json('id');
-
-        $show = $this->getJson(
-            self::TENANT_BASE . "/api/v1/projects/{$projectId}",
-            $this->authHeader(),
-        );
-
-        $show->assertOk()
-            ->assertJsonPath('is_fully_paid', true);
-    }
-
-    #[Test]
-    public function mark_paid_on_manual_project_with_no_balance_is_idempotent(): void
-    {
-        $client = $this->createClient();
-
-        $create = $this->postJson(
-            self::TENANT_BASE . '/api/v1/projects',
-            [
-                'client_id' => $client->id,
-                'name' => 'Manual zero',
-                'type' => 'freelance',
-            ],
-            $this->authHeader(),
-        );
-
-        $projectId = $create->json('id');
-
-        $response = $this->postJson(
-            self::TENANT_BASE . "/api/v1/projects/{$projectId}/mark-paid",
-            [],
-            $this->authHeader(),
-        );
-
-        $response->assertOk()
-            ->assertJsonPath('project.is_fully_paid', true)
-            ->assertJsonPath('project.balance_due_cents', 0)
-            ->assertJsonPath('payment', null);
-
-        $second = $this->postJson(
-            self::TENANT_BASE . "/api/v1/projects/{$projectId}/mark-paid",
-            [],
-            $this->authHeader(),
-        );
-
-        $second->assertOk()
-            ->assertJsonPath('project.is_fully_paid', true)
-            ->assertJsonPath('payment', null);
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['agreed_total_cents']);
     }
 
     #[Test]
@@ -561,7 +518,7 @@ final class ProjectPaymentTest extends TenantTestCase
     }
 
     #[Test]
-    public function payments_do_not_create_finance_entries(): void
+    public function payments_create_finance_entries_in_phase_7(): void
     {
         $quote = $this->createAcceptedQuote();
 
@@ -579,13 +536,14 @@ final class ProjectPaymentTest extends TenantTestCase
             $this->authHeader(),
         )->assertCreated();
 
-        $financeEntriesExist = self::$sharedTenant->run(function () {
-            return \Illuminate\Support\Facades\Schema::hasTable('finance_entries');
+        $financeEntriesCount = self::$sharedTenant->run(function () {
+            return \App\Models\FinanceEntry::query()->count();
         });
 
-        $this->assertFalse(
-            $financeEntriesExist,
-            'finance_entries table should not exist in Fase 6',
+        $this->assertSame(
+            1,
+            $financeEntriesCount,
+            'A project payment should create one finance income entry in Fase 7',
         );
     }
 }

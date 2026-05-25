@@ -15,7 +15,7 @@ const { toastApiError } = useApiError();
 const { registerPayment, markPaid } = useProjectsApi();
 const toast = useToast();
 
-const amount = ref<number | null>(null);
+const amount = ref<number | undefined>();
 const loadingPayment = ref(false);
 const loadingMark = ref(false);
 const showMarkPaidDialog = ref(false);
@@ -29,14 +29,15 @@ const sortedPayments = computed(() => {
 });
 
 async function onRegisterPayment() {
-  if (!amount.value || amount.value <= 0) return;
+  const parsedAmount = amount.value;
+  if (!parsedAmount || !Number.isFinite(parsedAmount) || parsedAmount <= 0) return;
 
   loadingPayment.value = true;
   try {
-    const amountCents = Math.round(amount.value * 100);
+    const amountCents = Math.round(parsedAmount * 100);
     await registerPayment(props.project.id, { amount_cents: amountCents });
     toast.add({ title: "Pago parcial registrado" });
-    amount.value = null;
+    amount.value = undefined;
     emit("refresh");
   } catch (error) {
     toastApiError(error, { fallback: "No se pudo registrar el pago." });
@@ -63,6 +64,10 @@ const paidLabel = computed(() => {
   const kindLabel: Record<string, string> = { partial: "Pago parcial", closure: "Pagado totalmente" };
   return (payment: ProjectPayment) => kindLabel[payment.kind] || payment.kind;
 });
+
+const isPaymentAmountValid = computed(() => {
+  return !!amount.value && Number.isFinite(amount.value) && amount.value > 0;
+});
 </script>
 
 <template>
@@ -72,18 +77,25 @@ const paidLabel = computed(() => {
     </template>
 
     <div class="space-y-4">
-      <div class="grid grid-cols-3 gap-2 text-center">
-        <div class="rounded-lg bg-elevated/50 p-3">
+      <div class="space-y-2">
+        <div class="flex items-center justify-between gap-4 rounded-lg bg-elevated/50 p-3">
           <p class="text-xs text-muted">Total</p>
-          <p class="text-lg font-semibold">{{ formatMoney(project.agreed_total_cents, project.currency) }}</p>
+          <p class="shrink-0 text-right text-base font-semibold sm:text-lg">
+            {{ formatMoney(project.agreed_total_cents, project.currency) }}
+          </p>
         </div>
-        <div class="rounded-lg bg-elevated/50 p-3">
+        <div class="flex items-center justify-between gap-4 rounded-lg bg-elevated/50 p-3">
           <p class="text-xs text-muted">Cobrado</p>
-          <p class="text-lg font-semibold text-success">{{ formatMoney(project.paid_total_cents, project.currency) }}</p>
+          <p class="shrink-0 text-right text-base font-semibold text-success sm:text-lg">
+            {{ formatMoney(project.paid_total_cents, project.currency) }}
+          </p>
         </div>
-        <div class="rounded-lg bg-elevated/50 p-3">
+        <div class="flex items-center justify-between gap-4 rounded-lg bg-elevated/50 p-3">
           <p class="text-xs text-muted">Por cobrar</p>
-          <p class="text-lg font-semibold" :class="project.is_fully_paid ? 'text-success' : 'text-warning'">
+          <p
+            class="shrink-0 text-right text-base font-semibold sm:text-lg"
+            :class="project.is_fully_paid ? 'text-success' : 'text-warning'"
+          >
             {{ formatMoney(project.balance_due_cents, project.currency) }}
           </p>
         </div>
@@ -91,22 +103,23 @@ const paidLabel = computed(() => {
 
       <div v-if="!project.is_fully_paid" class="space-y-2">
         <div class="flex items-center gap-2">
-          <UInput
+          <UInputNumber
             id="payment-amount"
             name="payment-amount"
             v-model="amount"
-            type="number"
             placeholder="Monto"
             class="flex-1"
             :min="0"
             :step="0.01"
+            :increment="false"
+            :decrement="false"
             aria-label="Monto del pago"
           />
           <UButton
             label="Registrar pago parcial"
             icon="i-lucide-coins"
             :loading="loadingPayment"
-            :disabled="!amount || (amount as number) <= 0"
+            :disabled="!isPaymentAmountValid"
             @click="onRegisterPayment"
           />
         </div>
@@ -121,7 +134,7 @@ const paidLabel = computed(() => {
         />
       </div>
 
-      <UDivider v-if="sortedPayments.length" />
+      <USeparator v-if="sortedPayments.length" />
 
       <div v-if="sortedPayments.length">
         <h4 class="text-sm font-semibold mb-2">Historial de pagos</h4>
@@ -161,7 +174,11 @@ const paidLabel = computed(() => {
     </template>
   </UCard>
 
-  <UModal v-model:open="showMarkPaidDialog" :ui="{ content: 'max-w-sm' }">
+  <UModal
+    v-model:open="showMarkPaidDialog"
+    title="Confirmar pago total"
+    :ui="{ content: 'max-w-sm', footer: 'justify-end' }"
+  >
     <template #body>
       <p class="text-sm">
         Vas a marcar este proyecto como <strong>pagado totalmente</strong>.
@@ -171,7 +188,7 @@ const paidLabel = computed(() => {
       </p>
     </template>
     <template #footer>
-      <div class="flex justify-end gap-2">
+      <div class="flex gap-2">
         <UButton label="Cancelar" variant="outline" @click="showMarkPaidDialog = false" />
         <UButton
           label="Confirmar"
