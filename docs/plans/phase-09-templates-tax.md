@@ -28,6 +28,19 @@
 1. [WORKFLOW.md](./WORKFLOW.md)
 2. [../main/ARCHITECTURE.md](../main/ARCHITECTURE.md) §8
 3. [.agents/skills/freelance-monetary-consistency/SKILL.md](../../.agents/skills/freelance-monetary-consistency/SKILL.md)
+4. [../main/ENGINEERING_GUARDRAILS.md](../main/ENGINEERING_GUARDRAILS.md)
+5. [../main/TENANCY.md](../main/TENANCY.md)
+6. [../main/FRONTEND_ARCHITECTURE.md](../main/FRONTEND_ARCHITECTURE.md)
+
+---
+
+## Guardrails transversales (obligatorios)
+
+1. Endpoints de settings/templates en `api/routes/tenant.php` bajo `auth:sanctum`.
+2. Contratos primero en `packages/contracts`; luego Request/Resource y composables.
+3. `MoneyMath` sigue siendo el único motor de cálculo; templates no ejecutan lógica fiscal.
+4. Frontend: manejo de errores con `useApiError().toastApiError(...)` y 422 por campo en formularios.
+5. Si se agregan formularios de settings/templates: `UFormField`, campos con `id` y `name`, y `UInputDate` cuando aplique fecha.
 
 ---
 
@@ -90,6 +103,8 @@ Refactor `QuotePdfGenerator` y `BillingPdfGenerator` para inyectar HTML resuelto
 - Preview: `POST /document-templates/preview` con sample data
 - Validar que exista solo un default activo por `type` en v1
 
+Todas estas rutas deben vivir en `tenant.php` con `auth:sanctum`.
+
 ---
 
 ## Paso 4 — Frontend settings
@@ -109,6 +124,15 @@ Editor plantilla (v1 simple):
 
 ```bash
 pnpm typecheck:web
+```
+
+---
+
+## Paso 4.5 — Validación obligatoria
+
+```bash
+bash scripts/validate-touched-files.sh <archivos_fase9...>
+pnpm --filter @freelance/web exec nuxi typecheck
 ```
 
 ---

@@ -33,6 +33,33 @@
 2. [../main/PROJECTS.md](../main/PROJECTS.md) — **obligatorio**
 3. [../main/UI_ROUTES.md](../main/UI_ROUTES.md) — `/projects/[id]`
 4. [.agents/skills/freelance-document-workflow/SKILL.md](../../.agents/skills/freelance-document-workflow/SKILL.md)
+5. [../main/ENGINEERING_GUARDRAILS.md](../main/ENGINEERING_GUARDRAILS.md)
+6. [../main/TENANCY.md](../main/TENANCY.md)
+7. [../main/FRONTEND_ARCHITECTURE.md](../main/FRONTEND_ARCHITECTURE.md)
+
+---
+
+## Guardrails transversales (obligatorios)
+
+1. **Tenancy**
+   - Todas las rutas de esta fase van en `api/routes/tenant.php` bajo `auth:sanctum`.
+   - No consultar modelos tenant desde rutas/servicios central sin `$tenant->run()`.
+
+2. **Contratos**
+   - Cambio de shape: primero `packages/contracts`, luego Form Request + Resource + composables.
+   - En fechas de payload de negocio usar formato explícito `YYYY-MM-DD` (date), sin mezclar con datetime cuando no aplique.
+
+3. **Dinero**
+   - Persistencia y servicios en centavos (`*_cents`) únicamente.
+   - Cálculo fiscal y montos finales solo en backend (`MoneyMath`), nunca en UI.
+
+4. **Errores API UX**
+   - En frontend, todos los `catch` deben usar `useApiError().toastApiError(error, { fallback })`.
+   - Formularios deben mapear 422 por campo cuando aplique.
+
+5. **Consistencia frontend**
+   - Seguir patrón `clients`: búsqueda con debounce, paginación, estado vacío, acciones consistentes o justificar omisión.
+   - Mantener convención de paths en minúscula: `components/projects/...`, `composables/projects/...`.
 
 ---
 
@@ -71,7 +98,7 @@ git push -u origin feature/projects-fase-6
 ### ProjectPayment
 
 - `id`, `project_id` (int positivos)
-- `amount_cents`, `paid_at` (date)
+- `amount_cents`, `paid_at` (date `YYYY-MM-DD`)
 - `kind` enum: `partial` | `closure` (interno)
 - label UI no expuesto — historial usa copy de PROJECTS.md
 - `created_at`
@@ -172,23 +199,23 @@ cd api && php artisan test --filter=Project
 
 ---
 
-## Paso 7 — Frontend `/projects/[id]`
+## Paso 7 — Frontend `/projects/[id]` y `/projects`
 
 ### Estructura (ver UI_ROUTES.md)
 
 - `pages/projects/index.vue` — badge Por cobrar / Pagado totalmente
 - `pages/projects/[id].vue` — orquestador
-- `components/Projects/sections/ProjectHeader.vue`
-- `components/Projects/sections/ProjectPaymentsCard.vue`:
+- `components/projects/sections/ProjectHeader.vue`
+- `components/projects/sections/ProjectPaymentsCard.vue`:
   - Total / Cobrado / Por cobrar
   - input monto + botón **Registrar pago parcial**
   - botón **Marcar como pagado** + `<dialog>` confirmación
   - historial pagos
-- `components/Projects/sections/ProjectSummary.vue`
+- `components/projects/sections/ProjectSummary.vue`
 
 ### Composables
 
-- `useProjectsApi.ts`, `useProjectPayments.ts`
+- `composables/projects/useProjectsApi.ts`, `composables/projects/useProjectPayments.ts`
 
 Menú **Proyectos** → `/projects`
 
@@ -196,7 +223,24 @@ Menú **Proyectos** → `/projects`
 pnpm typecheck:web
 ```
 
+Checklist UI mínimo en `/projects`:
+
+- búsqueda con debounce
+- paginación consistente
+- estado vacío claro
+- badge de estado y deuda por cobrar
+
 **Manual:** convertir cotización aceptada → proyecto → parcial → mark-paid en otro proyecto sin parciales.
+
+---
+
+## Paso 7.5 — Validación obligatoria
+
+```bash
+bash scripts/validate-touched-files.sh <archivos_fase6...>
+cd api && php artisan test --filter=Project
+pnpm --filter @freelance/web exec nuxi typecheck
+```
 
 ---
 

@@ -29,6 +29,19 @@
 2. [../main/FINANCES.md](../main/FINANCES.md) — **obligatorio**
 3. [../main/PROJECTS.md](../main/PROJECTS.md) § ingresos automáticos
 4. [../main/UI_ROUTES.md](../main/UI_ROUTES.md) — `/finances`
+5. [../main/ENGINEERING_GUARDRAILS.md](../main/ENGINEERING_GUARDRAILS.md)
+6. [../main/TENANCY.md](../main/TENANCY.md)
+7. [../main/FRONTEND_ARCHITECTURE.md](../main/FRONTEND_ARCHITECTURE.md)
+
+---
+
+## Guardrails transversales (obligatorios)
+
+1. Todas las rutas en `api/routes/tenant.php` bajo `auth:sanctum`; nada de dominio central para entidades tenant.
+2. Cambio de shape: primero `packages/contracts`, luego Form Request + Resource + composables.
+3. Montos siempre en centavos y cálculo definitivo en backend; UI solo formatea.
+4. En frontend, todo `catch` usa `useApiError().toastApiError(error, { fallback })`; 422 debe mapearse por campo cuando aplique.
+5. Listas de finanzas deben mantener coherencia visual/UX con baseline `clients` (búsqueda, paginación, estado vacío o justificación explícita).
 
 ---
 
@@ -54,6 +67,7 @@ git push -u origin feature/finances-fase-7
 - Filtros listado: `month`, `type` optional
 - `id` y `source_id` tipados según convención actual de enteros positivos
 - `is_manual` expuesto explícitamente en el contrato
+- `occurred_on` en formato date `YYYY-MM-DD`
 
 ---
 
@@ -156,6 +170,16 @@ pnpm typecheck:web
 ```
 
 **Manual:** parcial en proyecto → ver ingreso en Finanzas mismo mes; crear gasto AI; crear ingreso rifa; ver balance.
+
+---
+
+## Paso 7.5 — Validación obligatoria
+
+```bash
+bash scripts/validate-touched-files.sh <archivos_fase7...>
+cd api && php artisan test --filter=Finance
+pnpm --filter @freelance/web exec nuxi typecheck
+```
 
 ---
 

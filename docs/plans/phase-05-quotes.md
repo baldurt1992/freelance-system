@@ -342,17 +342,17 @@ Y además prueba manual:
 
 ## Definition of Done
 
-- [ ] Schemas quotes en contracts
-- [ ] Migraciones tenant aplicadas
-- [ ] CRUD + cambios de estado + PDF
-- [ ] Tests QuoteApiTest verdes
-- [ ] UI rutas `/quotes/*` funcionales
-- [ ] Totales recalculados solo en backend con `MoneyMath`
-- [ ] Snapshot cliente persistido y usado en PDF
-- [ ] `number` único por tenant
-- [ ] Restricción de borrado de cliente con cotizaciones
-- [ ] Descarga PDF autenticada sin token en URL
-- [ ] Merge a `main`
+- [x] Schemas quotes en contracts
+- [x] Migraciones tenant aplicadas
+- [x] CRUD + cambios de estado + PDF
+- [x] Tests QuoteApiTest verdes
+- [x] UI rutas `/quotes/*` funcionales
+- [x] Totales recalculados solo en backend con `MoneyMath`
+- [x] Snapshot cliente persistido y usado en PDF
+- [x] `number` único por tenant
+- [x] Restricción de borrado de cliente con cotizaciones
+- [x] Descarga PDF autenticada sin token en URL
+- [x] Merge a `main`
 
 ---
 

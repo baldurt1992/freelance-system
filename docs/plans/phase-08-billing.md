@@ -29,6 +29,19 @@
 1. [WORKFLOW.md](./WORKFLOW.md)
 2. [../main/FINANCES.md](../main/FINANCES.md) §4 — billing **no** crea ingreso
 3. [.agents/skills/freelance-document-workflow/SKILL.md](../../.agents/skills/freelance-document-workflow/SKILL.md)
+4. [../main/ENGINEERING_GUARDRAILS.md](../main/ENGINEERING_GUARDRAILS.md)
+5. [../main/TENANCY.md](../main/TENANCY.md)
+6. [../main/FRONTEND_ARCHITECTURE.md](../main/FRONTEND_ARCHITECTURE.md)
+
+---
+
+## Guardrails transversales (obligatorios)
+
+1. Rutas tenant únicamente en `api/routes/tenant.php` bajo `auth:sanctum`.
+2. Cambio de shape: primero `packages/contracts`, después Form Request + Resource + composables.
+3. Snapshot documental obligatorio y render PDF sin depender de entidades vivas.
+4. Frontend: errores en `catch` con `useApiError().toastApiError(...)`; sin toasts genéricos.
+5. UI en páginas dedicadas (`/projects/[id]`), usando modal/dialog solo para confirmación breve.
 
 ---
 
@@ -111,6 +124,8 @@ Config `.env.example`: `MAIL_*` documentado en ONBOARDING (mailtrap dev).
 
 Opcional: `POST /billing-documents/{id}/mark-sent`
 
+Todas en `tenant.php` con `auth:sanctum`.
+
 ---
 
 ## Paso 6 — Tests
@@ -139,6 +154,16 @@ En `pages/projects/[id].vue`:
 
 ```bash
 pnpm typecheck:web
+```
+
+---
+
+## Paso 7.5 — Validación obligatoria
+
+```bash
+bash scripts/validate-touched-files.sh <archivos_fase8...>
+cd api && php artisan test --filter=Billing
+pnpm --filter @freelance/web exec nuxi typecheck
 ```
 
 ---
