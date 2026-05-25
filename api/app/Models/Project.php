@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'client_id',
     'quote_id',
     'name',
+    'notes',
     'type',
     'status',
     'quote_number',

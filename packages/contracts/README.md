@@ -64,4 +64,4 @@ export type Client = z.infer<typeof ClientSchema>;
 
 ## Estado
 
-Paquete activo en producción local del monorepo. `clients` y `quotes` ya están implementados y exportados; usar este README como guía de evolución de contratos.
+Paquete activo en producción local del monorepo. `clients`, `quotes`, `projects`, `payments` y `finances` ya están implementados y exportados; usar este README como guía de evolución de contratos.

@@ -11,6 +11,7 @@
   }>();
 
   const openIndex = ref<number>(props.lines.length > 0 ? props.lines.length - 1 : 0);
+  const draftValues = ref<Record<number, { quantity?: number; unit_amount?: number | null }>>({});
 
   watch(
     () => props.lines.length,
@@ -58,13 +59,33 @@
   function updateLineQuantity(index: number, value: number) {
     const next = [...props.lines];
     next[index] = { ...next[index], quantity: value } as QuoteLineForm;
+    if (draftValues.value[index]) {
+      delete draftValues.value[index].quantity;
+    }
     emit("update:lines", next);
   }
 
   function updateLineUnitAmount(index: number, value: number | null) {
     const next = [...props.lines];
     next[index] = { ...next[index], unit_amount: value ?? 0 } as QuoteLineForm;
+    if (draftValues.value[index]) {
+      delete draftValues.value[index].unit_amount;
+    }
     emit("update:lines", next);
+  }
+
+  function updateDraftQuantity(index: number, value: number) {
+    draftValues.value[index] = {
+      ...draftValues.value[index],
+      quantity: value,
+    };
+  }
+
+  function updateDraftUnitAmount(index: number, value: number | null) {
+    draftValues.value[index] = {
+      ...draftValues.value[index],
+      unit_amount: value,
+    };
   }
 
   function handleOpenChange(index: number, isOpen: boolean) {
@@ -77,7 +98,10 @@
 
   const subtotalCents = computed(() => {
     return props.lines.reduce((sum, line) => {
-      return sum + Math.round(line.quantity * (line.unit_amount ?? 0) * 100);
+      const draft = draftValues.value[line.sort_order] ?? {};
+      const quantity = draft.quantity ?? line.quantity;
+      const unitAmount = draft.unit_amount ?? line.unit_amount ?? 0;
+      return sum + Math.round(quantity * unitAmount * 100);
     }, 0);
   });
 </script>
@@ -110,6 +134,8 @@
           <div :id="`concept-content-${index}`" class="px-4 pb-4">
             <QuotesUiQuoteConceptCard :line="line" :index="index"
               @update:description="updateLineDescription(index, $event)"
+              @preview:quantity="updateDraftQuantity(index, $event)"
+              @preview:unit-amount="updateDraftUnitAmount(index, $event)"
               @update:quantity="updateLineQuantity(index, $event)"
               @update:unit-amount="updateLineUnitAmount(index, $event)" @remove="removeLine(index)" />
           </div>
