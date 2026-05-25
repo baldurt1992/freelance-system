@@ -26,6 +26,13 @@ const links = [[{
   onSelect: () => {
     open.value = false
   }
+}, {
+  label: 'Proyectos',
+  icon: 'i-lucide-briefcase',
+  to: '/projects',
+  onSelect: () => {
+    open.value = false
+  }
 }], [{
   label: 'Configuración',
   icon: 'i-lucide-settings',

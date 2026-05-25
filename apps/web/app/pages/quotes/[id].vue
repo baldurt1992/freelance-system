@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useQuotesApi } from "~/composables/quotes/useQuotesApi";
+import { useProjectsApi } from "~/composables/projects/useProjectsApi";
 import { getQuoteStatusLabel, getQuoteStatusColor } from "~/utils/quoteStatus";
 import type { BadgeColor } from "~/utils/quoteStatus";
 
@@ -10,6 +11,7 @@ const router = useRouter();
 const toast = useToast();
 const { toastApiError } = useApiError();
 const { find, send, accept, reject, downloadPdf } = useQuotesApi();
+const { convertQuoteToProject } = useProjectsApi();
 
 const quoteId = computed(() => Number(route.params.id));
 
@@ -20,6 +22,7 @@ const { data: quote, status, refresh } = useAsyncData(
 );
 
 const loadingAction = ref<string | null>(null);
+const converting = ref(false);
 
 async function doAction(action: "send" | "accept" | "reject") {
   loadingAction.value = action;
@@ -50,6 +53,19 @@ async function onDownloadPdf() {
     URL.revokeObjectURL(url);
   } catch (error) {
     toastApiError(error, { fallback: "No se pudo descargar el PDF." });
+  }
+}
+
+async function onConvertToProject() {
+  converting.value = true;
+  try {
+    const project = await convertQuoteToProject(quoteId.value);
+    toast.add({ title: "Proyecto creado desde cotización" });
+    await router.push(`/projects/${project.id}`);
+  } catch (error) {
+    toastApiError(error, { fallback: "No se pudo convertir la cotización a proyecto." });
+  } finally {
+    converting.value = false;
   }
 }
 
@@ -124,6 +140,16 @@ const statusColor = computed<BadgeColor>(() => getQuoteStatusColor(quote.value?.
             variant="outline"
             :loading="loadingAction === 'reject'"
             @click="doAction('reject')"
+          />
+        </div>
+
+        <div v-if="quote.status === 'accepted'" class="flex gap-2">
+          <UButton
+            label="Convertir a proyecto"
+            icon="i-lucide-briefcase-business"
+            color="primary"
+            :loading="converting"
+            @click="onConvertToProject"
           />
         </div>
       </div>

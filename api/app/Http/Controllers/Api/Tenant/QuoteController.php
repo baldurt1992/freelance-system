@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\Tenant;
 
+use App\Application\Projects\QuoteToProjectService;
 use App\Application\Quotes\QuotePdfGenerator;
 use App\Application\Quotes\QuoteService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Quote\StoreQuoteRequest;
 use App\Http\Requests\Quote\UpdateQuoteRequest;
+use App\Http\Resources\ProjectResource;
 use App\Http\Resources\QuoteResource;
 use App\Models\Quote;
 use Illuminate\Http\JsonResponse;
@@ -21,6 +23,7 @@ final class QuoteController extends Controller
     public function __construct(
         private readonly QuoteService $quoteService,
         private readonly QuotePdfGenerator $pdfGenerator,
+        private readonly QuoteToProjectService $quoteToProjectService,
     ) {}
 
     public function index(Request $request): JsonResponse
@@ -138,6 +141,19 @@ final class QuoteController extends Controller
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="' . $quote->number . '.pdf"',
         ]);
+    }
+
+    public function convertToProject(string $id): JsonResponse
+    {
+        $quote = $this->quoteService->find($id);
+
+        if ($quote === null) {
+            return response()->json(['message' => 'Cotización no encontrada'], HttpResponse::HTTP_NOT_FOUND);
+        }
+
+        $project = $this->quoteToProjectService->convert($quote);
+
+        return response()->json(new ProjectResource($project), HttpResponse::HTTP_CREATED);
     }
 
     /**

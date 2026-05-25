@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Api\Tenant\AuthController;
 use App\Http\Controllers\Api\Tenant\ClientController;
+use App\Http\Controllers\Api\Tenant\ProjectController;
 use App\Http\Controllers\Api\Tenant\QuoteController;
 use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
@@ -42,5 +43,15 @@ Route::middleware([
         Route::post('/quotes/{id}/accept', [QuoteController::class, 'accept']);
         Route::post('/quotes/{id}/reject', [QuoteController::class, 'reject']);
         Route::get('/quotes/{id}/pdf', [QuoteController::class, 'pdf']);
+        Route::post('/quotes/{id}/convert-to-project', [QuoteController::class, 'convertToProject']);
+
+        Route::get('/projects', [ProjectController::class, 'index']);
+        Route::post('/projects', [ProjectController::class, 'store']);
+        Route::get('/projects/{id}', [ProjectController::class, 'show']);
+        Route::put('/projects/{id}', [ProjectController::class, 'update']);
+        Route::delete('/projects/{id}', [ProjectController::class, 'destroy']);
+        Route::post('/projects/{id}/payments', [ProjectController::class, 'registerPayment']);
+        Route::post('/projects/{id}/mark-paid', [ProjectController::class, 'markPaid']);
+        Route::get('/projects/{id}/payments', [ProjectController::class, 'payments']);
     });
 });
