@@ -192,13 +192,13 @@ pnpm typecheck:web
 
 ## Definition of Done
 
-- [ ] Rama `feature/clients-fase-4` pusheada y PR abierto
-- [ ] `packages/contracts` compila (`tsc --noEmit`)
-- [ ] `php artisan test` verde (incl. ClientApiTest)
-- [ ] `pnpm typecheck:web` verde
-- [ ] CRUD clientes funciona en UI con Bearer tenant
-- [ ] Sin `.env` commiteado
-- [ ] Merge a `main` aprobado
+- [x] Rama `feature/clients-fase-4` pusheada y PR abierto
+- [x] `packages/contracts` compila (`tsc --noEmit`)
+- [x] `php artisan test` verde (incl. ClientApiTest)
+- [x] `pnpm typecheck:web` verde
+- [x] CRUD clientes funciona en UI con Bearer tenant
+- [x] Sin `.env` commiteado
+- [x] Merge a `main` aprobado
 
 ---
 

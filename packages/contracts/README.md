@@ -64,4 +64,4 @@ export type Client = z.infer<typeof ClientSchema>;
 
 ## Estado
 
-Paquete **pendiente de scaffold** (fase 4 en `docs/plans/bootstrap.md`). Este README define la convención antes de instalar dependencias.
+Paquete activo en producción local del monorepo. `clients` y `quotes` ya están implementados y exportados; usar este README como guía de evolución de contratos.

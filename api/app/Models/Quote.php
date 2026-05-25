@@ -35,7 +35,7 @@ class Quote extends Model
     {
         return [
             'tax_rate' => 'decimal:2',
-            'valid_until' => 'datetime:Y-m-d',
+            'valid_until' => 'date:Y-m-d',
             'sent_at' => 'datetime',
             'accepted_at' => 'datetime',
             'rejected_at' => 'datetime',
