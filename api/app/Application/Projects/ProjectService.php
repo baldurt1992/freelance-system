@@ -44,25 +44,10 @@ final class ProjectService
         }
 
         $currency = (string) (tenant()->currency ?? 'COP');
-        $agreedTotalCents = (int) $data['agreed_total_cents'];
 
-        $project = Project::query()->create([
-            'client_id' => $client->id,
-            'name' => $data['name'],
-            'notes' => $data['notes'] ?? null,
-            'type' => $data['type'] ?? 'freelance',
-            'status' => 'active',
-            'client_name' => $client->name,
-            'client_email' => $client->email,
-            'client_tax_id' => $client->tax_id,
-            'client_address' => $client->address,
-            'currency' => $currency,
-            'agreed_total_cents' => $agreedTotalCents,
-            'paid_total_cents' => 0,
-            'balance_due_cents' => $agreedTotalCents,
-            'is_fully_paid' => false,
-            'started_at' => $data['started_at'] ?? null,
-        ]);
+        $project = Project::query()->create(
+            ProjectSnapshotFactory::forManualCreate($client, $data, $currency),
+        );
 
         return $project->fresh();
     }

@@ -28,24 +28,9 @@ final class QuoteToProjectService
         $currency = (string) (tenant()->currency ?? 'COP');
 
         return DB::transaction(function () use ($quote, $currency) {
-            $project = Project::query()->create([
-                'client_id' => $quote->client_id,
-                'quote_id' => $quote->id,
-                'name' => $quote->title ?? "Proyecto {$quote->number}",
-                'notes' => $quote->notes,
-                'type' => 'freelance',
-                'status' => 'active',
-                'quote_number' => $quote->number,
-                'client_name' => $quote->client_name,
-                'client_email' => $quote->client_email,
-                'client_tax_id' => $quote->client_tax_id,
-                'client_address' => $quote->client_address,
-                'currency' => $currency,
-                'agreed_total_cents' => $quote->total_cents,
-                'paid_total_cents' => 0,
-                'balance_due_cents' => $quote->total_cents,
-                'is_fully_paid' => false,
-            ]);
+            $project = Project::query()->create(
+                ProjectSnapshotFactory::forQuoteConversion($quote, $currency),
+            );
 
             $quote->status = 'converted';
             $quote->save();

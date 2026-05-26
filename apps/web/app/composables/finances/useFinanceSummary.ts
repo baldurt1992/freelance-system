@@ -1,3 +1,5 @@
+import { defaultFinanceMonth } from "./financeMonthHelpers";
+
 export function useFinanceSummary() {
   function getNetLabel(netCents: number): "surplus" | "shortfall" | "balanced" {
     if (netCents > 0) return "surplus";
@@ -12,10 +14,7 @@ export function useFinanceSummary() {
   }
 
   function monthInputDefault(): string {
-    const now = new Date();
-    const yyyy = now.getFullYear();
-    const mm = String(now.getMonth() + 1).padStart(2, "0");
-    return `${yyyy}-${mm}`;
+    return defaultFinanceMonth();
   }
 
   return { getNetLabel, getNetLabelText, monthInputDefault };

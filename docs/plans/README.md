@@ -22,3 +22,5 @@ Seguir **en orden**. No saltar fases.
 **Docs de dominio:** `docs/main/ARCHITECTURE.md`, `TENANCY.md`, `UI_ROUTES.md`, `FINANCES.md`, `PROJECTS.md`
 
 **Después de fase 9:** pulido UI global (no es una fase de dominio en esta tabla).
+
+**Backlog técnico post-MVP:** [post-mvp-technical-backlog.md](./post-mvp-technical-backlog.md)
