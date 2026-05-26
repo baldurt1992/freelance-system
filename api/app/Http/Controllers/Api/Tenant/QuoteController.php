@@ -33,15 +33,10 @@ final class QuoteController extends Controller
             search: is_string($search) ? $search : null,
         );
 
-        return response()->json([
-            'data' => QuoteResource::collection($paginator->items()),
-            'meta' => [
-                'current_page' => $paginator->currentPage(),
-                'last_page' => $paginator->lastPage(),
-                'per_page' => $paginator->perPage(),
-                'total' => $paginator->total(),
-            ],
-        ]);
+        return $this->paginatedResponse(
+            $paginator,
+            QuoteResource::collection($paginator->items()),
+        );
     }
 
     public function store(StoreQuoteRequest $request): JsonResponse
@@ -53,10 +48,9 @@ final class QuoteController extends Controller
 
     public function show(string $id): JsonResponse
     {
-        $quote = $this->quoteService->find($id);
-
-        if ($quote === null) {
-            return response()->json(['message' => 'Cotización no encontrada'], HttpResponse::HTTP_NOT_FOUND);
+        $quote = $this->findQuoteOrNotFoundResponse($id);
+        if ($quote instanceof JsonResponse) {
+            return $quote;
         }
 
         return response()->json(new QuoteResource($quote));
@@ -64,10 +58,9 @@ final class QuoteController extends Controller
 
     public function update(UpdateQuoteRequest $request, string $id): JsonResponse
     {
-        $quote = $this->quoteService->find($id);
-
-        if ($quote === null) {
-            return response()->json(['message' => 'Cotización no encontrada'], HttpResponse::HTTP_NOT_FOUND);
+        $quote = $this->findQuoteOrNotFoundResponse($id);
+        if ($quote instanceof JsonResponse) {
+            return $quote;
         }
 
         $updated = $this->quoteService->update($quote, $request->validated());
@@ -77,10 +70,9 @@ final class QuoteController extends Controller
 
     public function destroy(string $id): JsonResponse
     {
-        $quote = $this->quoteService->find($id);
-
-        if ($quote === null) {
-            return response()->json(['message' => 'Cotización no encontrada'], HttpResponse::HTTP_NOT_FOUND);
+        $quote = $this->findQuoteOrNotFoundResponse($id);
+        if ($quote instanceof JsonResponse) {
+            return $quote;
         }
 
         $this->quoteService->delete($quote);
@@ -90,10 +82,9 @@ final class QuoteController extends Controller
 
     public function send(string $id): JsonResponse
     {
-        $quote = $this->quoteService->find($id);
-
-        if ($quote === null) {
-            return response()->json(['message' => 'Cotización no encontrada'], HttpResponse::HTTP_NOT_FOUND);
+        $quote = $this->findQuoteOrNotFoundResponse($id);
+        if ($quote instanceof JsonResponse) {
+            return $quote;
         }
 
         $updated = $this->quoteService->send($quote);
@@ -103,10 +94,9 @@ final class QuoteController extends Controller
 
     public function accept(string $id): JsonResponse
     {
-        $quote = $this->quoteService->find($id);
-
-        if ($quote === null) {
-            return response()->json(['message' => 'Cotización no encontrada'], HttpResponse::HTTP_NOT_FOUND);
+        $quote = $this->findQuoteOrNotFoundResponse($id);
+        if ($quote instanceof JsonResponse) {
+            return $quote;
         }
 
         $updated = $this->quoteService->accept($quote);
@@ -116,10 +106,9 @@ final class QuoteController extends Controller
 
     public function reject(string $id): JsonResponse
     {
-        $quote = $this->quoteService->find($id);
-
-        if ($quote === null) {
-            return response()->json(['message' => 'Cotización no encontrada'], HttpResponse::HTTP_NOT_FOUND);
+        $quote = $this->findQuoteOrNotFoundResponse($id);
+        if ($quote instanceof JsonResponse) {
+            return $quote;
         }
 
         $updated = $this->quoteService->reject($quote);
@@ -129,10 +118,9 @@ final class QuoteController extends Controller
 
     public function pdf(string $id): Response|JsonResponse
     {
-        $quote = $this->quoteService->find($id);
-
-        if ($quote === null) {
-            return response()->json(['message' => 'Cotización no encontrada'], HttpResponse::HTTP_NOT_FOUND);
+        $quote = $this->findQuoteOrNotFoundResponse($id);
+        if ($quote instanceof JsonResponse) {
+            return $quote;
         }
 
         $pdfContent = $this->pdfGenerator->generate($quote);
@@ -145,10 +133,9 @@ final class QuoteController extends Controller
 
     public function convertToProject(string $id): JsonResponse
     {
-        $quote = $this->quoteService->find($id);
-
-        if ($quote === null) {
-            return response()->json(['message' => 'Cotización no encontrada'], HttpResponse::HTTP_NOT_FOUND);
+        $quote = $this->findQuoteOrNotFoundResponse($id);
+        if ($quote instanceof JsonResponse) {
+            return $quote;
         }
 
         $project = $this->quoteToProjectService->convert($quote);
@@ -168,5 +155,16 @@ final class QuoteController extends Controller
             'accepted_at' => $quote->accepted_at?->toIso8601String(),
             'rejected_at' => $quote->rejected_at?->toIso8601String(),
         ];
+    }
+
+    private function findQuoteOrNotFoundResponse(string $id): Quote|JsonResponse
+    {
+        $quote = $this->quoteService->find($id);
+
+        if ($quote === null) {
+            return $this->notFoundResponse('Cotización no encontrada');
+        }
+
+        return $quote;
     }
 }

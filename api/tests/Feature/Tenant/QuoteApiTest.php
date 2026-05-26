@@ -93,6 +93,33 @@ final class QuoteApiTest extends TenantTestCase
     }
 
     #[Test]
+    public function quote_valid_until_is_serialized_as_date_string(): void
+    {
+        $client = $this->createClient();
+
+        $create = $this->postJson(
+            self::TENANT_BASE . '/api/v1/quotes',
+            [
+                'client_id' => $client->id,
+                'valid_until' => '2026-06-15',
+                'lines' => $this->validLines(),
+            ],
+            $this->authHeader(),
+        );
+
+        $create->assertCreated()
+            ->assertJsonPath('valid_until', '2026-06-15');
+
+        $list = $this->getJson(
+            self::TENANT_BASE . '/api/v1/quotes',
+            $this->authHeader(),
+        );
+
+        $list->assertOk()
+            ->assertJsonPath('data.0.valid_until', '2026-06-15');
+    }
+
+    #[Test]
     public function backend_recalculates_ignoring_frontend_totals(): void
     {
         $client = $this->createClient();
