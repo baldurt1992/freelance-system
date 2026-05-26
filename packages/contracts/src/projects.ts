@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { IsoDateTimeStringSchema } from "./common/datetime.js";
 import { PaginationMetaSchema } from "./common/pagination.js";
 
 export const ProjectTypeSchema = z.enum(["freelance", "fixed", "retainer"]);
@@ -34,8 +35,8 @@ export const ProjectSchema = z.object({
   is_fully_paid: z.boolean(),
   started_at: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable(),
   completed_at: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable(),
-  created_at: z.string().datetime(),
-  updated_at: z.string().datetime(),
+  created_at: IsoDateTimeStringSchema,
+  updated_at: IsoDateTimeStringSchema,
 });
 
 export type Project = z.infer<typeof ProjectSchema>;

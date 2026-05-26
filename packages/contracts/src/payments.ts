@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { IsoDateTimeStringSchema } from "./common/datetime.js";
+import { ProjectSchema } from "./projects.js";
 
 export const ProjectPaymentKindSchema = z.enum(["partial", "closure"]);
 
@@ -10,7 +12,7 @@ export const ProjectPaymentSchema = z.object({
   amount_cents: z.number().int().nonnegative(),
   kind: ProjectPaymentKindSchema,
   paid_at: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  created_at: z.string().datetime(),
+  created_at: IsoDateTimeStringSchema,
 });
 
 export type ProjectPayment = z.infer<typeof ProjectPaymentSchema>;
@@ -50,4 +52,13 @@ export const ProjectPaymentListSchema = z.object({
 
 export type ProjectPaymentListResponse = z.infer<
   typeof ProjectPaymentListSchema
+>;
+
+export const RegisterPaymentResponseSchema = z.object({
+  project: ProjectSchema,
+  payment: ProjectPaymentSchema,
+});
+
+export type RegisterPaymentResponse = z.infer<
+  typeof RegisterPaymentResponseSchema
 >;

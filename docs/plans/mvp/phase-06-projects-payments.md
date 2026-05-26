@@ -29,13 +29,13 @@
 
 ## Leer primero
 
-1. [WORKFLOW.md](./WORKFLOW.md)
-2. [../main/PROJECTS.md](../main/PROJECTS.md) — **obligatorio**
-3. [../main/UI_ROUTES.md](../main/UI_ROUTES.md) — `/projects/[id]`
-4. [.agents/skills/freelance-document-workflow/SKILL.md](../../.agents/skills/freelance-document-workflow/SKILL.md)
-5. [../main/ENGINEERING_GUARDRAILS.md](../main/ENGINEERING_GUARDRAILS.md)
-6. [../main/TENANCY.md](../main/TENANCY.md)
-7. [../main/FRONTEND_ARCHITECTURE.md](../main/FRONTEND_ARCHITECTURE.md)
+1. [../WORKFLOW.md](../WORKFLOW.md)
+2. [../../main/PROJECTS.md](../../main/PROJECTS.md) — **obligatorio**
+3. [../../main/UI_ROUTES.md](../../main/UI_ROUTES.md) — `/projects/[id]`
+4. [../../../.agents/skills/freelance-document-workflow/SKILL.md](../../../.agents/skills/freelance-document-workflow/SKILL.md)
+5. [../../main/ENGINEERING_GUARDRAILS.md](../../main/ENGINEERING_GUARDRAILS.md)
+6. [../../main/TENANCY.md](../../main/TENANCY.md)
+7. [../../main/FRONTEND_ARCHITECTURE.md](../../main/FRONTEND_ARCHITECTURE.md)
 
 ---
 

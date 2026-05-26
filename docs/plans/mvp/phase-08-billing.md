@@ -26,12 +26,12 @@
 
 ## Leer primero
 
-1. [WORKFLOW.md](./WORKFLOW.md)
-2. [../main/FINANCES.md](../main/FINANCES.md) §4 — billing **no** crea ingreso
-3. [.agents/skills/freelance-document-workflow/SKILL.md](../../.agents/skills/freelance-document-workflow/SKILL.md)
-4. [../main/ENGINEERING_GUARDRAILS.md](../main/ENGINEERING_GUARDRAILS.md)
-5. [../main/TENANCY.md](../main/TENANCY.md)
-6. [../main/FRONTEND_ARCHITECTURE.md](../main/FRONTEND_ARCHITECTURE.md)
+1. [../WORKFLOW.md](../WORKFLOW.md)
+2. [../../main/FINANCES.md](../../main/FINANCES.md) §4 — billing **no** crea ingreso
+3. [../../../.agents/skills/freelance-document-workflow/SKILL.md](../../../.agents/skills/freelance-document-workflow/SKILL.md)
+4. [../../main/ENGINEERING_GUARDRAILS.md](../../main/ENGINEERING_GUARDRAILS.md)
+5. [../../main/TENANCY.md](../../main/TENANCY.md)
+6. [../../main/FRONTEND_ARCHITECTURE.md](../../main/FRONTEND_ARCHITECTURE.md)
 
 ---
 

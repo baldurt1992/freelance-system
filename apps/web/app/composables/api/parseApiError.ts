@@ -1,5 +1,6 @@
 import type { ParsedApiError, ParsedApiErrorKind } from "@freelance/contracts";
 import { parseApiErrorBody } from "@freelance/contracts";
+import { isContractValidationError } from "./parseApiResponse";
 
 export const FALLBACK_MESSAGES: Record<ParsedApiErrorKind, string> = {
   network: "No se pudo conectar con el servidor. Intenta de nuevo.",
@@ -8,6 +9,8 @@ export const FALLBACK_MESSAGES: Record<ParsedApiErrorKind, string> = {
   not_found: "El recurso no existe o fue eliminado.",
   validation: "Revisa los datos del formulario.",
   server: "Error del servidor. Intenta más tarde.",
+  contract:
+    "La respuesta del servidor no coincide con lo esperado. Vuelve a intentar; si persiste, contacta soporte.",
   unknown: "Ocurrió un error inesperado.",
 };
 
@@ -23,13 +26,21 @@ function mapStatusToKind(status: number | null): ParsedApiErrorKind {
 }
 
 /**
- * Normaliza cualquier error de la API (ofetch / fetch) a un ParsedApiError.
- * Usa el status HTTP y el cuerpo JSON según el contrato ApiErrorSchema.
+ * Normaliza errores de flujos HTTP: API (ofetch/fetch) o drift de contrato runtime.
  */
 export function parseApiError(error: unknown): ParsedApiError {
   const raw = error;
 
-  // 1. Detectar error de red (no hay respuesta del servidor)
+  if (isContractValidationError(error)) {
+    return {
+      kind: "contract",
+      status: null,
+      message: FALLBACK_MESSAGES.contract,
+      fieldErrors: {},
+      raw,
+    };
+  }
+
   if (error instanceof Error && error.message.includes("fetch")) {
     return {
       kind: "network",
@@ -40,7 +51,6 @@ export function parseApiError(error: unknown): ParsedApiError {
     };
   }
 
-  // 2. Errores de ofetch: tienen statusCode y data
   if (error && typeof error === "object" && "statusCode" in error) {
     const status = typeof error.statusCode === "number" ? error.statusCode : null;
     const data = "data" in error && error.data !== undefined ? error.data : null;
@@ -67,7 +77,6 @@ export function parseApiError(error: unknown): ParsedApiError {
     };
   }
 
-  // 3. Fallback para cualquier otro error
   return {
     kind: "unknown",
     status: null,

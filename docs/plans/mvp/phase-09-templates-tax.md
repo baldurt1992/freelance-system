@@ -25,12 +25,12 @@
 
 ## Leer primero
 
-1. [WORKFLOW.md](./WORKFLOW.md)
-2. [../main/ARCHITECTURE.md](../main/ARCHITECTURE.md) §8
-3. [.agents/skills/freelance-monetary-consistency/SKILL.md](../../.agents/skills/freelance-monetary-consistency/SKILL.md)
-4. [../main/ENGINEERING_GUARDRAILS.md](../main/ENGINEERING_GUARDRAILS.md)
-5. [../main/TENANCY.md](../main/TENANCY.md)
-6. [../main/FRONTEND_ARCHITECTURE.md](../main/FRONTEND_ARCHITECTURE.md)
+1. [../WORKFLOW.md](../WORKFLOW.md)
+2. [../../main/ARCHITECTURE.md](../../main/ARCHITECTURE.md) §8
+3. [../../../.agents/skills/freelance-monetary-consistency/SKILL.md](../../../.agents/skills/freelance-monetary-consistency/SKILL.md)
+4. [../../main/ENGINEERING_GUARDRAILS.md](../../main/ENGINEERING_GUARDRAILS.md)
+5. [../../main/TENANCY.md](../../main/TENANCY.md)
+6. [../../main/FRONTEND_ARCHITECTURE.md](../../main/FRONTEND_ARCHITECTURE.md)
 
 ---
 

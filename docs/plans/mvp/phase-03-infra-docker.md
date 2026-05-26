@@ -9,8 +9,8 @@
 
 ## Leer primero
 
-1. [WORKFLOW.md](./WORKFLOW.md)
-2. [../main/ONBOARDING.md](../main/ONBOARDING.md)
+1. [../WORKFLOW.md](../WORKFLOW.md)
+2. [../../main/ONBOARDING.md](../../main/ONBOARDING.md)
 3. `docker-compose.dev.yml` actual
 
 ---

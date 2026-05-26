@@ -201,7 +201,7 @@ Contrato único para errores en todas las respuestas JSON: `ApiErrorSchema` en `
 - `attributes()` en Form Requests para nombres de campo en español.
 - 404 → `ModelNotFoundException` o excepción de dominio con mensaje claro.
 
-Ver plan detallado: [`docs/plans/phase-04.5-error-handling.md`](../plans/phase-04.5-error-handling.md).
+Ver plan detallado: [`docs/plans/mvp/phase-04.5-error-handling.md`](../plans/mvp/phase-04.5-error-handling.md).
 
 ---
 

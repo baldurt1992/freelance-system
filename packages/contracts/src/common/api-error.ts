@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const ApiErrorSchema = z.object({
   message: z.string(),
-  errors: z.record(z.array(z.string())).optional(),
+  errors: z.record(z.string(), z.array(z.string())).optional(),
 });
 
 export type ParsedApiErrorKind =
@@ -12,6 +12,7 @@ export type ParsedApiErrorKind =
   | "not_found"
   | "server"
   | "network"
+  | "contract"
   | "unknown";
 
 export interface ParsedApiError {

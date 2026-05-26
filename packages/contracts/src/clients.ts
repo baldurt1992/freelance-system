@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { IsoDateTimeStringSchema } from "./common/datetime.js";
 import { PaginationMetaSchema } from "./common/pagination.js";
 
 export const ClientSchema = z.object({
@@ -10,8 +11,8 @@ export const ClientSchema = z.object({
   address: z.string().max(500).nullable(),
   notes: z.string().max(2000).nullable(),
   avatar: z.string().max(2048).nullable(),
-  created_at: z.string().datetime(),
-  updated_at: z.string().datetime(),
+  created_at: IsoDateTimeStringSchema,
+  updated_at: IsoDateTimeStringSchema,
 });
 
 export type Client = z.infer<typeof ClientSchema>;

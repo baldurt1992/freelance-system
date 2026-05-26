@@ -25,13 +25,13 @@
 
 ## Leer primero
 
-1. [WORKFLOW.md](./WORKFLOW.md)
-2. [../main/FINANCES.md](../main/FINANCES.md) — **obligatorio**
-3. [../main/PROJECTS.md](../main/PROJECTS.md) § ingresos automáticos
-4. [../main/UI_ROUTES.md](../main/UI_ROUTES.md) — `/finances`
-5. [../main/ENGINEERING_GUARDRAILS.md](../main/ENGINEERING_GUARDRAILS.md)
-6. [../main/TENANCY.md](../main/TENANCY.md)
-7. [../main/FRONTEND_ARCHITECTURE.md](../main/FRONTEND_ARCHITECTURE.md)
+1. [../WORKFLOW.md](../WORKFLOW.md)
+2. [../../main/FINANCES.md](../../main/FINANCES.md) — **obligatorio**
+3. [../../main/PROJECTS.md](../../main/PROJECTS.md) § ingresos automáticos
+4. [../../main/UI_ROUTES.md](../../main/UI_ROUTES.md) — `/finances`
+5. [../../main/ENGINEERING_GUARDRAILS.md](../../main/ENGINEERING_GUARDRAILS.md)
+6. [../../main/TENANCY.md](../../main/TENANCY.md)
+7. [../../main/FRONTEND_ARCHITECTURE.md](../../main/FRONTEND_ARCHITECTURE.md)
 
 ---
 

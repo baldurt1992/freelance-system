@@ -1,10 +1,14 @@
 import { useApi } from "~/composables/api/useApi";
-import type {
-  Quote,
-  QuoteCreateInput,
-  QuoteListResponse,
-  QuoteStatusTransitionResponse,
-  QuoteUpdateInput,
+import { parseApiResponse } from "~/composables/api/parseApiResponse";
+import {
+  QuoteListSchema,
+  QuoteSchema,
+  QuoteStatusTransitionSchema,
+  type Quote,
+  type QuoteCreateInput,
+  type QuoteListResponse,
+  type QuoteStatusTransitionResponse,
+  type QuoteUpdateInput,
 } from "@freelance/contracts";
 
 export function useQuotesApi() {
@@ -13,11 +17,13 @@ export function useQuotesApi() {
   async function list(page = 1, search = ""): Promise<QuoteListResponse> {
     const qs = new URLSearchParams({ page: String(page) });
     if (search) qs.append("search", search);
-    return api<QuoteListResponse>(`/quotes?${qs.toString()}`);
+    const data = await api(`/quotes?${qs.toString()}`);
+    return parseApiResponse(QuoteListSchema, data, "quotes.list");
   }
 
   async function find(id: number): Promise<Quote> {
-    return api<Quote>(`/quotes/${id}`);
+    const data = await api(`/quotes/${id}`);
+    return parseApiResponse(QuoteSchema, data, "quotes.find");
   }
 
   async function create(input: QuoteCreateInput): Promise<Quote> {
@@ -41,21 +47,24 @@ export function useQuotesApi() {
   }
 
   async function send(id: number): Promise<QuoteStatusTransitionResponse> {
-    return api<QuoteStatusTransitionResponse>(`/quotes/${id}/send`, {
+    const data = await api(`/quotes/${id}/send`, {
       method: "POST",
     });
+    return parseApiResponse(QuoteStatusTransitionSchema, data, "quotes.send");
   }
 
   async function accept(id: number): Promise<QuoteStatusTransitionResponse> {
-    return api<QuoteStatusTransitionResponse>(`/quotes/${id}/accept`, {
+    const data = await api(`/quotes/${id}/accept`, {
       method: "POST",
     });
+    return parseApiResponse(QuoteStatusTransitionSchema, data, "quotes.accept");
   }
 
   async function reject(id: number): Promise<QuoteStatusTransitionResponse> {
-    return api<QuoteStatusTransitionResponse>(`/quotes/${id}/reject`, {
+    const data = await api(`/quotes/${id}/reject`, {
       method: "POST",
     });
+    return parseApiResponse(QuoteStatusTransitionSchema, data, "quotes.reject");
   }
 
   async function downloadPdf(id: number): Promise<Blob> {

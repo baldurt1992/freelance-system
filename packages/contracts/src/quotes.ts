@@ -1,4 +1,8 @@
 import { z } from "zod";
+import {
+  IsoDateTimeStringSchema,
+  NullableIsoDateTimeStringSchema,
+} from "./common/datetime.js";
 import { PaginationMetaSchema } from "./common/pagination.js";
 
 export const QuoteStatusSchema = z.enum([
@@ -42,11 +46,11 @@ export const QuoteSchema = z.object({
   total_cents: z.number().int().nonnegative(),
   tax_rate: z.number().min(0).max(100).default(0),
   valid_until: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable(),
-  sent_at: z.string().datetime().nullable(),
-  accepted_at: z.string().datetime().nullable(),
-  rejected_at: z.string().datetime().nullable(),
-  created_at: z.string().datetime(),
-  updated_at: z.string().datetime(),
+  sent_at: NullableIsoDateTimeStringSchema,
+  accepted_at: NullableIsoDateTimeStringSchema,
+  rejected_at: NullableIsoDateTimeStringSchema,
+  created_at: IsoDateTimeStringSchema,
+  updated_at: IsoDateTimeStringSchema,
   lines: z.array(QuoteLineSchema).optional(),
 });
 
@@ -90,9 +94,9 @@ export type QuoteListResponse = z.infer<typeof QuoteListSchema>;
 export const QuoteStatusTransitionSchema = z.object({
   id: z.number().int().positive(),
   status: QuoteStatusSchema,
-  sent_at: z.string().datetime().nullable(),
-  accepted_at: z.string().datetime().nullable(),
-  rejected_at: z.string().datetime().nullable(),
+  sent_at: NullableIsoDateTimeStringSchema,
+  accepted_at: NullableIsoDateTimeStringSchema,
+  rejected_at: NullableIsoDateTimeStringSchema,
 });
 
 export type QuoteStatusTransitionResponse = z.infer<typeof QuoteStatusTransitionSchema>;

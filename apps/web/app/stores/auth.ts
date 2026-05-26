@@ -1,6 +1,8 @@
 import { defineStore } from "pinia";
 import { useApi } from "~/composables/api/useApi";
-import type { ApiUser, LoginResponse, MeResponse } from "~/types/auth";
+import { parseApiError } from "~/composables/api/parseApiError";
+import { useAuthApi } from "~/composables/auth/useAuthApi";
+import type { AuthUser } from "@freelance/contracts";
 
 const TOKEN_COOKIE = "freelance_auth_token";
 
@@ -18,21 +20,18 @@ export const useAuthStore = defineStore("auth", () => {
     },
   });
 
-  const user = ref<ApiUser | null>(null);
+  const user = ref<AuthUser | null>(null);
   const initialized = ref(false);
   const loading = ref(false);
 
   const isAuthenticated = computed(() => Boolean(token.value && user.value));
 
   async function login(email: string, password: string): Promise<void> {
-    const { api } = useApi();
+    const authApi = useAuthApi();
     loading.value = true;
 
     try {
-      const response = await api<LoginResponse>("/auth/login", {
-        method: "POST",
-        body: { email, password },
-      });
+      const response = await authApi.login(email, password);
 
       token.value = response.token;
       user.value = response.user;
@@ -48,8 +47,8 @@ export const useAuthStore = defineStore("auth", () => {
       return;
     }
 
-    const { api } = useApi();
-    const response = await api<MeResponse>("/auth/me");
+    const authApi = useAuthApi();
+    const response = await authApi.fetchMe();
 
     user.value = response.user;
     useTenantStore().setTenant(response.tenant);
@@ -85,7 +84,20 @@ export const useAuthStore = defineStore("auth", () => {
 
     try {
       await fetchMe();
-    } catch {
+    } catch (error) {
+      const parsed = parseApiError(error);
+
+      if (parsed.kind === "contract") {
+        console.error("[AuthStore] Bootstrap abortado: drift de contrato en sesión", {
+          message: parsed.message,
+        });
+      } else {
+        console.error("[AuthStore] Bootstrap abortado: sesión no confiable", {
+          kind: parsed.kind,
+          message: parsed.message,
+        });
+      }
+
       token.value = null;
       user.value = null;
       useTenantStore().clear();

@@ -39,11 +39,11 @@ Antes de implementar, asumir estas reglas como **cerradas**:
 
 ## Leer primero
 
-1. [WORKFLOW.md](./WORKFLOW.md)
-2. [../main/ARCHITECTURE.md](../main/ARCHITECTURE.md) §8–9
-3. [../main/UI_ROUTES.md](../main/UI_ROUTES.md) — `/quotes`
-4. [.agents/skills/freelance-document-workflow/SKILL.md](../../.agents/skills/freelance-document-workflow/SKILL.md)
-5. [.agents/skills/freelance-monetary-consistency/SKILL.md](../../.agents/skills/freelance-monetary-consistency/SKILL.md)
+1. [../WORKFLOW.md](../WORKFLOW.md)
+2. [../../main/ARCHITECTURE.md](../../main/ARCHITECTURE.md) §8–9
+3. [../../main/UI_ROUTES.md](../../main/UI_ROUTES.md) — `/quotes`
+4. [../../../.agents/skills/freelance-document-workflow/SKILL.md](../../../.agents/skills/freelance-document-workflow/SKILL.md)
+5. [../../../.agents/skills/freelance-monetary-consistency/SKILL.md](../../../.agents/skills/freelance-monetary-consistency/SKILL.md)
 
 ---
 
@@ -336,7 +336,7 @@ Y además prueba manual:
 
 ## Paso 6 — Cierre PR
 
-[WORKFLOW.md § D](./WORKFLOW.md) — título: `feat: quotes module with PDF (phase 5)`
+[WORKFLOW.md § D](../WORKFLOW.md) — título: `feat: quotes module with PDF (phase 5)`
 
 ---
 

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { IsoDateTimeStringSchema } from "./common/datetime.js";
 import { PaginationMetaSchema } from "./common/pagination.js";
 
 export const FinanceEntryTypeSchema = z.enum(["income", "expense"]);
@@ -17,8 +18,8 @@ export const FinanceEntrySchema = z.object({
   source_type: z.string().nullable(),
   source_id: z.number().int().positive().nullable(),
   is_manual: z.boolean(),
-  created_at: z.string().datetime(),
-  updated_at: z.string().datetime(),
+  created_at: IsoDateTimeStringSchema,
+  updated_at: IsoDateTimeStringSchema,
 });
 
 export type FinanceEntry = z.infer<typeof FinanceEntrySchema>;

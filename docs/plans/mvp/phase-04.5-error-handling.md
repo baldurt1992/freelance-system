@@ -10,8 +10,8 @@
 
 ## Leer primero
 
-1. [WORKFLOW.md](./WORKFLOW.md)
-2. [../main/ARCHITECTURE.md](../main/ARCHITECTURE.md)
+1. [../WORKFLOW.md](../WORKFLOW.md)
+2. [../../main/ARCHITECTURE.md](../../main/ARCHITECTURE.md)
 3. `packages/contracts/src/common/api-error.ts` (ya existe `ApiErrorSchema`)
 4. `apps/web/app/composables/api/useApi.ts`
 5. `apps/web/app/pages/login.vue` — ya tiene `extractApiErrorMessage` local (referencia a unificar)
@@ -252,7 +252,7 @@ Estado: **cerrada**.
    - `upload_avatar_422_for_file_too_large`
 
 5. **Índice de planes actualizado.**
-   - Fase 4.5 marcada como `✅ Hecho` en `docs/plans/README.md`.
+   - Fase 4.5 marcada como `✅ Hecho` en `docs/plans/mvp/README.md`.
 
 ### Verificación final ejecutada
 
@@ -296,6 +296,6 @@ cd apps/web && pnpm exec nuxi typecheck
 
 ## Merge
 
-Seguir [WORKFLOW.md](./WORKFLOW.md) § D–E: PR a `main`, borrar rama `feature/error-handling-fase-4-5` tras merge.
+Seguir [WORKFLOW.md](../WORKFLOW.md) § D–E: PR a `main`, borrar rama `feature/error-handling-fase-4-5` tras merge.
 
 **Después del merge:** Fase 5 (cotizaciones) arranca con los composables de error ya disponibles; copiar patrón de `clients` en forms y toasts.

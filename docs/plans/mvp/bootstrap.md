@@ -4,7 +4,7 @@
 
 | Siguiente trabajo | Plan                                         |
 | ----------------- | -------------------------------------------- |
-| Git en cada fase  | [WORKFLOW.md](./WORKFLOW.md)                 |
+| Git en cada fase  | [../WORKFLOW.md](../WORKFLOW.md)             |
 | Fase 4            | [phase-04-clients.md](./phase-04-clients.md) |
 
 **No saltar fases.** UI polish global después de fase 9.

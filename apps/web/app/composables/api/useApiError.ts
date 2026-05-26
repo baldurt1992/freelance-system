@@ -1,5 +1,6 @@
 import type { ParsedApiError } from "@freelance/contracts";
 import { getFieldError, parseApiErrorBody } from "@freelance/contracts";
+import { isContractValidationError } from "./parseApiResponse";
 import { parseApiError, FALLBACK_MESSAGES } from "./parseApiError";
 
 interface ToastApiErrorOptions {
@@ -48,8 +49,18 @@ export function useApiError() {
     error: unknown,
     context?: Record<string, unknown>
   ) {
-    const parsed = parseApiError(error);
-    // eslint-disable-next-line no-console
+    if (isContractValidationError(error)) {
+      console.error(`[${tag}] Contract drift`, {
+        kind: "contract",
+        label: error.label,
+        issues: error.issues,
+        message: FALLBACK_MESSAGES.contract,
+        ...context,
+      });
+      return;
+    }
+
+    const parsed: ParsedApiError = parseApiError(error);
     console.error(`[${tag}] API Error`, {
       kind: parsed.kind,
       status: parsed.status,
