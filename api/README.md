@@ -48,7 +48,15 @@ El tenant se resuelve por **dominio** (`personal.localhost`), no por path.
 php artisan test
 ```
 
-SQLite en memoria (central + tenants).
+Central: SQLite en memoria. Tenant tests: SQLite por archivo con bootstrap Stancl real.
+
+Para iteración segura en WSL:
+
+```bash
+bash ../scripts/test-tenant-safe.sh tests/Feature/Tenant/TemplateTaxTest.php --filter=default_template_fallback
+```
+
+Guía operativa: [docs/main/WSL_TESTING.md](../docs/main/WSL_TESTING.md)
 
 ## Comandos útiles
 

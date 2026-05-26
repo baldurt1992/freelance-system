@@ -43,6 +43,7 @@ final class AuthController extends Controller
                 'name' => tenant('name'),
                 'tax_enabled' => tenant()->tax_enabled,
                 'currency' => tenant()->currency,
+                'tax_rate' => tenant()->tax_rate,
             ],
         ]);
     }

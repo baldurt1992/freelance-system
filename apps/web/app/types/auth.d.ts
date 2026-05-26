@@ -11,6 +11,7 @@ export interface ApiTenant {
   name: string;
   tax_enabled: boolean;
   currency: string;
+  tax_rate?: number;
 }
 
 export interface LoginResponse {

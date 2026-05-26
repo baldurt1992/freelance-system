@@ -18,6 +18,17 @@ class User extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use HasApiTokens, HasFactory, Notifiable;
 
+    public function isTenantOwner(): bool
+    {
+        if (! $this->exists || $this->getKey() === null) {
+            return false;
+        }
+
+        $ownerId = self::query()->orderBy('id')->value('id');
+
+        return $ownerId !== null && (int) $this->getKey() === (int) $ownerId;
+    }
+
     /**
      * Get the attributes that should be cast.
      *

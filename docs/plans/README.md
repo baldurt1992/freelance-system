@@ -13,7 +13,7 @@ Seguir **en orden**. No saltar fases.
 | 6            | [phase-06-projects-payments.md](./phase-06-projects-payments.md)                    | `feature/projects-fase-6`         | ✅ Hecho (local)   |
 | 7            | [phase-07-finances.md](./phase-07-finances.md)                                      | `feature/finances-fase-7`         | ✅ Hecho (local)   |
 | 8            | [phase-08-billing.md](./phase-08-billing.md)                                        | `feature/billing-fase-8`          | ✅ Hecho (local)   |
-| 9            | [phase-09-templates-tax.md](./phase-09-templates-tax.md)                            | `feature/templates-tax-fase-9`    | Pendiente          |
+| 9            | [phase-09-templates-tax.md](./phase-09-templates-tax.md)                            | `feature/templates-tax-fase-9`    | ✅ Hecho (local)   |
 
 **Nota de alineación (2026-05-25):** fases 6–9 fueron reforzadas con guardrails transversales obligatorios (tenancy boundary, contracts-first, manejo de errores API en UI, consistencia UX baseline `clients` y compuerta `validate-touched-files.sh` + tests + `nuxi typecheck`).
 
