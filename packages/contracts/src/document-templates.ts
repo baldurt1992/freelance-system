@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { IsoDateTimeStringSchema } from "./common/datetime.js";
 
 export const DocumentTemplateTypeSchema = z.enum(["quote", "billing"]);
 
@@ -11,8 +12,8 @@ export const DocumentTemplateSchema = z.object({
   name: z.string().min(1).max(255),
   html_body: z.string().min(1),
   is_default: z.boolean(),
-  created_at: z.string().datetime(),
-  updated_at: z.string().datetime(),
+  created_at: IsoDateTimeStringSchema,
+  updated_at: IsoDateTimeStringSchema,
 });
 
 export type DocumentTemplate = z.infer<typeof DocumentTemplateSchema>;

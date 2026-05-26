@@ -35,10 +35,11 @@ bash scripts/setup-dev-hosts.sh
 - [Finanzas](docs/main/FINANCES.md)
 - [Tenancy (Stancl)](docs/main/TENANCY.md)
 - [Guardrails](docs/main/ENGINEERING_GUARDRAILS.md)
-- [Planes por fase](docs/plans/README.md) · [Flujo Git](docs/plans/WORKFLOW.md)
-- [Bootstrap 0–2](docs/plans/bootstrap.md)
+- [Planes](docs/plans/README.md) · [Flujo Git](docs/plans/WORKFLOW.md)
+- [Fases MVP](docs/plans/mvp/README.md) · [Bootstrap 0–2](docs/plans/mvp/bootstrap.md)
+- [Backlog técnico](docs/plans/backlog/README.md)
 - [AGENTS.md](AGENTS.md)
 
 ## Estado
 
-Fases **0–2** listas. Siguiente: **Fase 4 — Clients** ([bootstrap](docs/plans/bootstrap.md)).
+Fases **0–2** listas. Siguiente histórico del plan MVP: **Fase 4 — Clients** ([bootstrap](docs/plans/mvp/bootstrap.md)).

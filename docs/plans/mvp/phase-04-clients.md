@@ -8,19 +8,19 @@
 
 ## Leer primero (obligatorio)
 
-1. [WORKFLOW.md](./WORKFLOW.md)
-2. [../main/ARCHITECTURE.md](../main/ARCHITECTURE.md) §5–7
-3. [../main/UI_ROUTES.md](../main/UI_ROUTES.md) — rutas `/clients`
-4. [../main/TENANCY.md](../main/TENANCY.md) — rutas tenant
-5. [../../packages/contracts/README.md](../../packages/contracts/README.md)
-6. [../../api/tests/TenantTestCase.php](../../api/tests/TenantTestCase.php)
+1. [../WORKFLOW.md](../WORKFLOW.md)
+2. [../../main/ARCHITECTURE.md](../../main/ARCHITECTURE.md) §5–7
+3. [../../main/UI_ROUTES.md](../../main/UI_ROUTES.md) — rutas `/clients`
+4. [../../main/TENANCY.md](../../main/TENANCY.md) — rutas tenant
+5. [../../../packages/contracts/README.md](../../../packages/contracts/README.md)
+6. [../../../api/tests/TenantTestCase.php](../../../api/tests/TenantTestCase.php)
 7. Skills: `laravel-specialist`, `vue-best-practices`, `zod`, `freelance-tenancy-stancl`
 
 ---
 
 ## Paso 0 — Git
 
-Ejecutar [WORKFLOW.md § A](./WORKFLOW.md) con:
+Ejecutar [WORKFLOW.md § A](../WORKFLOW.md) con:
 
 ```bash
 git checkout -b feature/clients-fase-4
@@ -185,7 +185,7 @@ pnpm typecheck:web
 ## Paso 7 — Cierre
 
 1. Marcar checklist en este archivo (mental o PR).
-2. Ejecutar [WORKFLOW.md § C y D](./WORKFLOW.md).
+2. Ejecutar [WORKFLOW.md § C y D](../WORKFLOW.md).
 3. Título PR sugerido: `feat: clients module and contracts package (phase 4)`
 
 ---

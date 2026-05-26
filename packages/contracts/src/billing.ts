@@ -1,4 +1,8 @@
 import { z } from "zod";
+import {
+  IsoDateTimeStringSchema,
+  NullableIsoDateTimeStringSchema,
+} from "./common/datetime.js";
 import { ProjectSchema } from "./projects.js";
 
 export const BillingDocumentStatusSchema = z.enum([
@@ -26,10 +30,10 @@ export const BillingDocumentSchema = z.object({
   paid_total_cents: z.number().int().nonnegative(),
   balance_due_cents: z.number().int().nonnegative(),
   pdf_path: z.string().nullable(),
-  issued_at: z.string().datetime().nullable(),
-  sent_at: z.string().datetime().nullable(),
-  created_at: z.string().datetime(),
-  updated_at: z.string().datetime(),
+  issued_at: NullableIsoDateTimeStringSchema,
+  sent_at: NullableIsoDateTimeStringSchema,
+  created_at: IsoDateTimeStringSchema,
+  updated_at: IsoDateTimeStringSchema,
 });
 
 export type BillingDocument = z.infer<typeof BillingDocumentSchema>;

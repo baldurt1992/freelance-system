@@ -3,7 +3,7 @@
 **Rama de trabajo:** `feature/clients-fase-4` (ya existente).  
 **No incluye:** stage, commit, push ni PR — solo código y docs.
 
-**Leer antes:** [phase-04-clients.md](./phase-04-clients.md), [WORKFLOW.md](./WORKFLOW.md) § C (verificación).
+**Leer antes:** [phase-04-clients.md](./phase-04-clients.md), [../WORKFLOW.md](../WORKFLOW.md) § C (verificación).
 
 ---
 
@@ -171,7 +171,7 @@ O usar `meta.total` solo si muestras contexto global.
 
 ## Paso 7 — Actualizar plan fase 4
 
-**Archivo:** `docs/plans/phase-04-clients.md`
+**Archivo:** `docs/plans/mvp/phase-04-clients.md`
 
 ### 7.1 Paso 2 — tabla de campos
 
@@ -208,7 +208,7 @@ Ver [phase-04-clients-fixes.md](./phase-04-clients-fixes.md). Ejecutar antes de 
 
 ### 7.7 README plans
 
-En `docs/plans/README.md`, bajo fase 4, enlace opcional: “fixes → phase-04-clients-fixes.md”.
+En `docs/plans/mvp/README.md`, bajo fase 4, enlace opcional: “fixes → phase-04-clients-fixes.md”.
 
 ---
 

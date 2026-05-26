@@ -1,15 +1,24 @@
 import { useApi } from "~/composables/api/useApi";
-import type {
-  Project,
-  ProjectCreateInput,
-  ProjectListResponse,
-  ProjectPayment,
-  RegisterPartialPaymentInput,
-  MarkProjectPaidInput,
-  MarkProjectPaidResponse,
-  ProjectUpdateInput,
-  ConvertQuoteToProjectResponse,
-  CompleteProjectResponse,
+import { parseApiResponse } from "~/composables/api/parseApiResponse";
+import {
+  CompleteProjectResponseSchema,
+  ConvertQuoteToProjectResponseSchema,
+  MarkProjectPaidResponseSchema,
+  ProjectListSchema,
+  ProjectPaymentListSchema,
+  ProjectSchema,
+  RegisterPaymentResponseSchema,
+  type CompleteProjectResponse,
+  type ConvertQuoteToProjectResponse,
+  type MarkProjectPaidInput,
+  type MarkProjectPaidResponse,
+  type Project,
+  type ProjectCreateInput,
+  type ProjectListResponse,
+  type ProjectPaymentListResponse,
+  type ProjectUpdateInput,
+  type RegisterPartialPaymentInput,
+  type RegisterPaymentResponse,
 } from "@freelance/contracts";
 
 export function useProjectsApi() {
@@ -18,11 +27,13 @@ export function useProjectsApi() {
   async function list(page = 1, search = ""): Promise<ProjectListResponse> {
     const qs = new URLSearchParams({ page: String(page) });
     if (search) qs.append("search", search);
-    return api<ProjectListResponse>(`/projects?${qs.toString()}`);
+    const data = await api(`/projects?${qs.toString()}`);
+    return parseApiResponse(ProjectListSchema, data, "projects.list");
   }
 
   async function find(id: number): Promise<Project> {
-    return api<Project>(`/projects/${id}`);
+    const data = await api(`/projects/${id}`);
+    return parseApiResponse(ProjectSchema, data, "projects.find");
   }
 
   async function create(input: ProjectCreateInput): Promise<Project> {
@@ -46,39 +57,52 @@ export function useProjectsApi() {
   }
 
   async function convertQuoteToProject(quoteId: number): Promise<ConvertQuoteToProjectResponse> {
-    return api<ConvertQuoteToProjectResponse>(`/quotes/${quoteId}/convert-to-project`, {
+    const data = await api(`/quotes/${quoteId}/convert-to-project`, {
       method: "POST",
     });
+    return parseApiResponse(
+      ConvertQuoteToProjectResponseSchema,
+      data,
+      "projects.convertQuoteToProject",
+    );
   }
 
   async function registerPayment(
     projectId: number,
     input: RegisterPartialPaymentInput,
-  ): Promise<{ project: Project; payment: ProjectPayment }> {
-    return api(`/projects/${projectId}/payments`, {
+  ): Promise<RegisterPaymentResponse> {
+    const data = await api(`/projects/${projectId}/payments`, {
       method: "POST",
       body: input,
     });
+    return parseApiResponse(
+      RegisterPaymentResponseSchema,
+      data,
+      "projects.registerPayment",
+    );
   }
 
   async function markPaid(
     projectId: number,
     input: MarkProjectPaidInput,
   ): Promise<MarkProjectPaidResponse> {
-    return api<MarkProjectPaidResponse>(`/projects/${projectId}/mark-paid`, {
+    const data = await api(`/projects/${projectId}/mark-paid`, {
       method: "POST",
       body: input,
     });
+    return parseApiResponse(MarkProjectPaidResponseSchema, data, "projects.markPaid");
   }
 
-  async function getPayments(projectId: number): Promise<{ data: ProjectPayment[] }> {
-    return api<{ data: ProjectPayment[] }>(`/projects/${projectId}/payments`);
+  async function getPayments(projectId: number): Promise<ProjectPaymentListResponse> {
+    const data = await api(`/projects/${projectId}/payments`);
+    return parseApiResponse(ProjectPaymentListSchema, data, "projects.getPayments");
   }
 
   async function complete(projectId: number): Promise<CompleteProjectResponse> {
-    return api<CompleteProjectResponse>(`/projects/${projectId}/complete`, {
+    const data = await api(`/projects/${projectId}/complete`, {
       method: "POST",
     });
+    return parseApiResponse(CompleteProjectResponseSchema, data, "projects.complete");
   }
 
   return { list, find, create, update, remove, convertQuoteToProject, registerPayment, markPaid, getPayments, complete };

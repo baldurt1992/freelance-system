@@ -19,7 +19,7 @@ const state = reactive({
   password: ''
 })
 
-const { parseApiError } = useApiError()
+const { parseApiError, logApiError } = useApiError()
 
 const errorMessage = ref<string | null>(null)
 
@@ -43,11 +43,7 @@ async function onSubmit() {
   } catch (error: unknown) {
     const parsed = parseApiError(error)
     errorMessage.value = parsed.message
-    console.error('[AuthLogin] Error al iniciar sesión', {
-      email: state.email,
-      kind: parsed.kind,
-      message: parsed.message
-    })
+    logApiError('AuthLogin', error, { email: state.email })
   }
 }
 </script>

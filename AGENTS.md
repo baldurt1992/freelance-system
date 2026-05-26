@@ -14,8 +14,8 @@ Mantener Freelance System coherente: multi-tenant (Stancl), dinero en centavos, 
 1. `docs/main/ARCHITECTURE.md`
 2. `docs/main/TENANCY.md`
 3. `docs/main/ENGINEERING_GUARDRAILS.md`
-4. `docs/plans/README.md` — plan activo de la fase; `docs/plans/WORKFLOW.md` para Git
-5. `docs/plans/bootstrap.md` — índice histórico fases 0–2
+4. `docs/plans/README.md` — índice general; `docs/plans/WORKFLOW.md` para Git
+5. `docs/plans/mvp/README.md` y `docs/plans/mvp/bootstrap.md` — fases MVP e índice histórico 0–2
 6. `docs/main/UI_ROUTES.md` — rutas y vistas (no modales como CRUD principal)
 7. `docs/main/FRONTEND_ARCHITECTURE.md` — patrón obligatorio frontend/Nuxt UI
 8. `packages/contracts/README.md`

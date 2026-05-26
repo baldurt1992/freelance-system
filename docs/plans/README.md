@@ -1,26 +1,25 @@
-# Planes de implementación por fase
+# Planes del proyecto
 
-Cada archivo es un **runbook ejecutable** (rama Git → pasos → verificación → merge).  
-Seguir **en orden**. No saltar fases.
+Este directorio quedó dividido en dos líneas de trabajo:
 
-| Fase         | Archivo                                                                             | Rama Git                          | Estado             |
-| ------------ | ----------------------------------------------------------------------------------- | --------------------------------- | ------------------ |
-| 0–2          | [bootstrap.md](./bootstrap.md)                                                      | —                                 | ✅ Hecho           |
-| 3 (opcional) | [phase-03-infra-docker.md](./phase-03-infra-docker.md)                              | `feature/infra-docker-fase-3`     | Parcial / opcional |
-| 4            | [phase-04-clients.md](./phase-04-clients.md) · [fixes](./phase-04-clients-fixes.md) | `feature/clients-fase-4`          | ✅ Hecho           |
-| 4.5          | [phase-04.5-error-handling.md](./phase-04.5-error-handling.md)                      | `feature/error-handling-fase-4-5` | ✅ Hecho           |
-| 5            | [phase-05-quotes.md](./phase-05-quotes.md)                                          | `feature/quotes-fase-5`           | ✅ Hecho (local)   |
-| 6            | [phase-06-projects-payments.md](./phase-06-projects-payments.md)                    | `feature/projects-fase-6`         | ✅ Hecho (local)   |
-| 7            | [phase-07-finances.md](./phase-07-finances.md)                                      | `feature/finances-fase-7`         | ✅ Hecho (local)   |
-| 8            | [phase-08-billing.md](./phase-08-billing.md)                                        | `feature/billing-fase-8`          | ✅ Hecho (local)   |
-| 9            | [phase-09-templates-tax.md](./phase-09-templates-tax.md)                            | `feature/templates-tax-fase-9`    | ✅ Hecho (local)   |
+| Línea | Índice | Uso |
+| --- | --- | --- |
+| MVP | [mvp/README.md](./mvp/README.md) | Runbooks históricos y ejecutables de las fases funcionales 0–9 |
+| Backlog técnico | [backlog/README.md](./backlog/README.md) | Runbooks post-MVP para endurecer arquitectura sin romper módulos main |
 
-**Nota de alineación (2026-05-25):** fases 6–9 fueron reforzadas con guardrails transversales obligatorios (tenancy boundary, contracts-first, manejo de errores API en UI, consistencia UX baseline `clients` y compuerta `validate-touched-files.sh` + tests + `nuxi typecheck`).
+## Reglas globales
 
-**Git (todas las fases):** [WORKFLOW.md](./WORKFLOW.md)
+1. Leer primero el índice de la línea que vas a tocar.
+2. Para Git, todas las ramas siguen [WORKFLOW.md](./WORKFLOW.md).
+3. Ningún agente debe mezclar una fase MVP y un backlog técnico en la misma rama.
+4. Si el cambio toca contratos, tenancy, dinero o UI, revisar antes:
+   - `docs/main/ARCHITECTURE.md`
+   - `docs/main/TENANCY.md`
+   - `docs/main/ENGINEERING_GUARDRAILS.md`
+   - `docs/main/FRONTEND_ARCHITECTURE.md`
+5. El backlog técnico no reabre el MVP: endurece estructura, validación y mantenibilidad.
 
-**Docs de dominio:** `docs/main/ARCHITECTURE.md`, `TENANCY.md`, `UI_ROUTES.md`, `FINANCES.md`, `PROJECTS.md`
+## Orden recomendado
 
-**Después de fase 9:** pulido UI global (no es una fase de dominio en esta tabla).
-
-**Backlog técnico post-MVP:** [post-mvp-technical-backlog.md](./post-mvp-technical-backlog.md)
+- Si el trabajo es dominio o funcionalidad del sistema base: usar `mvp/`.
+- Si el trabajo es disciplina técnica, refactor o cobertura post-MVP: usar `backlog/`.

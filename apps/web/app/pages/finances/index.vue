@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import FinancesUiMonthPicker from "~/components/finances/ui/MonthPicker.vue";
 import { formatMoney } from "~/utils/formatMoney";
 import { useFinancesApi } from "~/composables/finances/useFinancesApi";
 import { useFinanceSummary } from "~/composables/finances/useFinanceSummary";
@@ -75,7 +76,7 @@ async function onDelete(entryId: number) {
         <UTabs v-model="tab" :items="[...financesTabItems]" />
 
         <div class="ms-auto">
-          <FinancesMonthPicker
+          <FinancesUiMonthPicker
             :month="month"
             :month-fallback="monthInputDefault()"
             @update:month="month = $event"
