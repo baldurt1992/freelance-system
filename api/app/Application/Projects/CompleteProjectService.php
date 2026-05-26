@@ -75,6 +75,7 @@ final class CompleteProjectService
             $pdfPath = $this->pdfGenerator->store($billingDocument);
             $billingDocument->update(['pdf_path' => $pdfPath]);
 
+            // Stancl QueueTenancyBootstrapper adjunta tenant_id al payload; el worker bootstraps tenancy antes de handle().
             SendBillingDocumentEmail::dispatch($billingDocument->id)->afterCommit();
 
             Log::info('[Billing] issued', [
