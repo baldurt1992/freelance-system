@@ -5,9 +5,11 @@ declare(strict_types=1);
 use App\Http\Controllers\Api\Tenant\AuthController;
 use App\Http\Controllers\Api\Tenant\BillingDocumentController;
 use App\Http\Controllers\Api\Tenant\ClientController;
+use App\Http\Controllers\Api\Tenant\DocumentTemplateController;
 use App\Http\Controllers\Api\Tenant\FinanceController;
 use App\Http\Controllers\Api\Tenant\ProjectController;
 use App\Http\Controllers\Api\Tenant\QuoteController;
+use App\Http\Controllers\Api\Tenant\SettingsController;
 use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
@@ -67,5 +69,12 @@ Route::middleware([
         Route::get('/finances/entries/{id}', [FinanceController::class, 'show']);
         Route::patch('/finances/entries/{id}', [FinanceController::class, 'update']);
         Route::delete('/finances/entries/{id}', [FinanceController::class, 'destroy']);
+
+        Route::get('/settings', [SettingsController::class, 'show']);
+        Route::patch('/settings', [SettingsController::class, 'update']);
+
+        Route::get('/document-templates', [DocumentTemplateController::class, 'index']);
+        Route::put('/document-templates/{id}', [DocumentTemplateController::class, 'update']);
+        Route::post('/document-templates/preview', [DocumentTemplateController::class, 'preview']);
     });
 });

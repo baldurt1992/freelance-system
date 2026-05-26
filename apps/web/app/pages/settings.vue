@@ -7,6 +7,14 @@ const links = [[{
   to: '/settings',
   exact: true
 }, {
+  label: 'Facturación',
+  icon: 'i-lucide-receipt',
+  to: '/settings/billing'
+}, {
+  label: 'Plantillas',
+  icon: 'i-lucide-file-code',
+  to: '/settings/templates'
+}, {
   label: 'Members',
   icon: 'i-lucide-users',
   to: '/settings/members'
@@ -29,7 +37,7 @@ const links = [[{
 <template>
   <UDashboardPanel id="settings" :ui="{ body: 'lg:py-12' }">
     <template #header>
-      <UDashboardNavbar title="Settings">
+      <UDashboardNavbar title="Configuración">
         <template #leading>
           <UDashboardSidebarCollapse />
         </template>

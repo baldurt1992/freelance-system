@@ -41,13 +41,19 @@ final class TenantProvisionCommand extends Command
 
         $this->info("Provisioning tenant [{$slug}]…");
 
+        $tenantData = [
+            'tax_enabled' => $taxEnabled,
+            'currency' => $currency,
+        ];
+
+        if ($taxEnabled) {
+            $tenantData['tax_rate'] = 19.0;
+        }
+
         $tenant = Tenant::create([
             'id' => $slug,
             'name' => $name,
-            'data' => [
-                'tax_enabled' => $taxEnabled,
-                'currency' => $currency,
-            ],
+            ...$tenantData,
         ]);
 
         $tenant->domains()->create(['domain' => $domain]);

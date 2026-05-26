@@ -8,6 +8,7 @@ export const useTenantStore = defineStore("tenant", () => {
   const displayName = computed(() => current.value?.name ?? "Workspace");
   const currency = computed(() => current.value?.currency ?? "COP");
   const taxEnabled = computed(() => current.value?.tax_enabled ?? false);
+  const taxRate = computed(() => current.value?.tax_rate ?? 19);
 
   function setTenant(tenant: ApiTenant | null): void {
     current.value = tenant;
@@ -28,6 +29,7 @@ export const useTenantStore = defineStore("tenant", () => {
     displayName,
     currency,
     taxEnabled,
+    taxRate,
     setTenant,
     clear,
     loadFromMe,

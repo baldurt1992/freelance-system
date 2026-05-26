@@ -46,6 +46,9 @@
 
 ## Paso 0 — Git
 
+- [x] Rama `feature/templates-tax-fase-9` creada y pusheada
+- [ ] Merge a `main` (usuario)
+
 ```bash
 git checkout main && git pull origin main
 git checkout -b feature/templates-tax-fase-9
@@ -58,21 +61,22 @@ git push -u origin feature/templates-tax-fase-9
 
 ## Paso 1 — Tenant settings IVA
 
-1. Asegurar `tax_enabled` y `currency` en tenant `data` (ya existe provision).
-2. Endpoint: `PATCH /settings` o `PATCH /tenant/settings` (tenant auth):
-   - body `{ tax_enabled: boolean }`
-3. Al activar IVA:
-   - afecta quotes nuevas
-   - puede recalcular solo quotes en `draft`
-4. Al desactivar:
-   - forzar `tax_rate = 0` para quotes nuevas y `draft`
-   - **no** reescribir documentos históricos ya emitidos/aceptados/convertidos/completados
-
-Tests: quote `draft` con tax on/off + assert de inmutabilidad histórica.
+- [x] `tax_enabled`, `currency` y `tax_rate` en tenant `data` (`Tenant` + `tenant:provision --tax-enabled`)
+- [x] `GET /settings` y `PATCH /settings` en `tenant.php` (`SettingsController`, `TenantSettingsService`)
+- [x] Body `{ tax_enabled: boolean }` — contrato `UpdateTenantSettingsSchema`
+- [x] Al activar: quotes nuevas con IVA; `DraftQuoteTaxRecalculator` recalcula solo `draft`
+- [x] Al desactivar: `tax_cents = 0` vía `QuoteTotalsCalculator` + recálculo de drafts; históricos inmutables
+- [x] Tests de draft on/off e inmutabilidad en `TemplateTaxTest`
 
 ---
 
 ## Paso 2 — Plantillas documentos
+
+- [x] Migración `document_templates` + seed defaults (`quote.html`, `billing.html`)
+- [x] Modelo `DocumentTemplate`
+- [x] `TemplateResolver::resolve(type, client_id)` — cliente específico → default tenant
+- [x] `QuotePdfGenerator` y `BillingPdfGenerator` delegan a `TemplateRenderer` + `TemplateVariableBuilder` + `PdfRenderer`
+- [x] Totales formateados en PHP (`MoneyFormatter`); sin math fiscal en HTML
 
 ### Modelo / storage
 
@@ -98,37 +102,27 @@ Refactor `QuotePdfGenerator` y `BillingPdfGenerator` para inyectar HTML resuelto
 
 ## Paso 3 — API plantillas (mínimo v1)
 
-- `GET /document-templates?type=quote`
-- `PUT /document-templates/{id}` — actualizar HTML (owner only v1)
-- Preview: `POST /document-templates/preview` con sample data
-- Validar que exista solo un default activo por `type` en v1
-
-Todas estas rutas deben vivir en `tenant.php` con `auth:sanctum`.
+- [x] `GET /document-templates?type=quote|billing` — `DocumentTemplateController@index`
+- [x] `PUT /document-templates/{id}` — actualizar `html_body` (owner v1, auth sanctum)
+- [x] `POST /document-templates/preview` — PDF con sample data o `html_body` enviado
+- [x] Un solo `is_default` por `type` + `client_id` — `DocumentTemplateService::update`
+- [x] Rutas en `tenant.php` bajo `auth:sanctum`
 
 ---
 
 ## Paso 4 — Frontend settings
 
-En `pages/settings/index.vue` (o nueva `settings/billing.vue`):
-
-- Toggle **Activar IVA** → llama PATCH settings
-- Aviso cuando cambia:
-  - afecta nuevas cotizaciones
-  - puede recalcular drafts
-  - no modifica documentos históricos
-
-Editor plantilla (v1 simple):
-
-- `pages/settings/templates.vue` — textarea HTML + preview link
-- Sin WYSIWYG pesado en v1
-
-```bash
-pnpm typecheck:web
-```
+- [x] `pages/settings/billing.vue` — toggle IVA + aviso históricos (`useSettingsApi`, `toastApiError`)
+- [x] `pages/settings/templates.vue` — textarea HTML + preview + guardar (`useDocumentTemplatesApi`)
+- [x] Nav en `pages/settings.vue` → Facturación / Plantillas
+- [x] `pnpm typecheck:web` en verde
 
 ---
 
 ## Paso 4.5 — Validación obligatoria
+
+- [x] `bash scripts/validate-touched-files.sh` — PHP `php -l` OK en archivos fase 9
+- [x] `nuxi typecheck` — verde en entorno validado
 
 ```bash
 bash scripts/validate-touched-files.sh <archivos_fase9...>
@@ -139,30 +133,53 @@ pnpm --filter @freelance/web exec nuxi typecheck
 
 ## Paso 5 — Tests
 
-- tax_enabled false → tax_cents 0 en quote nueva
-- tax_enabled true → cálculo con MoneyMath coherente
-- template por cliente usado en PDF quote
-- toggle IVA no altera quote histórica aceptada / billing emitido
-- fallback template default cuando no hay template por cliente
+- [x] `tax_enabled` false → `tax_cents` 0 en quote nueva
+- [x] `tax_enabled` true → cálculo MoneyMath (19% sobre subtotal)
+- [x] template por cliente usado en render quote
+- [x] toggle IVA no altera quote `accepted` ni billing emitido
+- [x] fallback template default (`Cotización predeterminada`)
+- [x] list/update/preview API plantillas
 
 ```bash
+cd api && bash ../scripts/test-tenant-safe.sh tests/Feature/Tenant/TemplateTaxTest.php
 cd api && php artisan test
 ```
+
+**Evidencia (2026-05-25):** `TemplateTaxTest` — 12 passed, 47 assertions, ~3.9s (`php artisan test --filter=TemplateTax`). `pnpm --filter @freelance/web exec nuxi typecheck` también verde.
 
 ---
 
 ## Paso 6 — Cierre PR
 
+- [ ] Commit de archivos nuevos + modificados (usuario)
+- [ ] PR con título abajo
+- [ ] Merge a `main` (usuario)
+
 Título: `feat: document templates and tax toggle (phase 9)`
+
+---
+
+## Entregables (implementado en rama)
+
+| Área | Archivos clave |
+| --- | --- |
+| Contratos | `packages/contracts/src/settings.ts`, `document-templates.ts` |
+| Settings API | `SettingsController`, `TenantSettingsService`, `DraftQuoteTaxRecalculator`, `TenantSettingsResource` |
+| Templates API | `DocumentTemplateController`, `DocumentTemplateService`, `TemplateResolver`, `TemplateRenderer`, `TemplateVariableBuilder`, `PdfRenderer` |
+| PDF | `QuotePdfGenerator`, `BillingPdfGenerator` (refactor) |
+| BD tenant | `2026_05_26_100000_create_document_templates_table.php`, `api/resources/templates/defaults/*.html` |
+| Tests | `api/tests/Feature/Tenant/TemplateTaxTest.php`, `TenantTestCase` (shared tenant) |
+| Frontend | `pages/settings/billing.vue`, `pages/settings/templates.vue`, `composables/settings/*` |
+| Tooling | `scripts/test-tenant-safe.sh`, `scripts/kill-runaway-php-tests.sh`, `docs/main/WSL_TESTING.md` |
 
 ---
 
 ## Definition of Done
 
-- [ ] Toggle IVA en settings funcional
-- [ ] PDF quote/billing usan template resoluble
-- [ ] Editor mínimo de plantilla
-- [ ] Tests verdes
+- [x] Toggle IVA en settings funcional
+- [x] PDF quote/billing usan template resoluble
+- [x] Editor mínimo de plantilla
+- [x] Tests verdes
 - [ ] Merge a `main`
 
 ---

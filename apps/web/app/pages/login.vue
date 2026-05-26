@@ -10,7 +10,7 @@ const tenant = useTenantStore()
 const toast = useToast()
 
 const schema = z.object({
-  email: z.email('Email inválido'),
+  email: z.string().email('Email inválido'),
   password: z.string().min(1, 'La contraseña es obligatoria')
 })
 

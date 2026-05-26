@@ -54,7 +54,7 @@ final class QuoteService
 
         $linesInput = $data['lines'];
         $taxEnabled = (bool) (tenant()->tax_enabled ?? false);
-        $defaultTaxRate = (float) (tenant()->data['tax_rate'] ?? 0.0);
+        $defaultTaxRate = (float) tenant()->tax_rate;
         $currency = (string) (tenant()->currency ?? 'COP');
 
         $totals = $this->totalsCalculator->calculate(
@@ -99,7 +99,7 @@ final class QuoteService
         }
 
         $taxEnabled = (bool) (tenant()->tax_enabled ?? false);
-        $defaultTaxRate = (float) (tenant()->data['tax_rate'] ?? 0.0);
+        $defaultTaxRate = (float) tenant()->tax_rate;
 
         $updatePayload = [
             'title' => $data['title'] ?? $quote->title,

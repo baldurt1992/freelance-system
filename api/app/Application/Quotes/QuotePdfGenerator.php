@@ -4,27 +4,29 @@ declare(strict_types=1);
 
 namespace App\Application\Quotes;
 
+use App\Application\Documents\PdfRenderer;
+use App\Application\Documents\TemplateRenderer;
+use App\Application\Documents\TemplateResolver;
+use App\Application\Documents\TemplateVariableBuilder;
 use App\Models\Quote;
-use Dompdf\Dompdf;
-use Dompdf\Options;
-use Illuminate\Support\Facades\View;
 
 final class QuotePdfGenerator
 {
+    public function __construct(
+        private readonly TemplateResolver $templateResolver,
+        private readonly TemplateVariableBuilder $variableBuilder,
+        private readonly TemplateRenderer $templateRenderer,
+        private readonly PdfRenderer $pdfRenderer,
+    ) {}
+
     public function generate(Quote $quote): string
     {
-        $options = new Options();
-        $options->set('isHtml5ParserEnabled', true);
-        $options->set('isRemoteEnabled', true);
+        $quote->loadMissing('lines');
 
-        $dompdf = new Dompdf($options);
+        $template = $this->templateResolver->resolve('quote', $quote->client_id);
+        $variables = $this->variableBuilder->forQuote($quote);
+        $html = $this->templateRenderer->render($template->html_body, $variables);
 
-        $html = View::make('quotes.pdf', ['quote' => $quote->load('lines')])->render();
-
-        $dompdf->loadHtml($html);
-        $dompdf->setPaper('A4', 'portrait');
-        $dompdf->render();
-
-        return (string) $dompdf->output();
+        return $this->pdfRenderer->renderHtmlToPdf($html);
     }
 }
