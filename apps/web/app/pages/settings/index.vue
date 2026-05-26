@@ -1,158 +1,82 @@
 <script setup lang="ts">
-import * as z from 'zod'
-import type { FormSubmitEvent } from '@nuxt/ui'
+const tenant = useTenantStore();
+const auth = useAuthStore();
 
-const fileRef = ref<HTMLInputElement>()
-
-const profileSchema = z.object({
-  name: z.string().min(2, 'Too short'),
-  email: z.string().email('Invalid email'),
-  username: z.string().min(2, 'Too short'),
-  avatar: z.string().optional(),
-  bio: z.string().optional()
-})
-
-type ProfileSchema = z.output<typeof profileSchema>
-
-const profile = reactive<Partial<ProfileSchema>>({
-  name: 'Benjamin Canac',
-  email: 'ben@nuxtlabs.com',
-  username: 'benjamincanac',
-  avatar: undefined,
-  bio: undefined
-})
-const toast = useToast()
-async function onSubmit(event: FormSubmitEvent<ProfileSchema>) {
-  toast.add({
-    title: 'Success',
-    description: 'Your settings have been updated.',
-    icon: 'i-lucide-check',
-    color: 'success'
-  })
-  console.log(event.data)
-}
-
-function onFileChange(e: Event) {
-  const input = e.target as HTMLInputElement
-
-  if (!input.files?.length) {
-    return
-  }
-
-  profile.avatar = URL.createObjectURL(input.files[0]!)
-}
-
-function onFileClick() {
-  fileRef.value?.click()
-}
+const settingsLinks = [
+  {
+    label: "Facturación e IVA",
+    description: "Activa o desactiva el IVA en cotizaciones nuevas y borradores.",
+    to: "/settings/billing",
+    icon: "i-lucide-receipt",
+  },
+  {
+    label: "Plantillas de documentos",
+    description: "Personaliza HTML para cotizaciones y cuentas de cobro.",
+    to: "/settings/templates",
+    icon: "i-lucide-file-code",
+  },
+] as const;
 </script>
 
 <template>
-  <UForm
-    id="settings"
-    :schema="profileSchema"
-    :state="profile"
-    @submit="onSubmit"
-  >
+  <div class="space-y-6">
     <UPageCard
-      title="Profile"
-      description="These informations will be displayed publicly."
+      title="General"
+      description="Resumen del workspace y accesos a la configuración activa del producto."
       variant="naked"
       orientation="horizontal"
-      class="mb-4"
+    />
+
+    <UPageCard
+      title="Workspace"
+      variant="subtle"
     >
-      <UButton
-        form="settings"
-        label="Save changes"
-        color="neutral"
-        type="submit"
-        class="w-fit lg:ms-auto"
-      />
+      <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <dt class="text-sm text-muted">Nombre</dt>
+          <dd class="font-medium">{{ tenant.displayName }}</dd>
+        </div>
+        <div>
+          <dt class="text-sm text-muted">Moneda</dt>
+          <dd>{{ tenant.currency }}</dd>
+        </div>
+        <div>
+          <dt class="text-sm text-muted">IVA</dt>
+          <dd>{{ tenant.taxEnabled ? `Activo (${tenant.taxRate}%)` : "Desactivado" }}</dd>
+        </div>
+        <div v-if="auth.user">
+          <dt class="text-sm text-muted">Usuario en sesión</dt>
+          <dd>{{ auth.user.name }}</dd>
+          <dd class="text-sm text-muted">{{ auth.user.email }}</dd>
+        </div>
+      </dl>
     </UPageCard>
 
-    <UPageCard variant="subtle">
-      <UFormField
-        name="name"
-        label="Name"
-        description="Will appear on receipts, invoices, and other communication."
-        required
-        class="flex max-sm:flex-col justify-between items-start gap-4"
-      >
-        <UInput
-          v-model="profile.name"
-          autocomplete="off"
-        />
-      </UFormField>
-      <USeparator />
-      <UFormField
-        name="email"
-        label="Email"
-        description="Used to sign in, for email receipts and product updates."
-        required
-        class="flex max-sm:flex-col justify-between items-start gap-4"
-      >
-        <UInput
-          v-model="profile.email"
-          type="email"
-          autocomplete="off"
-        />
-      </UFormField>
-      <USeparator />
-      <UFormField
-        name="username"
-        label="Username"
-        description="Your unique username for logging in and your profile URL."
-        required
-        class="flex max-sm:flex-col justify-between items-start gap-4"
-      >
-        <UInput
-          v-model="profile.username"
-          type="username"
-          autocomplete="off"
-        />
-      </UFormField>
-      <USeparator />
-      <UFormField
-        name="avatar"
-        label="Avatar"
-        description="JPG, GIF or PNG. 1MB Max."
-        class="flex max-sm:flex-col justify-between sm:items-center gap-4"
-      >
-        <div class="flex flex-wrap items-center gap-3">
-          <UAvatar
-            :src="profile.avatar"
-            :alt="profile.name"
-            size="lg"
-          />
+    <UPageCard
+      title="Configuración disponible"
+      variant="subtle"
+    >
+      <div class="space-y-3">
+        <div
+          v-for="link in settingsLinks"
+          :key="link.to"
+          class="flex flex-col gap-3 rounded-lg border border-default p-4 sm:flex-row sm:items-center sm:justify-between"
+        >
+          <div class="flex items-start gap-3">
+            <UIcon :name="link.icon" class="mt-0.5 size-5 text-muted" />
+            <div>
+              <p class="font-medium">{{ link.label }}</p>
+              <p class="text-sm text-muted">{{ link.description }}</p>
+            </div>
+          </div>
           <UButton
-            label="Choose"
-            color="neutral"
-            @click="onFileClick"
+            :to="link.to"
+            label="Abrir"
+            variant="outline"
+            class="w-fit"
           />
-          <input
-            ref="fileRef"
-            type="file"
-            class="hidden"
-            accept=".jpg, .jpeg, .png, .gif"
-            @change="onFileChange"
-          >
         </div>
-      </UFormField>
-      <USeparator />
-      <UFormField
-        name="bio"
-        label="Bio"
-        description="Brief description for your profile. URLs are hyperlinked."
-        class="flex max-sm:flex-col justify-between items-start gap-4"
-        :ui="{ container: 'w-full' }"
-      >
-        <UTextarea
-          v-model="profile.bio"
-          :rows="5"
-          autoresize
-          class="w-full"
-        />
-      </UFormField>
+      </div>
     </UPageCard>
-  </UForm>
+  </div>
 </template>
