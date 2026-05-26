@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useQuotesApi } from "~/composables/quotes/useQuotesApi";
-import { useProjectsApi } from "~/composables/projects/useProjectsApi";
 import { getQuoteStatusLabel, getQuoteStatusColor } from "~/utils/quoteStatus";
 import type { BadgeColor } from "~/utils/quoteStatus";
 
@@ -8,10 +7,7 @@ definePageMeta({ layout: "default" });
 
 const route = useRoute();
 const router = useRouter();
-const toast = useToast();
-const { toastApiError } = useApiError();
-const { find, send, accept, reject, downloadPdf } = useQuotesApi();
-const { convertQuoteToProject } = useProjectsApi();
+const { find } = useQuotesApi();
 
 const quoteId = computed(() => Number(route.params.id));
 
@@ -21,53 +17,15 @@ const { data: quote, status, refresh } = useAsyncData(
   { server: false, watch: [quoteId] },
 );
 
-const loadingAction = ref<string | null>(null);
-const converting = ref(false);
+const quoteNumber = computed(() => quote.value?.number);
 
-async function doAction(action: "send" | "accept" | "reject") {
-  loadingAction.value = action;
-  try {
-    const handlers = { send, accept, reject };
-    await handlers[action](quoteId.value);
-    toast.add({
-      title: action === "send" ? "Enviada" : action === "accept" ? "Aceptada" : "Rechazada",
-    });
-    await refresh();
-  } catch (error) {
-    toastApiError(error, { fallback: `No se pudo ${action} la cotización.` });
-  } finally {
-    loadingAction.value = null;
-  }
-}
-
-async function onDownloadPdf() {
-  try {
-    const blob = await downloadPdf(quoteId.value);
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${quote.value?.number ?? "cotizacion"}.pdf`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  } catch (error) {
-    toastApiError(error, { fallback: "No se pudo descargar el PDF." });
-  }
-}
-
-async function onConvertToProject() {
-  converting.value = true;
-  try {
-    const project = await convertQuoteToProject(quoteId.value);
-    toast.add({ title: "Proyecto creado desde cotización" });
-    await router.push(`/projects/${project.id}`);
-  } catch (error) {
-    toastApiError(error, { fallback: "No se pudo convertir la cotización a proyecto." });
-  } finally {
-    converting.value = false;
-  }
-}
+const {
+  loadingAction,
+  converting,
+  doAction,
+  onDownloadPdf,
+  onConvertToProject,
+} = useQuoteDetailActions(quoteId, refresh, quoteNumber);
 
 const statusLabel = computed(() => getQuoteStatusLabel(quote.value?.status ?? ""));
 const statusColor = computed<BadgeColor>(() => getQuoteStatusColor(quote.value?.status ?? ""));
@@ -93,11 +51,11 @@ const statusColor = computed<BadgeColor>(() => getQuoteStatusColor(quote.value?.
 
     <template #body>
       <UCard v-if="status === 'pending'">
-        <div class="text-center py-8 text-muted">Cargando...</div>
+        <div class="py-8 text-center text-muted">Cargando...</div>
       </UCard>
 
       <UCard v-else-if="!quote">
-        <div class="text-center py-8 text-muted">Cotización no encontrada.</div>
+        <div class="py-8 text-center text-muted">Cotización no encontrada.</div>
       </UCard>
 
       <div v-else class="max-w-4xl space-y-6">
@@ -116,42 +74,15 @@ const statusColor = computed<BadgeColor>(() => getQuoteStatusColor(quote.value?.
         <QuotesSectionsQuoteDetailCard :quote="quote" />
         <QuotesSectionsQuoteLinesTable :quote="quote" />
 
-        <div v-if="quote.status === 'draft' || quote.status === 'sent'" class="flex gap-2">
-          <UButton
-            v-if="quote.status === 'draft'"
-            label="Enviar"
-            icon="i-lucide-send"
-            :loading="loadingAction === 'send'"
-            @click="doAction('send')"
-          />
-          <UButton
-            v-if="quote.status === 'sent'"
-            label="Aceptar"
-            icon="i-lucide-check"
-            color="success"
-            :loading="loadingAction === 'accept'"
-            @click="doAction('accept')"
-          />
-          <UButton
-            v-if="quote.status === 'sent'"
-            label="Rechazar"
-            icon="i-lucide-x"
-            color="error"
-            variant="outline"
-            :loading="loadingAction === 'reject'"
-            @click="doAction('reject')"
-          />
-        </div>
-
-        <div v-if="quote.status === 'accepted'" class="flex gap-2">
-          <UButton
-            label="Convertir a proyecto"
-            icon="i-lucide-briefcase-business"
-            color="primary"
-            :loading="converting"
-            @click="onConvertToProject"
-          />
-        </div>
+        <QuotesSectionsQuoteActions
+          :status="quote.status"
+          :loading-action="loadingAction"
+          :converting="converting"
+          @send="doAction('send')"
+          @accept="doAction('accept')"
+          @reject="doAction('reject')"
+          @convert="onConvertToProject"
+        />
       </div>
     </template>
   </UDashboardPanel>
