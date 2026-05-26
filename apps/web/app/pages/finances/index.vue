@@ -1,26 +1,23 @@
 <script setup lang="ts">
-import { CalendarDate } from "@internationalized/date";
 import { formatMoney } from "~/utils/formatMoney";
 import { useFinancesApi } from "~/composables/finances/useFinancesApi";
 import { useFinanceSummary } from "~/composables/finances/useFinanceSummary";
+import { useFinancesListState } from "~/composables/finances/useFinancesListState";
+import {
+  financesTabItems,
+  useFinancesTableColumns,
+} from "~/composables/finances/useFinancesTableColumns";
 
 definePageMeta({ layout: "default" });
 
 const router = useRouter();
 const { toastApiError } = useApiError();
 const { getSummary, listEntries, removeEntry } = useFinancesApi();
-const { monthInputDefault, getNetLabelText } = useFinanceSummary();
+const { getNetLabelText } = useFinanceSummary();
+const { month, tab, page, activeType, monthInputDefault } = useFinancesListState();
+const { columns, entriesTableTitle } = useFinancesTableColumns();
 
-const month = ref(monthInputDefault());
-const tab = ref<"summary" | "income" | "expense">("summary");
-const page = ref(1);
 const loadingDelete = ref<number | null>(null);
-
-type InputDateExpose = {
-  inputsRef?: Array<{ $el?: HTMLElement } | HTMLElement | null>;
-};
-
-const inputDate = useTemplateRef<InputDateExpose>("inputDate");
 
 const { data: summary, refresh: refreshSummary } = useAsyncData(
   () => `finances-summary-${month.value}`,
@@ -28,43 +25,20 @@ const { data: summary, refresh: refreshSummary } = useAsyncData(
   { watch: [month] },
 );
 
-const activeType = computed<"income" | "expense">(() => (tab.value === "expense" ? "expense" : "income"));
-
-watch(tab, () => {
-  page.value = 1;
-});
-
 const { data: entriesData, status, refresh: refreshEntries } = useAsyncData(
   () => `finances-entries-${tab.value}-${month.value}-${page.value}`,
-  () => listEntries(page.value, tab.value === "summary" ? { month: month.value } : { month: month.value, type: activeType.value }),
+  () => listEntries(
+    page.value,
+    tab.value === "summary"
+      ? { month: month.value }
+      : { month: month.value, type: activeType.value },
+  ),
   { watch: [tab, month, page] },
 );
 
 const entries = computed(() => entriesData.value?.data ?? []);
 const meta = computed(() => entriesData.value?.meta);
 const loading = computed(() => status.value === "pending");
-
-function parseMonthToCalendarDate(value: string): CalendarDate | undefined {
-  const parts = value.split("-").map((segment) => parseInt(segment, 10));
-  if (parts.length !== 2 || parts.some((part) => Number.isNaN(part))) return undefined;
-
-  const [year, monthValue] = parts as [number, number];
-  return new CalendarDate(year, monthValue, 1);
-}
-
-function calendarDateToMonth(value: CalendarDate | null | undefined): string {
-  if (!value) return monthInputDefault();
-
-  const year = String(value.year).padStart(4, "0");
-  const monthValue = String(value.month).padStart(2, "0");
-  return `${year}-${monthValue}`;
-}
-
-function getInputDateReference(): HTMLElement | undefined {
-  const candidate = inputDate.value?.inputsRef?.[3];
-  if (!candidate) return undefined;
-  return candidate instanceof HTMLElement ? candidate : candidate.$el;
-}
 
 async function onDelete(entryId: number) {
   loadingDelete.value = entryId;
@@ -98,45 +72,14 @@ async function onDelete(entryId: number) {
 
     <template #body>
       <div class="flex flex-wrap items-center gap-3">
-        <UTabs
-          v-model="tab"
-          :items="[
-            { value: 'summary', label: 'Resumen' },
-            { value: 'income', label: 'Ingresos' },
-            { value: 'expense', label: 'Gastos' },
-          ]"
-        />
+        <UTabs v-model="tab" :items="[...financesTabItems]" />
 
         <div class="ms-auto">
-          <UInputDate
-            ref="inputDate"
-            id="finance-month"
-            name="month"
-            class="w-full min-w-44"
-            :model-value="parseMonthToCalendarDate(month)"
-            @update:model-value="month = calendarDateToMonth($event as CalendarDate | undefined)"
-          >
-            <template #trailing>
-              <UPopover :reference="getInputDateReference()">
-                <UButton
-                  color="neutral"
-                  variant="link"
-                  size="sm"
-                  icon="i-lucide-calendar"
-                  aria-label="Seleccionar mes"
-                  class="px-0"
-                />
-
-                <template #content>
-                  <UCalendar
-                    :model-value="parseMonthToCalendarDate(month)"
-                    class="p-2"
-                    @update:model-value="month = calendarDateToMonth($event as CalendarDate | undefined)"
-                  />
-                </template>
-              </UPopover>
-            </template>
-          </UInputDate>
+          <FinancesMonthPicker
+            :month="month"
+            :month-fallback="monthInputDefault()"
+            @update:month="month = $event"
+          />
         </div>
       </div>
 
@@ -165,23 +108,11 @@ async function onDelete(entryId: number) {
       <UCard class="mt-4">
         <template #header>
           <h3 class="font-semibold">
-            {{ tab === 'summary' ? 'Movimientos del mes' : tab === 'income' ? 'Ingresos' : 'Gastos' }}
+            {{ entriesTableTitle(tab) }}
           </h3>
         </template>
 
-        <UTable
-          :data="entries"
-          :loading="loading"
-          :columns="[
-            { accessorKey: 'occurred_on', header: 'Fecha' },
-            { accessorKey: 'description', header: 'Descripción' },
-            { accessorKey: 'category', header: 'Categoría' },
-            { accessorKey: 'amount_cents', header: 'Monto' },
-            { accessorKey: 'type', header: 'Tipo' },
-            { accessorKey: 'is_manual', header: 'Origen' },
-            { id: 'actions', header: '' },
-          ]"
-        >
+        <UTable :data="entries" :loading="loading" :columns="columns">
           <template #amount_cents-cell="{ row }">
             {{ formatMoney(row.original.amount_cents, 'COP') }}
           </template>
