@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Finance\StoreFinanceEntryRequest;
 use App\Http\Requests\Finance\UpdateFinanceEntryRequest;
 use App\Http\Resources\FinanceEntryResource;
+use App\Models\FinanceEntry;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
@@ -37,15 +38,10 @@ final class FinanceController extends Controller
             type: is_string($type) ? $type : null,
         );
 
-        return response()->json([
-            'data' => FinanceEntryResource::collection($paginator->items()),
-            'meta' => [
-                'current_page' => $paginator->currentPage(),
-                'last_page' => $paginator->lastPage(),
-                'per_page' => $paginator->perPage(),
-                'total' => $paginator->total(),
-            ],
-        ]);
+        return $this->paginatedResponse(
+            $paginator,
+            FinanceEntryResource::collection($paginator->items()),
+        );
     }
 
     public function store(StoreFinanceEntryRequest $request): JsonResponse
@@ -57,10 +53,9 @@ final class FinanceController extends Controller
 
     public function show(string $id): JsonResponse
     {
-        $entry = $this->financeEntryService->find($id);
-
-        if ($entry === null) {
-            return response()->json(['message' => 'Movimiento no encontrado'], HttpResponse::HTTP_NOT_FOUND);
+        $entry = $this->findEntryOrNotFoundResponse($id);
+        if ($entry instanceof JsonResponse) {
+            return $entry;
         }
 
         return response()->json(new FinanceEntryResource($entry));
@@ -68,10 +63,9 @@ final class FinanceController extends Controller
 
     public function update(UpdateFinanceEntryRequest $request, string $id): JsonResponse
     {
-        $entry = $this->financeEntryService->find($id);
-
-        if ($entry === null) {
-            return response()->json(['message' => 'Movimiento no encontrado'], HttpResponse::HTTP_NOT_FOUND);
+        $entry = $this->findEntryOrNotFoundResponse($id);
+        if ($entry instanceof JsonResponse) {
+            return $entry;
         }
 
         $updated = $this->financeEntryService->updateManualEntry($entry, $request->validated());
@@ -81,14 +75,24 @@ final class FinanceController extends Controller
 
     public function destroy(string $id): JsonResponse
     {
-        $entry = $this->financeEntryService->find($id);
-
-        if ($entry === null) {
-            return response()->json(['message' => 'Movimiento no encontrado'], HttpResponse::HTTP_NOT_FOUND);
+        $entry = $this->findEntryOrNotFoundResponse($id);
+        if ($entry instanceof JsonResponse) {
+            return $entry;
         }
 
         $this->financeEntryService->deleteManualEntry($entry);
 
         return response()->json(null, HttpResponse::HTTP_NO_CONTENT);
+    }
+
+    private function findEntryOrNotFoundResponse(string $id): FinanceEntry|JsonResponse
+    {
+        $entry = $this->financeEntryService->find($id);
+
+        if ($entry === null) {
+            return $this->notFoundResponse('Movimiento no encontrado');
+        }
+
+        return $entry;
     }
 }

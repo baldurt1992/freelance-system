@@ -32,7 +32,7 @@ final class QuoteResource extends JsonResource
             'tax_cents' => $this->tax_cents,
             'total_cents' => $this->total_cents,
             'tax_rate' => (float) $this->tax_rate,
-            'valid_until' => $this->valid_until,
+            'valid_until' => $this->valid_until?->toDateString(),
             'sent_at' => $this->sent_at?->toIso8601String(),
             'accepted_at' => $this->accepted_at?->toIso8601String(),
             'rejected_at' => $this->rejected_at?->toIso8601String(),

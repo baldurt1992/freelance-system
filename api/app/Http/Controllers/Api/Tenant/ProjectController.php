@@ -15,6 +15,7 @@ use App\Http\Requests\Project\UpdateProjectRequest;
 use App\Http\Resources\BillingDocumentResource;
 use App\Http\Resources\ProjectPaymentResource;
 use App\Http\Resources\ProjectResource;
+use App\Models\Project;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
@@ -34,15 +35,10 @@ final class ProjectController extends Controller
             search: is_string($search) ? $search : null,
         );
 
-        return response()->json([
-            'data' => ProjectResource::collection($paginator->items()),
-            'meta' => [
-                'current_page' => $paginator->currentPage(),
-                'last_page' => $paginator->lastPage(),
-                'per_page' => $paginator->perPage(),
-                'total' => $paginator->total(),
-            ],
-        ]);
+        return $this->paginatedResponse(
+            $paginator,
+            ProjectResource::collection($paginator->items()),
+        );
     }
 
     public function store(StoreProjectRequest $request): JsonResponse
@@ -54,10 +50,9 @@ final class ProjectController extends Controller
 
     public function show(string $id): JsonResponse
     {
-        $project = $this->projectService->find($id);
-
-        if ($project === null) {
-            return response()->json(['message' => 'Proyecto no encontrado'], HttpResponse::HTTP_NOT_FOUND);
+        $project = $this->findProjectOrNotFoundResponse($id);
+        if ($project instanceof JsonResponse) {
+            return $project;
         }
 
         return response()->json(new ProjectResource($project));
@@ -65,10 +60,9 @@ final class ProjectController extends Controller
 
     public function update(UpdateProjectRequest $request, string $id): JsonResponse
     {
-        $project = $this->projectService->find($id);
-
-        if ($project === null) {
-            return response()->json(['message' => 'Proyecto no encontrado'], HttpResponse::HTTP_NOT_FOUND);
+        $project = $this->findProjectOrNotFoundResponse($id);
+        if ($project instanceof JsonResponse) {
+            return $project;
         }
 
         $updated = $this->projectService->update($project, $request->validated());
@@ -78,10 +72,9 @@ final class ProjectController extends Controller
 
     public function destroy(string $id): JsonResponse
     {
-        $project = $this->projectService->find($id);
-
-        if ($project === null) {
-            return response()->json(['message' => 'Proyecto no encontrado'], HttpResponse::HTTP_NOT_FOUND);
+        $project = $this->findProjectOrNotFoundResponse($id);
+        if ($project instanceof JsonResponse) {
+            return $project;
         }
 
         $this->projectService->delete($project);
@@ -91,10 +84,9 @@ final class ProjectController extends Controller
 
     public function registerPayment(RegisterPaymentRequest $request, string $id): JsonResponse
     {
-        $project = $this->projectService->find($id);
-
-        if ($project === null) {
-            return response()->json(['message' => 'Proyecto no encontrado'], HttpResponse::HTTP_NOT_FOUND);
+        $project = $this->findProjectOrNotFoundResponse($id);
+        if ($project instanceof JsonResponse) {
+            return $project;
         }
 
         $result = $this->paymentService->registerPartialPayment(
@@ -111,10 +103,9 @@ final class ProjectController extends Controller
 
     public function markPaid(MarkProjectPaidRequest $request, string $id): JsonResponse
     {
-        $project = $this->projectService->find($id);
-
-        if ($project === null) {
-            return response()->json(['message' => 'Proyecto no encontrado'], HttpResponse::HTTP_NOT_FOUND);
+        $project = $this->findProjectOrNotFoundResponse($id);
+        if ($project instanceof JsonResponse) {
+            return $project;
         }
 
         $result = $this->paymentService->markProjectPaid(
@@ -137,10 +128,9 @@ final class ProjectController extends Controller
 
     public function payments(string $id): JsonResponse
     {
-        $project = $this->projectService->find($id);
-
-        if ($project === null) {
-            return response()->json(['message' => 'Proyecto no encontrado'], HttpResponse::HTTP_NOT_FOUND);
+        $project = $this->findProjectOrNotFoundResponse($id);
+        if ($project instanceof JsonResponse) {
+            return $project;
         }
 
         return response()->json([
@@ -150,10 +140,9 @@ final class ProjectController extends Controller
 
     public function complete(string $id): JsonResponse
     {
-        $project = $this->projectService->find($id);
-
-        if ($project === null) {
-            return response()->json(['message' => 'Proyecto no encontrado'], HttpResponse::HTTP_NOT_FOUND);
+        $project = $this->findProjectOrNotFoundResponse($id);
+        if ($project instanceof JsonResponse) {
+            return $project;
         }
 
         $result = $this->completeProjectService->complete($project);
@@ -166,10 +155,9 @@ final class ProjectController extends Controller
 
     public function billingDocuments(string $id): JsonResponse
     {
-        $project = $this->projectService->find($id);
-
-        if ($project === null) {
-            return response()->json(['message' => 'Proyecto no encontrado'], HttpResponse::HTTP_NOT_FOUND);
+        $project = $this->findProjectOrNotFoundResponse($id);
+        if ($project instanceof JsonResponse) {
+            return $project;
         }
 
         $documents = $project->billingDocument !== null
@@ -179,5 +167,16 @@ final class ProjectController extends Controller
         return response()->json([
             'data' => BillingDocumentResource::collection($documents),
         ]);
+    }
+
+    private function findProjectOrNotFoundResponse(string $id): Project|JsonResponse
+    {
+        $project = $this->projectService->find($id);
+
+        if ($project === null) {
+            return $this->notFoundResponse('Proyecto no encontrado');
+        }
+
+        return $project;
     }
 }

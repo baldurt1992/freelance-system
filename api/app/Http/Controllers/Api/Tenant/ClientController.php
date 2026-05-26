@@ -10,6 +10,7 @@ use App\Http\Requests\Client\StoreClientRequest;
 use App\Http\Requests\Client\UpdateClientRequest;
 use App\Http\Requests\Client\UploadClientAvatarRequest;
 use App\Http\Resources\ClientResource;
+use App\Models\Client;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -28,15 +29,10 @@ final class ClientController extends Controller
             search: is_string($search) ? $search : null,
         );
 
-        return response()->json([
-            'data' => ClientResource::collection($paginator->items()),
-            'meta' => [
-                'current_page' => $paginator->currentPage(),
-                'last_page' => $paginator->lastPage(),
-                'per_page' => $paginator->perPage(),
-                'total' => $paginator->total(),
-            ],
-        ]);
+        return $this->paginatedResponse(
+            $paginator,
+            ClientResource::collection($paginator->items()),
+        );
     }
 
     public function store(StoreClientRequest $request): JsonResponse
@@ -48,10 +44,9 @@ final class ClientController extends Controller
 
     public function show(string $id): JsonResponse
     {
-        $client = $this->clientService->find($id);
-
-        if ($client === null) {
-            return response()->json(['message' => 'Client not found'], HttpResponse::HTTP_NOT_FOUND);
+        $client = $this->findClientOrNotFoundResponse($id);
+        if ($client instanceof JsonResponse) {
+            return $client;
         }
 
         return response()->json(new ClientResource($client));
@@ -59,10 +54,9 @@ final class ClientController extends Controller
 
     public function update(UpdateClientRequest $request, string $id): JsonResponse
     {
-        $client = $this->clientService->find($id);
-
-        if ($client === null) {
-            return response()->json(['message' => 'Client not found'], HttpResponse::HTTP_NOT_FOUND);
+        $client = $this->findClientOrNotFoundResponse($id);
+        if ($client instanceof JsonResponse) {
+            return $client;
         }
 
         $updated = $this->clientService->update($client, $request->validated());
@@ -72,10 +66,9 @@ final class ClientController extends Controller
 
     public function destroy(string $id): JsonResponse
     {
-        $client = $this->clientService->find($id);
-
-        if ($client === null) {
-            return response()->json(['message' => 'Client not found'], HttpResponse::HTTP_NOT_FOUND);
+        $client = $this->findClientOrNotFoundResponse($id);
+        if ($client instanceof JsonResponse) {
+            return $client;
         }
 
         $this->clientService->delete($client);
@@ -85,10 +78,9 @@ final class ClientController extends Controller
 
     public function uploadAvatar(UploadClientAvatarRequest $request, string $id): JsonResponse
     {
-        $client = $this->clientService->find($id);
-
-        if ($client === null) {
-            return response()->json(['message' => 'Client not found'], HttpResponse::HTTP_NOT_FOUND);
+        $client = $this->findClientOrNotFoundResponse($id);
+        if ($client instanceof JsonResponse) {
+            return $client;
         }
 
         $avatar = $request->file('avatar');
@@ -100,5 +92,16 @@ final class ClientController extends Controller
         $updated = $this->clientService->update($client, ['avatar' => $path]);
 
         return response()->json(new ClientResource($updated));
+    }
+
+    private function findClientOrNotFoundResponse(string $id): Client|JsonResponse
+    {
+        $client = $this->clientService->find($id);
+
+        if ($client === null) {
+            return $this->notFoundResponse('Client not found');
+        }
+
+        return $client;
     }
 }
