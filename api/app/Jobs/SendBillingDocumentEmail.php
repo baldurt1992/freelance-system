@@ -14,6 +14,13 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
+/**
+ * Envía la cuenta de cobro por correo y marca el documento como `sent`.
+ *
+ * Tenant-aware vía Stancl {@see \Stancl\Tenancy\Bootstrappers\QueueTenancyBootstrapper}:
+ * el worker inicializa tenancy desde `tenant_id` en el payload de la cola.
+ * Este job solo persiste el ID del documento; no depende de estado efímero del request HTTP.
+ */
 final class SendBillingDocumentEmail implements ShouldQueue
 {
     use Dispatchable;
@@ -32,6 +39,8 @@ final class SendBillingDocumentEmail implements ShouldQueue
         if ($document === null) {
             Log::warning('[Billing] email skipped — document not found', [
                 'billing_document_id' => $this->billingDocumentId,
+                'tenancy_initialized' => tenancy()->initialized,
+                'tenant_id' => tenant()?->getTenantKey(),
             ]);
 
             return;

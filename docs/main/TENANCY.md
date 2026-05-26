@@ -185,7 +185,7 @@ REDIS_CLIENT=phpredis
 
 - PDFs y plantillas: disco `tenant` → `storage/app/tenants/{id}/...`
 - Colas: v1 `QUEUE_CONNECTION=database`; fase siguiente `redis` + `QueueTenancyBootstrapper`
-- Jobs (email, PDF): implementar `TenantAware` / inicializar tenancy en el job.
+- Jobs tenant con side effects: despachar **desde contexto tenant**; Stancl adjunta `tenant_id` al payload y el worker inicializa tenancy antes de `handle()` (ver §14)
 
 ---
 
@@ -219,3 +219,53 @@ Activar `tax_enabled` en settings del tenant empresa sin afectar tenant `persona
 - Rutas tenant accesibles desde dominio central sin tenancy.
 - Queries a `clients` desde comando central sin `run()`.
 - Cache keys sin prefijo tenant en código de aplicación.
+
+---
+
+## 14. Jobs tenant-aware (colas)
+
+### Inventario actual (B05)
+
+| Job | Side effects tenant | Despacho | Notas |
+| --- | --- | --- | --- |
+| `App\Jobs\SendBillingDocumentEmail` | Lee/actualiza `BillingDocument`; envía mail | `CompleteProjectService` → `dispatch($id)->afterCommit()` | Único job de negocio activo hoy |
+
+Jobs de infraestructura Stancl (`CreateDatabase`, `MigrateDatabase`, `DeleteDatabase`) viven en el pipeline de provisioning; no son side effects de casos de uso tenant.
+
+### Garantía base: `QueueTenancyBootstrapper`
+
+Configurado en `api/config/tenancy.php` (`bootstrappers`). `TenancyServiceProvider` no añade lógica custom de colas.
+
+Flujo:
+
+1. Request HTTP inicializa tenancy (middleware Stancl).
+2. Al encolar desde ese contexto, Stancl agrega `tenant_id` al payload del job.
+3. El worker (`queue:work`, Horizon, etc.) recibe el job **sin** tenancy previa.
+4. Listener `JobProcessing` inicializa tenancy con ese `tenant_id`.
+5. `handle()` opera sobre la BD tenant correcta.
+6. Tras procesar, Stancl revierte al contexto anterior (central).
+
+No reimplementar este bootstrapper ni depender de estado global del request dentro del job.
+
+### Patrón oficial para nuevos jobs
+
+1. **Despachar solo desde contexto tenant** (ruta tenant, `$tenant->run()`, comando `tenants:run`).
+2. **Persistir IDs o snapshots** en el payload del job; no confiar en modelos/resolvers del request.
+3. **Evitar `SerializesModels` sobre modelos tenant** salvo necesidad clara; preferir IDs primitivos.
+4. **`afterCommit()`** cuando el job dependa de filas creadas en la misma transacción.
+5. **Prueba de boundary**: ejecutar el job vía cola (payload con `tenant_id`) y verificar side effects en BD tenant; incluir caso negativo sin tenancy inicializada.
+6. **Logs diagnósticos** en ramas “no encontrado” con `tenancy_initialized` / `tenant_id` si ayuda a detectar ejecución fuera de contexto.
+
+### Referencia: billing email
+
+```php
+// CompleteProjectService — tras crear BillingDocument en transacción tenant
+SendBillingDocumentEmail::dispatch($billingDocument->id)->afterCommit();
+```
+
+```php
+// SendBillingDocumentEmail — solo ID; Stancl restaura tenancy en el worker
+public function __construct(public readonly int $billingDocumentId) {}
+```
+
+Tests: `tests/Feature/Tenant/SendBillingDocumentEmailJobTest.php`, `tests/Feature/Tenant/BillingTest.php`.
