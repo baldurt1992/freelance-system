@@ -1,69 +1,113 @@
 <script setup lang="ts">
-import * as z from 'zod'
+import { UpdatePasswordInputSchema } from '@freelance/contracts'
 import type { FormError } from '@nuxt/ui'
 
-const passwordSchema = z.object({
-  current: z.string().min(8, 'Must be at least 8 characters'),
-  new: z.string().min(8, 'Must be at least 8 characters')
+const { updatePassword } = useAuthApi()
+const { toastApiError, getFieldError, logApiError } = useApiError()
+const toast = useToast()
+
+type PasswordSchema = {
+  current_password: string
+  password: string
+}
+
+const passwordSchema = UpdatePasswordInputSchema
+
+const password = reactive<PasswordSchema>({
+  current_password: '',
+  password: ''
 })
 
-type PasswordSchema = z.output<typeof passwordSchema>
-
-const password = reactive<Partial<PasswordSchema>>({
-  current: '',
-  new: ''
-})
+const loading = ref(false)
+const fieldErrors = ref<Record<string, string[]>>({})
 
 const validate = (state: Partial<PasswordSchema>): FormError[] => {
   const errors: FormError[] = []
-  if (state.current && state.new && state.current === state.new) {
-    errors.push({ name: 'new', message: 'Passwords must be different' })
+  if (state.current_password && state.password && state.current_password === state.password) {
+    errors.push({ name: 'password', message: 'La nueva contraseña debe ser diferente a la actual.' })
   }
   return errors
+}
+
+async function onSubmit() {
+  fieldErrors.value = {}
+
+  const parsed = passwordSchema.safeParse(password)
+  if (!parsed.success) {
+    return
+  }
+
+  loading.value = true
+
+  try {
+    const response = await updatePassword(parsed.data)
+    password.current_password = ''
+    password.password = ''
+    toast.add({
+      title: 'Seguridad actualizada',
+      description: response.message,
+      color: 'success'
+    })
+  } catch (error: unknown) {
+    const parsedError = toastApiError(error, {
+      fallback: 'No se pudo actualizar la contraseña.'
+    })
+    fieldErrors.value = parsedError.fieldErrors
+    logApiError('SettingsSecurityUpdatePassword', error)
+  } finally {
+    loading.value = false
+  }
 }
 </script>
 
 <template>
   <UPageCard
-    title="Password"
-    description="Confirm your current password before setting a new one."
+    title="Contraseña"
+    description="Confirma tu contraseña actual antes de definir una nueva."
     variant="subtle"
   >
     <UForm
       :schema="passwordSchema"
       :state="password"
       :validate="validate"
-      class="flex flex-col gap-4 max-w-xs"
+      class="flex flex-col gap-4 max-w-md"
+      @submit.prevent="onSubmit"
     >
-      <UFormField name="current">
+      <UFormField
+        label="Contraseña actual"
+        name="current_password"
+        required
+        :error="getFieldError(fieldErrors, 'current_password')"
+      >
         <UInput
-          v-model="password.current"
+          id="current-password"
+          v-model="password.current_password"
+          name="current_password"
           type="password"
-          placeholder="Current password"
+          autocomplete="current-password"
+          placeholder="Ingresa tu contraseña actual"
           class="w-full"
         />
       </UFormField>
 
-      <UFormField name="new">
+      <UFormField
+        label="Nueva contraseña"
+        name="password"
+        required
+        :error="getFieldError(fieldErrors, 'password')"
+      >
         <UInput
-          v-model="password.new"
+          id="new-password"
+          v-model="password.password"
+          name="password"
           type="password"
-          placeholder="New password"
+          autocomplete="new-password"
+          placeholder="Mínimo 8 caracteres"
           class="w-full"
         />
       </UFormField>
 
-      <UButton label="Update" class="w-fit" type="submit" />
+      <UButton label="Actualizar contraseña" class="w-fit" type="submit" :loading="loading" />
     </UForm>
-  </UPageCard>
-
-  <UPageCard
-    title="Account"
-    description="No longer want to use our service? You can delete your account here. This action is not reversible. All information related to this account will be deleted permanently."
-    class="bg-linear-to-tl from-error/10 from-5% to-default"
-  >
-    <template #footer>
-      <UButton label="Delete account" color="error" />
-    </template>
   </UPageCard>
 </template>

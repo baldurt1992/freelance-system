@@ -15,6 +15,12 @@ const settingsLinks = [
     to: "/settings/templates",
     icon: "i-lucide-file-code",
   },
+  {
+    label: "Seguridad",
+    description: "Actualiza tu contraseña y revisa acciones sensibles de la cuenta.",
+    to: "/settings/security",
+    icon: "i-lucide-shield",
+  },
 ] as const;
 </script>
 

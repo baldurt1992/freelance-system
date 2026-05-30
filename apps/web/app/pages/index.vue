@@ -1,69 +1,86 @@
 <script setup lang="ts">
-import { sub } from 'date-fns'
-import type { DropdownMenuItem } from '@nuxt/ui'
-import type { Period, Range } from '~/types'
-
-const { isNotificationsSlideoverOpen } = useDashboard()
-
-const items = [[{
-  label: 'New mail',
-  icon: 'i-lucide-send',
-  to: '/inbox'
-}, {
-  label: 'New customer',
-  icon: 'i-lucide-user-plus',
-  to: '/clients/new'
-}]] satisfies DropdownMenuItem[][]
-
-const range = shallowRef<Range>({
-  start: sub(new Date(), { days: 14 }),
-  end: new Date()
-})
-const period = ref<Period>('daily')
+const sections = [
+  {
+    title: 'Clientes',
+    description: 'Consulta tu base de clientes y actualiza sus datos.',
+    to: '/clients',
+    icon: 'i-lucide-users'
+  },
+  {
+    title: 'Cotizaciones',
+    description: 'Revisa borradores, cotizaciones enviadas y conversiones a proyecto.',
+    to: '/quotes',
+    icon: 'i-lucide-file-text'
+  },
+  {
+    title: 'Proyectos',
+    description: 'Haz seguimiento a proyectos activos, cobros y cierres.',
+    to: '/projects',
+    icon: 'i-lucide-briefcase'
+  },
+  {
+    title: 'Finanzas',
+    description: 'Consulta ingresos, gastos y movimientos del periodo.',
+    to: '/finances',
+    icon: 'i-lucide-wallet'
+  },
+  {
+    title: 'Configuración',
+    description: 'Ajusta IVA, plantillas y seguridad del workspace.',
+    to: '/settings',
+    icon: 'i-lucide-settings'
+  }
+] as const
 </script>
 
 <template>
   <UDashboardPanel id="home">
     <template #header>
-      <UDashboardNavbar title="Inicio" :ui="{ right: 'gap-3' }">
+      <UDashboardNavbar title="Inicio">
         <template #leading>
           <UDashboardSidebarCollapse />
         </template>
-
-        <template #right>
-          <UTooltip text="Notifications" :shortcuts="['N']">
-            <UButton
-              color="neutral"
-              variant="ghost"
-              square
-              @click="isNotificationsSlideoverOpen = true"
-            >
-              <UChip color="error" inset>
-                <UIcon name="i-lucide-bell" class="size-5 shrink-0" />
-              </UChip>
-            </UButton>
-          </UTooltip>
-
-          <UDropdownMenu :items="items">
-            <UButton icon="i-lucide-plus" size="md" class="rounded-full" />
-          </UDropdownMenu>
-        </template>
       </UDashboardNavbar>
-
-      <UDashboardToolbar>
-        <template #left>
-          <!-- NOTE: The `-ms-1` class is used to align with the `DashboardSidebarCollapse` button here. -->
-          <HomeDateRangePicker v-model="range" class="-ms-1" />
-
-          <HomePeriodSelect v-model="period" :range="range" />
-        </template>
-      </UDashboardToolbar>
     </template>
 
     <template #body>
-      <HomeStats :period="period" :range="range" />
-      <HomeChart :period="period" :range="range" />
-      <HomeSales :period="period" :range="range" />
+      <div class="space-y-6">
+        <UPageCard
+          title="Dashboard en preparación"
+          description="Quitamos el contenido placeholder del template para implementar en una rama aparte un resumen operativo real del negocio."
+          variant="naked"
+          orientation="horizontal"
+        />
+
+        <UAlert
+          color="info"
+          variant="subtle"
+          icon="i-lucide-layout-dashboard"
+          title="Sin métricas inventadas"
+          description="Mientras definimos el dashboard operativo, usa estos accesos para navegar por los módulos activos del sistema."
+        />
+
+        <UPageGrid class="gap-4 sm:gap-6 lg:grid-cols-2">
+          <UPageCard
+            v-for="section in sections"
+            :key="section.to"
+            :title="section.title"
+            :description="section.description"
+            :icon="section.icon"
+            :to="section.to"
+            variant="subtle"
+          >
+            <template #footer>
+              <UButton
+                :to="section.to"
+                label="Abrir módulo"
+                variant="outline"
+                class="w-fit"
+              />
+            </template>
+          </UPageCard>
+        </UPageGrid>
+      </div>
     </template>
   </UDashboardPanel>
 </template>

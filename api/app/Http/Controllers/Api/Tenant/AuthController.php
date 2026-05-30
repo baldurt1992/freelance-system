@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Api\Tenant;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\UpdatePasswordRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -54,6 +55,17 @@ final class AuthController extends Controller
 
         return response()->json([
             'message' => 'Logged out',
+        ]);
+    }
+
+    public function updatePassword(UpdatePasswordRequest $request): JsonResponse
+    {
+        $request->user()->update([
+            'password' => $request->validated('password'),
+        ]);
+
+        return response()->json([
+            'message' => 'Contraseña actualizada.',
         ]);
     }
 }
