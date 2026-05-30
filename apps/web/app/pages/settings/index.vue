@@ -19,7 +19,7 @@ const settingsLinks = [
     label: "Seguridad",
     description: "Actualiza tu contraseña y revisa acciones sensibles de la cuenta.",
     to: "/settings/security",
-    icon: "i-lucide-shield",
+    icon: "i-lucide-shield-check",
   },
 ] as const;
 </script>

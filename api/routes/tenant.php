@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Controllers\Api\Tenant\AuthController;
 use App\Http\Controllers\Api\Tenant\BillingDocumentController;
 use App\Http\Controllers\Api\Tenant\ClientController;
+use App\Http\Controllers\Api\Tenant\DashboardController;
 use App\Http\Controllers\Api\Tenant\DocumentTemplateController;
 use App\Http\Controllers\Api\Tenant\FinanceController;
 use App\Http\Controllers\Api\Tenant\ProjectController;
@@ -31,6 +32,7 @@ Route::middleware([
         Route::get('/auth/me', [AuthController::class, 'me']);
         Route::post('/auth/logout', [AuthController::class, 'logout']);
         Route::patch('/auth/password', [AuthController::class, 'updatePassword']);
+        Route::get('/dashboard', [DashboardController::class, 'show']);
 
         Route::get('/clients', [ClientController::class, 'index']);
         Route::post('/clients', [ClientController::class, 'store']);

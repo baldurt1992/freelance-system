@@ -5,12 +5,26 @@ export * from "./common/datetime.js";
 export * from "./common/api-error.js";
 
 // domain
-export * from "./auth.js";
+export {
+  AuthUserSchema,
+  type AuthUser,
+  SessionTenantSchema,
+  type SessionTenant,
+  LoginResponseSchema,
+  type LoginResponse,
+  MeResponseSchema,
+  type MeResponse,
+  UpdatePasswordInputSchema,
+  type UpdatePasswordInput,
+  UpdatePasswordResponseSchema,
+  type UpdatePasswordResponse,
+} from "./auth.js";
 export * from "./clients.js";
 export * from "./quotes.js";
 export * from "./projects.js";
 export * from "./payments.js";
 export * from "./finances.js";
+export * from "./dashboard.js";
 export * from "./billing.js";
 export * from "./settings.js";
 export * from "./document-templates.js";
