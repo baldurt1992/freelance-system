@@ -16,7 +16,7 @@ const links = [[{
   to: '/settings/templates'
 }, {
   label: 'Seguridad',
-  icon: 'i-lucide-shield',
+  icon: 'i-lucide-shield-check',
   to: '/settings/security'
 }]] satisfies NavigationMenuItem[][]
 </script>

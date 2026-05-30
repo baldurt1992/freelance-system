@@ -2,8 +2,10 @@
 import {
   buildFinanceMonthSelectItems,
   buildFinanceYearSelectItems,
+  defaultFinanceMonth,
   formatFinanceMonth,
   normalizeFinanceMonth,
+  parseFinanceMonth,
 } from "~/composables/finances/financeMonthHelpers";
 
 const props = defineProps<{
@@ -15,15 +17,31 @@ const emit = defineEmits<{
   "update:month": [value: string];
 }>();
 
-const yearItems = buildFinanceYearSelectItems();
-const monthItems = buildFinanceMonthSelectItems();
+const currentMonth = parseFinanceMonth(defaultFinanceMonth())!;
+const yearItems = buildFinanceYearSelectItems({ yearsAfter: 0 });
 
-const selected = ref(normalizeFinanceMonth(props.month, props.monthFallback));
+function clampToCurrentMonth(value: { year: number; month: number }) {
+  if (value.year > currentMonth.year) return currentMonth;
+  if (value.year === currentMonth.year && value.month > currentMonth.month) return currentMonth;
+  return value;
+}
+
+const monthItems = computed(() => {
+  const items = buildFinanceMonthSelectItems();
+
+  if (selected.value.year < currentMonth.year) {
+    return items;
+  }
+
+  return items.filter((item) => item.value <= currentMonth.month);
+});
+
+const selected = ref(clampToCurrentMonth(normalizeFinanceMonth(props.month, props.monthFallback)));
 
 watch(
   () => props.month,
   (value) => {
-    selected.value = normalizeFinanceMonth(value, props.monthFallback);
+    selected.value = clampToCurrentMonth(normalizeFinanceMonth(value, props.monthFallback));
   },
 );
 
@@ -33,13 +51,13 @@ function emitMonth(year: number, month: number) {
 
 function onYearChange(year: number | undefined) {
   if (year === undefined) return;
-  selected.value = { ...selected.value, year };
+  selected.value = clampToCurrentMonth({ ...selected.value, year });
   emitMonth(selected.value.year, selected.value.month);
 }
 
 function onMonthChange(month: number | undefined) {
   if (month === undefined) return;
-  selected.value = { ...selected.value, month };
+  selected.value = clampToCurrentMonth({ ...selected.value, month });
   emitMonth(selected.value.year, selected.value.month);
 }
 </script>
