@@ -30,6 +30,7 @@ Route::middleware([
     Route::middleware('auth:sanctum')->group(function (): void {
         Route::get('/auth/me', [AuthController::class, 'me']);
         Route::post('/auth/logout', [AuthController::class, 'logout']);
+        Route::patch('/auth/password', [AuthController::class, 'updatePassword']);
 
         Route::get('/clients', [ClientController::class, 'index']);
         Route::post('/clients', [ClientController::class, 'store']);

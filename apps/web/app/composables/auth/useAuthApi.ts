@@ -3,8 +3,11 @@ import { parseApiResponse } from "~/composables/api/parseApiResponse";
 import {
   LoginResponseSchema,
   MeResponseSchema,
+  UpdatePasswordResponseSchema,
   type LoginResponse,
   type MeResponse,
+  type UpdatePasswordInput,
+  type UpdatePasswordResponse,
 } from "@freelance/contracts";
 
 /** API HTTP de autenticación con validación runtime de contratos. */
@@ -24,5 +27,13 @@ export function useAuthApi() {
     return parseApiResponse(MeResponseSchema, data, "auth.me");
   }
 
-  return { login, fetchMe };
+  async function updatePassword(input: UpdatePasswordInput): Promise<UpdatePasswordResponse> {
+    const data = await api("/auth/password", {
+      method: "PATCH",
+      body: input,
+    });
+    return parseApiResponse(UpdatePasswordResponseSchema, data, "auth.updatePassword");
+  }
+
+  return { login, fetchMe, updatePassword };
 }

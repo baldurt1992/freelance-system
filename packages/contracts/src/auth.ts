@@ -39,3 +39,16 @@ export const MeResponseSchema = z.object({
 });
 
 export type MeResponse = z.infer<typeof MeResponseSchema>;
+
+export const UpdatePasswordInputSchema = z.object({
+  current_password: z.string().min(8, "La contraseña actual debe tener al menos 8 caracteres."),
+  password: z.string().min(8, "La nueva contraseña debe tener al menos 8 caracteres."),
+});
+
+export type UpdatePasswordInput = z.infer<typeof UpdatePasswordInputSchema>;
+
+export const UpdatePasswordResponseSchema = z.object({
+  message: z.string().min(1),
+});
+
+export type UpdatePasswordResponse = z.infer<typeof UpdatePasswordResponseSchema>;
