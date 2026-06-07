@@ -252,14 +252,16 @@ Título: `feat: projects and partial payments (phase 6)`
 
 ## Definition of Done
 
-- [ ] Convert quote → project
-- [ ] Pagos parciales + mark-paid según PROJECTS.md
-- [ ] Vista `/projects/[id]` completa (no modal)
-- [ ] Snapshot de cliente/quote persistido en project
-- [ ] Conversión idempotente (1 quote = 1 project)
-- [ ] Sin `finance_entries` creados en Fase 6
-- [ ] Tests verdes
-- [ ] Merge a `main`
+- [x] Convert quote → project
+- [x] Pagos parciales + mark-paid según PROJECTS.md
+- [x] Vista `/projects/[id]` completa (no modal)
+- [x] Snapshot de cliente/quote persistido en project
+- [x] Conversión idempotente (1 quote = 1 project)
+- [x] Sin `finance_entries` creados en Fase 6
+- [x] Tests verdes
+- [x] Merge a `main`
+
+Fase cerrada en `main` el **2026-05-26** mediante PR `#8`.
 
 ---
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Tenant;
 
 use App\Models\Client;
+use App\Models\FinanceCategory;
 use App\Models\FinanceEntry;
 use App\Models\Quote;
 use PHPUnit\Framework\Attributes\Test;
@@ -78,6 +79,17 @@ final class FinanceEntryTest extends TenantTestCase
 
         return self::$sharedTenant->run(function () use ($id) {
             return Quote::query()->findOrFail($id);
+        });
+    }
+
+    private function createFinanceCategory(string $type, string $name): FinanceCategory
+    {
+        return self::$sharedTenant->run(function () use ($type, $name) {
+            return FinanceCategory::query()->create([
+                'type' => $type,
+                'slug' => str($name)->ascii()->lower()->replaceMatches('/[^a-z0-9]+/', '_')->trim('_')->value(),
+                'name' => $name,
+            ]);
         });
     }
 
@@ -170,14 +182,18 @@ final class FinanceEntryTest extends TenantTestCase
     #[Test]
     public function manual_expense_and_income_affect_monthly_summary(): void
     {
+        $incomeCategory = $this->createFinanceCategory('income', 'Premio');
+        $expenseCategory = $this->createFinanceCategory('expense', 'Herramientas IA');
+
         $this->postJson(
             self::TENANT_BASE . '/api/v1/finances/entries',
             [
                 'type' => 'income',
                 'amount_cents' => 500_00,
                 'occurred_on' => '2026-05-10',
+                'name' => 'Ingreso rifa',
                 'description' => 'Rifa',
-                'category' => 'prize',
+                'category_id' => $incomeCategory->id,
             ],
             $this->authHeader(),
         )->assertCreated();
@@ -188,8 +204,9 @@ final class FinanceEntryTest extends TenantTestCase
                 'type' => 'expense',
                 'amount_cents' => 200_00,
                 'occurred_on' => '2026-05-11',
+                'name' => 'Compra AI tooling',
                 'description' => 'AI tooling',
-                'category' => 'ai_tools',
+                'category_id' => $expenseCategory->id,
             ],
             $this->authHeader(),
         )->assertCreated();
@@ -252,5 +269,41 @@ final class FinanceEntryTest extends TenantTestCase
             [],
             $this->authHeader(),
         )->assertStatus(409);
+    }
+
+    #[Test]
+    public function manual_entry_can_change_type_and_category(): void
+    {
+        $incomeCategory = $this->createFinanceCategory('income', 'Premio');
+        $expenseCategory = $this->createFinanceCategory('expense', 'Suscripciones');
+
+        $create = $this->postJson(
+            self::TENANT_BASE . '/api/v1/finances/entries',
+            [
+                'type' => 'income',
+                'amount_cents' => 500_00,
+                'occurred_on' => '2026-05-10',
+                'name' => 'Ingreso inicial',
+                'description' => 'Rifa',
+                'category_id' => $incomeCategory->id,
+            ],
+            $this->authHeader(),
+        );
+
+        $entryId = (int) $create->json('id');
+
+        $this->patchJson(
+            self::TENANT_BASE . "/api/v1/finances/entries/{$entryId}",
+            [
+                'type' => 'expense',
+                'name' => 'Gasto reclasificado',
+                'category_id' => $expenseCategory->id,
+            ],
+            $this->authHeader(),
+        )->assertOk()
+            ->assertJsonPath('type', 'expense')
+            ->assertJsonPath('name', 'Gasto reclasificado')
+            ->assertJsonPath('category_id', $expenseCategory->id)
+            ->assertJsonPath('category_name', 'Suscripciones');
     }
 }

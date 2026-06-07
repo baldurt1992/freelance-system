@@ -17,8 +17,9 @@ final class StoreFinanceEntryRequest extends FormRequest
             'type' => ['required', 'string', 'in:income,expense'],
             'amount_cents' => ['required', 'integer', 'min:1'],
             'occurred_on' => ['required', 'date_format:Y-m-d'],
-            'description' => ['required', 'string', 'max:255'],
-            'category' => ['nullable', 'string', 'max:100'],
+            'name' => ['required', 'string', 'min:1', 'max:255'],
+            'description' => ['nullable', 'string', 'max:1000'],
+            'category_id' => ['nullable', 'integer', 'exists:finance_categories,id'],
         ];
     }
 }

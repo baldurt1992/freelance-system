@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\Tenant\BillingDocumentController;
 use App\Http\Controllers\Api\Tenant\ClientController;
 use App\Http\Controllers\Api\Tenant\DashboardController;
 use App\Http\Controllers\Api\Tenant\DocumentTemplateController;
+use App\Http\Controllers\Api\Tenant\FinanceCategoryController;
 use App\Http\Controllers\Api\Tenant\FinanceController;
 use App\Http\Controllers\Api\Tenant\ProjectController;
 use App\Http\Controllers\Api\Tenant\QuoteController;
@@ -67,6 +68,10 @@ Route::middleware([
         Route::post('/billing-documents/{id}/mark-sent', [BillingDocumentController::class, 'markSent']);
 
         Route::get('/finances/summary', [FinanceController::class, 'summary']);
+        Route::get('/finances/categories', [FinanceCategoryController::class, 'index']);
+        Route::post('/finances/categories', [FinanceCategoryController::class, 'store']);
+        Route::patch('/finances/categories/{id}', [FinanceCategoryController::class, 'update']);
+        Route::delete('/finances/categories/{id}', [FinanceCategoryController::class, 'destroy']);
         Route::get('/finances/entries', [FinanceController::class, 'index']);
         Route::post('/finances/entries', [FinanceController::class, 'store']);
         Route::get('/finances/entries/{id}', [FinanceController::class, 'show']);

@@ -47,7 +47,7 @@
 ## Paso 0 — Git
 
 - [x] Rama `feature/templates-tax-fase-9` creada y pusheada
-- [ ] Merge a `main` (usuario)
+- [x] Merge a `main` (usuario)
 
 ```bash
 git checkout main && git pull origin main
@@ -151,15 +151,15 @@ cd api && php artisan test
 
 ## Paso 6 — Cierre PR
 
-- [ ] Commit de archivos nuevos + modificados (usuario)
-- [ ] PR con título abajo
-- [ ] Merge a `main` (usuario)
+- [x] Commit de archivos nuevos + modificados (usuario)
+- [x] PR con título abajo
+- [x] Merge a `main` (usuario)
 
 Título: `feat: document templates and tax toggle (phase 9)`
 
 ---
 
-## Entregables (implementado en rama)
+## Entregables implementados
 
 | Área | Archivos clave |
 | --- | --- |
@@ -180,7 +180,9 @@ Título: `feat: document templates and tax toggle (phase 9)`
 - [x] PDF quote/billing usan template resoluble
 - [x] Editor mínimo de plantilla
 - [x] Tests verdes
-- [ ] Merge a `main`
+- [x] Merge a `main`
+
+Fase cerrada en `main` el **2026-05-25** mediante PR `#7`.
 
 ---
 

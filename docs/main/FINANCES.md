@@ -50,7 +50,8 @@ Rutas API sugeridas (tenant, prefijo `/api/v1`):
 | `type`         | `income` \| `expense` |                                                                                       |
 | `amount_cents` | int                   | Siempre positivo; el signo lo da `type`                                               |
 | `occurred_on`  | date                  | Fecha contable → agrupa por mes                                                       |
-| `description`  | string                | Obligatorio en manuales; opcional en automáticos                                      |
+| `name`         | string                | Nombre corto del movimiento; obligatorio en manuales                                  |
+| `description`  | string nullable       | Detalle adicional opcional del movimiento                                             |
 | `category`     | string/enum           | Gastos: `subscriptions`, `ai_tools`, … Ingresos manuales: `prize`, `gift`, `other`, … |
 | `source_type`  | string nullable       | Ver §4                                                                                |
 | `source_id`    | int nullable          | Enlace al origen si aplica; debe seguir el tipo real del recurso origen               |
@@ -81,7 +82,7 @@ Rutas API sugeridas (tenant, prefijo `/api/v1`):
 Casos: rifa, premio, regalo, freelance no cargado en el sistema, reembolso personal, etc.
 
 - `type=income`, `is_manual=true`, `source_type=manual`, `source_id=null`
-- Campos UI: monto, fecha, descripción (ej. “Rifa empresa — 2.000.000 COP”), categoría opcional
+- Campos UI: monto, fecha, nombre (ej. “Rifa empresa”), descripción opcional, categoría opcional
 - Entran al **mismo** resumen mensual que los ingresos por proyecto
 
 ### Gastos (siempre manuales en v1)
