@@ -2,6 +2,7 @@
   import { upperFirst } from "scule";
   import type { ClientsTableApi } from "~/types/clients-table";
   import ClientsDeleteModal from "~/components/clients/ClientsDeleteModal.vue";
+  import PageToolbarShell from "~/components/ui/PageToolbarShell.vue";
 
   const searchQuery = defineModel<string>("searchQuery", { required: true });
 
@@ -16,7 +17,7 @@
 </script>
 
 <template>
-  <div class="flex flex-wrap items-center justify-between gap-1.5">
+  <PageToolbarShell>
     <UInput id="clients-search" name="clients-search" v-model="searchQuery" type="search" class="max-w-sm"
       icon="i-lucide-search" placeholder="Buscar clientes..." autocomplete="off" aria-label="Buscar clientes" />
 
@@ -47,5 +48,5 @@
         <UButton label="Columnas" color="neutral" variant="outline" trailing-icon="i-lucide-settings-2" />
       </UDropdownMenu>
     </div>
-  </div>
+  </PageToolbarShell>
 </template>

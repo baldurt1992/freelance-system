@@ -7,6 +7,7 @@ namespace App\Application\Finances;
 use App\Models\FinanceCategory;
 use App\Models\FinanceEntry;
 use App\Models\ProjectPayment;
+use DateTimeInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
@@ -83,7 +84,7 @@ final class FinanceEntryService
             [
                 'type' => 'income',
                 'amount_cents' => (int) $payment->amount_cents,
-                'occurred_on' => $payment->paid_at?->toDateString(),
+                'occurred_on' => $this->normalizeDateValue($payment->paid_at),
                 'name' => 'Pago de proyecto',
                 'description' => 'Pago de proyecto',
                 'category' => 'project_payment',
@@ -112,7 +113,7 @@ final class FinanceEntryService
         $entry->update([
             'type' => $nextType,
             'amount_cents' => isset($data['amount_cents']) ? (int) $data['amount_cents'] : $entry->amount_cents,
-            'occurred_on' => $data['occurred_on'] ?? $entry->occurred_on?->toDateString(),
+            'occurred_on' => $data['occurred_on'] ?? $this->normalizeDateValue($entry->occurred_on),
             'name' => $data['name'] ?? $entry->name,
             'description' => $data['description'] ?? $entry->description,
             'category' => array_key_exists('category_id', $data) ? $category?->slug : $entry->category,
@@ -186,5 +187,14 @@ final class FinanceEntryService
         }
 
         return $category;
+    }
+
+    private function normalizeDateValue(mixed $value): ?string
+    {
+        if ($value instanceof DateTimeInterface) {
+            return $value->format('Y-m-d');
+        }
+
+        return is_string($value) && $value !== '' ? $value : null;
     }
 }

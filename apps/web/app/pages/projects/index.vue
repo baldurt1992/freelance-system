@@ -2,6 +2,7 @@
 import type { Row } from "@tanstack/table-core";
 import type { Project } from "@freelance/contracts";
 import type { ProjectsTableApi, ProjectsTableExpose } from "~/types/projects-table";
+import TableEmptyState from "~/components/ui/TableEmptyState.vue";
 import { useProjectsApi } from "~/composables/projects/useProjectsApi";
 import { useProjectsTableColumns } from "~/composables/projects/useProjectsTableColumns";
 
@@ -122,9 +123,7 @@ async function onBatchDelete() {
         }"
       >
         <template #empty>
-          <div class="py-8 text-center text-muted">
-            No hay proyectos registrados. Convierte una cotización aceptada o crea uno manualmente.
-          </div>
+          <TableEmptyState message="No hay proyectos registrados. Convierte una cotización aceptada o crea uno manualmente." />
         </template>
       </UTable>
 

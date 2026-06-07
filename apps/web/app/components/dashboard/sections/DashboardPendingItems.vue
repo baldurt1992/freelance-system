@@ -32,16 +32,17 @@ const items = computed(() => [
     title="Pendientes"
     description="Acciones que todavía requieren seguimiento en el workspace."
     variant="subtle"
+    :ui="{ root: 'bg-default/85 ring ring-default/80 backdrop-blur-sm' }"
   >
     <div class="space-y-3">
       <NuxtLink
         v-for="item in items"
         :key="item.label"
         :to="item.to"
-        class="flex items-center justify-between gap-4 rounded-lg border border-default px-4 py-3 transition-colors hover:bg-elevated/50"
+        class="flex items-center justify-between gap-4 rounded-xl border border-default/80 bg-default/70 px-4 py-3 transition-[background-color,border-color,transform,box-shadow] duration-300 ease-out hover:border-primary/20 hover:bg-primary/6 hover:-translate-y-px hover:shadow-[0_14px_30px_-26px_color-mix(in_srgb,var(--ui-color-primary-950)_24%,transparent)]"
       >
         <div class="flex min-w-0 items-center gap-3">
-          <div class="rounded-full bg-primary/10 p-2 text-primary ring ring-inset ring-primary/15">
+          <div class="rounded-2xl bg-primary/10 p-2 text-primary ring ring-inset ring-primary/15">
             <UIcon :name="item.icon" class="size-4" />
           </div>
           <div class="min-w-0">
@@ -54,7 +55,7 @@ const items = computed(() => [
           </div>
         </div>
 
-        <UBadge :label="String(item.value)" color="neutral" variant="subtle" />
+        <UBadge :label="String(item.value)" color="primary" variant="subtle" class="rounded-full" />
       </NuxtLink>
     </div>
   </UPageCard>

@@ -66,7 +66,7 @@ function clearCategoryIfDeleted(id: number): void {
 </script>
 
 <template>
-  <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+  <div class="grid grid-cols-1 gap-4 rounded-2xl border border-default/80 bg-default/72 p-4 backdrop-blur-sm md:grid-cols-2 md:p-5">
     <UFormField label="Tipo" name="type" required>
       <USelect
         id="finance-type"

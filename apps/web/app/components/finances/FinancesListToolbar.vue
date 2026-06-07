@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { upperFirst } from "scule";
 import type { FinancesTableApi } from "~/types/finances-table";
+import PageToolbarShell from "~/components/ui/PageToolbarShell.vue";
 
 const searchQuery = defineModel<string>("searchQuery", { required: true });
 
@@ -10,7 +11,7 @@ defineProps<{
 </script>
 
 <template>
-  <div class="flex flex-wrap items-center justify-between gap-1.5">
+  <PageToolbarShell>
     <UInput
       id="finances-search"
       name="finances-search"
@@ -46,5 +47,5 @@ defineProps<{
         <UButton label="Columnas" color="neutral" variant="outline" trailing-icon="i-lucide-settings-2" />
       </UDropdownMenu>
     </div>
-  </div>
+  </PageToolbarShell>
 </template>

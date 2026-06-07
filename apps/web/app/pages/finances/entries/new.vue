@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import FinanceEntryFormFields from "~/components/finances/ui/FinanceEntryFormFields.vue";
+import PageContentNarrow from "~/components/ui/PageContentNarrow.vue";
+import PageSectionCard from "~/components/ui/PageSectionCard.vue";
 import { useFinanceCategories } from "~/composables/finances/useFinanceCategories";
 import { useFinancesApi } from "~/composables/finances/useFinancesApi";
 
@@ -79,34 +81,36 @@ watch(type, () => {
       </UDashboardNavbar>
     </template>
     <template #body>
-      <UCard class="w-full max-w-2xl">
-        <form class="space-y-4" @submit.prevent="onSubmit">
-          <FinanceEntryFormFields
-            :type="type"
-            :amount="amount"
-            :occurred-on="occurredOn"
-            :name="name"
-            :description="description"
-            :category-id="categoryId"
-            :categories="categories"
-            :create-finance-category="createFinanceCategory"
-            :update-finance-category="updateFinanceCategory"
-            :delete-finance-category="deleteFinanceCategory"
-            @update:type="type = $event"
-            @update:amount="amount = $event"
-            @update:occurred-on="occurredOn = $event"
-            @update:name="name = $event"
-            @update:description="description = $event"
-            @update:category-id="categoryId = $event"
-          />
+      <PageContentNarrow>
+        <PageSectionCard>
+          <form class="space-y-4" @submit.prevent="onSubmit">
+            <FinanceEntryFormFields
+              :type="type"
+              :amount="amount"
+              :occurred-on="occurredOn"
+              :name="name"
+              :description="description"
+              :category-id="categoryId"
+              :categories="categories"
+              :create-finance-category="createFinanceCategory"
+              :update-finance-category="updateFinanceCategory"
+              :delete-finance-category="deleteFinanceCategory"
+              @update:type="type = $event"
+              @update:amount="amount = $event"
+              @update:occurred-on="occurredOn = $event"
+              @update:name="name = $event"
+              @update:description="description = $event"
+              @update:category-id="categoryId = $event"
+            />
 
-          <div class="flex items-center gap-2">
-            <div class="flex-1" />
-            <UButton variant="outline" @click="router.push('/finances')">Cancelar</UButton>
-            <UButton type="submit" :loading="saving">Guardar</UButton>
-          </div>
-        </form>
-      </UCard>
+            <div class="flex items-center gap-2">
+              <div class="flex-1" />
+              <UButton variant="outline" @click="router.push('/finances')">Cancelar</UButton>
+              <UButton type="submit" :loading="saving">Guardar</UButton>
+            </div>
+          </form>
+        </PageSectionCard>
+      </PageContentNarrow>
     </template>
   </UDashboardPanel>
 </template>

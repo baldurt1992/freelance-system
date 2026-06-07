@@ -33,7 +33,15 @@ const loading = computed(() => status.value === "pending");
       <div class="space-y-6">
         <div class="flex flex-wrap items-center gap-3">
           <div class="space-y-1">
-            <p class="text-sm text-muted">Workspace</p>
+            <div class="flex items-center gap-2">
+              <UBadge
+                label="Workspace activo"
+                color="primary"
+                variant="soft"
+                class="rounded-full px-2.5 py-1"
+              />
+              <p class="text-sm text-muted">Panel operativo</p>
+            </div>
             <h2 class="text-2xl font-semibold text-highlighted">
               {{ tenant.displayName }}
             </h2>
@@ -84,7 +92,7 @@ const loading = computed(() => status.value === "pending");
 
         <div
           v-if="loading && !dashboard"
-          class="rounded-lg border border-dashed border-default px-4 py-8 text-center text-sm text-muted"
+          class="rounded-2xl border border-dashed border-default bg-default/75 px-4 py-8 text-center text-sm text-muted backdrop-blur-sm"
         >
           Cargando dashboard...
         </div>

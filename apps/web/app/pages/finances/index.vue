@@ -4,6 +4,7 @@ import type { FinanceEntry } from "@freelance/contracts";
 import type { FinancesTableApi, FinancesTableExpose } from "~/types/finances-table";
 import FinancesListToolbar from "~/components/finances/FinancesListToolbar.vue";
 import FinancesUiMonthPicker from "~/components/finances/ui/MonthPicker.vue";
+import TableEmptyState from "~/components/ui/TableEmptyState.vue";
 import { formatMoney } from "~/utils/formatMoney";
 import { useFinancesApi } from "~/composables/finances/useFinancesApi";
 import { useFinanceSummary } from "~/composables/finances/useFinanceSummary";
@@ -179,7 +180,7 @@ const tableApi = computed((): FinancesTableApi | null => table.value?.tableApi ?
           </template>
 
           <template #empty>
-            <div class="py-8 text-center text-muted">No hay movimientos para este filtro.</div>
+            <TableEmptyState message="No hay movimientos para este filtro." />
           </template>
         </UTable>
 

@@ -17,6 +17,7 @@ const { getNetLabelText } = useFinanceSummary();
     title="Resumen financiero"
     :description="`Corte del mes ${month}.`"
     variant="subtle"
+    :ui="{ root: 'bg-default/85 ring ring-default/80 backdrop-blur-sm' }"
   >
     <div class="grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:items-start">
       <div class="space-y-2">
@@ -32,13 +33,13 @@ const { getNetLabelText } = useFinanceSummary();
       </div>
 
       <div class="grid gap-3">
-        <div class="rounded-lg border border-default p-4">
+        <div class="rounded-xl border border-default/80 bg-default/80 p-4">
           <p class="text-sm text-muted">Ingresos</p>
           <p class="mt-1 text-lg font-semibold text-success">
             {{ formatMoney(summary.income_cents, currency) }}
           </p>
         </div>
-        <div class="rounded-lg border border-default p-4">
+        <div class="rounded-xl border border-default/80 bg-default/80 p-4">
           <p class="text-sm text-muted">Gastos</p>
           <p class="mt-1 text-lg font-semibold text-error">
             {{ formatMoney(summary.expense_cents, currency) }}

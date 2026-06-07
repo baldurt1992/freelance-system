@@ -1,4 +1,6 @@
 <script setup lang="ts">
+  import PageContentWide from "~/components/ui/PageContentWide.vue";
+  import PageSectionCard from "~/components/ui/PageSectionCard.vue";
   import { useQuotesApi } from "~/composables/quotes/useQuotesApi";
   import { useClientsApi } from "~/composables/clients/useClientsApi";
   import { useQuoteForm } from "~/composables/quotes/useQuoteForm";
@@ -66,9 +68,9 @@
     </template>
 
     <template #body>
-      <div class="grid w-full max-w-7xl gap-6 xl:grid-cols-[minmax(0,1fr)_22rem] xl:items-start">
+      <PageContentWide class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_22rem] xl:items-start">
         <form class="space-y-6" @submit.prevent="onSubmit">
-          <UCard class="w-full">
+          <PageSectionCard>
             <div class="space-y-4">
               <div>
                 <p class="text-xs font-semibold uppercase tracking-wide text-muted">Datos generales</p>
@@ -80,9 +82,9 @@
                 @update:client-id="form.clientId.value = $event" @update:title="form.title.value = $event"
                 @update:notes="form.notes.value = $event" @update:valid-until="form.validUntil.value = $event" />
             </div>
-          </UCard>
+          </PageSectionCard>
 
-          <UCard class="w-full">
+          <PageSectionCard>
             <div class="space-y-4">
               <div>
                 <p class="text-xs font-semibold uppercase tracking-wide text-muted">Propuesta</p>
@@ -91,7 +93,7 @@
 
               <QuotesUiQuoteLinesEditor :lines="form.lines.value" @update:lines="form.lines.value = $event" />
             </div>
-          </UCard>
+          </PageSectionCard>
 
           <div class="flex items-center gap-3">
             <div class="flex-1" />
@@ -106,7 +108,7 @@
 
         <QuotesSectionsQuoteDraftSummaryCard :client-name="selectedClient?.name" :title="form.title.value"
           :valid-until="form.validUntil.value" :lines="form.lines.value" />
-      </div>
+      </PageContentWide>
     </template>
   </UDashboardPanel>
 </template>

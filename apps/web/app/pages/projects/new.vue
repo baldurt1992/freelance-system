@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import PageContentWide from "~/components/ui/PageContentWide.vue";
+import PageSectionCard from "~/components/ui/PageSectionCard.vue";
 import { useProjectsApi } from "~/composables/projects/useProjectsApi";
 import { useClientsApi } from "~/composables/clients/useClientsApi";
 import { useProjectForm } from "~/composables/projects/useProjectForm";
@@ -86,9 +88,9 @@ async function onSubmit() {
     </template>
 
     <template #body>
-      <div class="grid w-full max-w-7xl gap-6 xl:grid-cols-[minmax(0,1fr)_22rem] xl:items-start">
+      <PageContentWide class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_22rem] xl:items-start">
         <form class="space-y-6" @submit.prevent="onSubmit">
-          <UCard class="w-full">
+          <PageSectionCard>
             <ProjectsUiProjectFormFields
               :clients="clients"
               :client-id="form.clientId.value"
@@ -105,7 +107,7 @@ async function onSubmit() {
               @update:agreed-total-preview="form.agreedTotalPreview.value = $event"
               @update:started-at="form.startedAt.value = $event"
             />
-          </UCard>
+          </PageSectionCard>
 
           <div class="flex items-center gap-3">
             <div class="flex-1" />
@@ -125,7 +127,7 @@ async function onSubmit() {
           :started-at="form.startedAt.value"
           :agreed-total-cents="agreedTotalCentsPreview"
         />
-      </div>
+      </PageContentWide>
     </template>
   </UDashboardPanel>
 </template>
