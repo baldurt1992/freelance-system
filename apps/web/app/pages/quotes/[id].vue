@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import PageContentNarrow from "~/components/ui/PageContentNarrow.vue";
+import PageStateCard from "~/components/ui/PageStateCard.vue";
 import { useQuotesApi } from "~/composables/quotes/useQuotesApi";
 import { getQuoteStatusLabel, getQuoteStatusColor } from "~/utils/quoteStatus";
 import type { BadgeColor } from "~/utils/quoteStatus";
@@ -50,15 +52,11 @@ const statusColor = computed<BadgeColor>(() => getQuoteStatusColor(quote.value?.
     </template>
 
     <template #body>
-      <UCard v-if="status === 'pending'">
-        <div class="py-8 text-center text-muted">Cargando...</div>
-      </UCard>
+      <PageStateCard v-if="status === 'pending'" message="Cargando..." />
 
-      <UCard v-else-if="!quote">
-        <div class="py-8 text-center text-muted">Cotización no encontrada.</div>
-      </UCard>
+      <PageStateCard v-else-if="!quote" message="Cotización no encontrada." />
 
-      <div v-else class="max-w-4xl space-y-6">
+      <PageContentNarrow v-else class="space-y-6">
         <div class="flex items-center gap-3">
           <UBadge :label="statusLabel" :color="statusColor" variant="subtle" />
           <UButton
@@ -83,7 +81,7 @@ const statusColor = computed<BadgeColor>(() => getQuoteStatusColor(quote.value?.
           @reject="doAction('reject')"
           @convert="onConvertToProject"
         />
-      </div>
+      </PageContentNarrow>
     </template>
   </UDashboardPanel>
 </template>

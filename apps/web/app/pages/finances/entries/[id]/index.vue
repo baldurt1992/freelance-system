@@ -1,6 +1,9 @@
 <script setup lang="ts">
 definePageMeta({ layout: "default" });
 
+import PageContentNarrow from "~/components/ui/PageContentNarrow.vue";
+import PageSectionCard from "~/components/ui/PageSectionCard.vue";
+import PageStateCard from "~/components/ui/PageStateCard.vue";
 import { formatMoney } from "~/utils/formatMoney";
 
 const route = useRoute();
@@ -71,61 +74,59 @@ async function onDelete() {
     </template>
 
     <template #body>
-      <UCard v-if="status === 'pending'">
-        <div class="py-8 text-center text-muted">Cargando...</div>
-      </UCard>
+      <PageContentNarrow>
+        <PageStateCard v-if="status === 'pending'" message="Cargando..." />
 
-      <UCard v-else-if="!entry">
-        <div class="py-8 text-center text-muted">Movimiento no encontrado.</div>
-      </UCard>
+        <PageStateCard v-else-if="!entry" message="Movimiento no encontrado." />
 
-      <div v-else class="max-w-4xl space-y-6">
-        <div class="flex flex-wrap items-center gap-3">
-          <UBadge
-            :label="entry.type === 'income' ? 'Ingreso' : 'Gasto'"
-            :color="entry.type === 'income' ? 'success' : 'error'"
-            variant="subtle"
-          />
-          <UBadge
-            :label="entry.is_manual ? 'Manual' : 'Automático'"
-            :color="entry.is_manual ? 'info' : 'neutral'"
-            variant="subtle"
-          />
-        </div>
-
-        <UCard>
-          <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div>
-              <p class="text-sm text-muted">Nombre</p>
-              <p class="mt-1 text-base font-medium text-highlighted">{{ entry.name }}</p>
-            </div>
-
-            <div>
-              <p class="text-sm text-muted">Monto</p>
-              <p class="mt-1 text-base font-medium text-highlighted">
-                {{ formatMoney(entry.amount_cents, 'COP') }}
-              </p>
-            </div>
-
-            <div>
-              <p class="text-sm text-muted">Fecha</p>
-              <p class="mt-1 text-base">{{ entry.occurred_on }}</p>
-            </div>
-
-            <div>
-              <p class="text-sm text-muted">Categoría</p>
-              <p class="mt-1 text-base">{{ entry.category_name ?? 'Sin categoría' }}</p>
-            </div>
-
-            <div class="md:col-span-2">
-              <p class="text-sm text-muted">Descripción</p>
-              <p class="mt-1 text-base whitespace-pre-line">
-                {{ entry.description || 'Sin descripción adicional.' }}
-              </p>
-            </div>
+        <div v-else class="space-y-6">
+          <div class="flex flex-wrap items-center gap-3">
+            <UBadge
+              :label="entry.type === 'income' ? 'Ingreso' : 'Gasto'"
+              :color="entry.type === 'income' ? 'success' : 'error'"
+              variant="subtle"
+            />
+            <UBadge
+              :label="entry.is_manual ? 'Manual' : 'Automático'"
+              :color="entry.is_manual ? 'info' : 'neutral'"
+              variant="subtle"
+            />
           </div>
-        </UCard>
-      </div>
+
+          <PageSectionCard>
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div>
+                <p class="text-sm text-muted">Nombre</p>
+                <p class="mt-1 text-base font-medium text-highlighted">{{ entry.name }}</p>
+              </div>
+
+              <div>
+                <p class="text-sm text-muted">Monto</p>
+                <p class="mt-1 text-base font-medium text-highlighted">
+                  {{ formatMoney(entry.amount_cents, 'COP') }}
+                </p>
+              </div>
+
+              <div>
+                <p class="text-sm text-muted">Fecha</p>
+                <p class="mt-1 text-base">{{ entry.occurred_on }}</p>
+              </div>
+
+              <div>
+                <p class="text-sm text-muted">Categoría</p>
+                <p class="mt-1 text-base">{{ entry.category_name ?? 'Sin categoría' }}</p>
+              </div>
+
+              <div class="md:col-span-2">
+                <p class="text-sm text-muted">Descripción</p>
+                <p class="mt-1 text-base whitespace-pre-line">
+                  {{ entry.description || 'Sin descripción adicional.' }}
+                </p>
+              </div>
+            </div>
+          </PageSectionCard>
+        </div>
+      </PageContentNarrow>
     </template>
   </UDashboardPanel>
 </template>

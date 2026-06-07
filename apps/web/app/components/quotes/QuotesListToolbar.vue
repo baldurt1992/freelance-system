@@ -2,6 +2,7 @@
 import { upperFirst } from "scule";
 import type { QuotesTableApi } from "~/types/quotes-table";
 import QuotesDeleteModal from "~/components/quotes/QuotesDeleteModal.vue";
+import PageToolbarShell from "~/components/ui/PageToolbarShell.vue";
 
 const searchQuery = defineModel<string>("searchQuery", { required: true });
 
@@ -16,7 +17,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="flex flex-wrap items-center justify-between gap-1.5">
+  <PageToolbarShell>
     <UInput
       id="quotes-search"
       name="quotes-search"
@@ -69,5 +70,5 @@ const emit = defineEmits<{
         <UButton label="Columnas" color="neutral" variant="outline" trailing-icon="i-lucide-settings-2" />
       </UDropdownMenu>
     </div>
-  </div>
+  </PageToolbarShell>
 </template>

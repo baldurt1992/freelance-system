@@ -38,8 +38,9 @@ const items = computed<DropdownMenuItem[][]>(() => [[{
       variant="ghost"
       block
       :square="collapsed"
-      class="data-[state=open]:bg-elevated"
+      class="data-[state=open]:bg-default/90 data-[state=open]:shadow-[inset_0_0_0_1px_var(--ui-border)]"
       :ui="{
+        base: 'rounded-xl px-3 py-2.5',
         trailingIcon: 'text-dimmed'
       }"
     />

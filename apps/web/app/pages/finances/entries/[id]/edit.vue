@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import FinanceEntryFormFields from "~/components/finances/ui/FinanceEntryFormFields.vue";
+import PageContentNarrow from "~/components/ui/PageContentNarrow.vue";
+import PageSectionCard from "~/components/ui/PageSectionCard.vue";
+import PageStateCard from "~/components/ui/PageStateCard.vue";
 import { useFinanceCategories } from "~/composables/finances/useFinanceCategories";
 import { useFinancesApi } from "~/composables/finances/useFinancesApi";
 
@@ -98,40 +101,38 @@ async function onSubmit() {
       </UDashboardNavbar>
     </template>
     <template #body>
-      <UCard v-if="status === 'pending'">
-        <div class="py-8 text-center text-muted">Cargando...</div>
-      </UCard>
-      <UCard v-else-if="!entry">
-        <div class="py-8 text-center text-muted">Movimiento no encontrado.</div>
-      </UCard>
-      <UCard v-else class="w-full max-w-2xl">
-        <form class="space-y-4" @submit.prevent="onSubmit">
-          <FinanceEntryFormFields
-            :type="type"
-            :amount="amount"
-            :occurred-on="occurredOn"
-            :name="name"
-            :description="description"
-            :category-id="categoryId"
-            :categories="categories"
-            :create-finance-category="createFinanceCategory"
-            :update-finance-category="updateFinanceCategory"
-            :delete-finance-category="deleteFinanceCategory"
-            @update:type="type = $event"
-            @update:amount="amount = $event"
-            @update:occurred-on="occurredOn = $event"
-            @update:name="name = $event"
-            @update:description="description = $event"
-            @update:category-id="categoryId = $event"
-          />
+      <PageContentNarrow>
+        <PageStateCard v-if="status === 'pending'" message="Cargando..." />
+        <PageStateCard v-else-if="!entry" message="Movimiento no encontrado." />
+        <PageSectionCard v-else>
+          <form class="space-y-4" @submit.prevent="onSubmit">
+            <FinanceEntryFormFields
+              :type="type"
+              :amount="amount"
+              :occurred-on="occurredOn"
+              :name="name"
+              :description="description"
+              :category-id="categoryId"
+              :categories="categories"
+              :create-finance-category="createFinanceCategory"
+              :update-finance-category="updateFinanceCategory"
+              :delete-finance-category="deleteFinanceCategory"
+              @update:type="type = $event"
+              @update:amount="amount = $event"
+              @update:occurred-on="occurredOn = $event"
+              @update:name="name = $event"
+              @update:description="description = $event"
+              @update:category-id="categoryId = $event"
+            />
 
-          <div class="flex items-center gap-2">
-            <div class="flex-1" />
-            <UButton variant="outline" @click="router.push('/finances')">Cancelar</UButton>
-            <UButton type="submit" :loading="saving">Actualizar</UButton>
-          </div>
-        </form>
-      </UCard>
+            <div class="flex items-center gap-2">
+              <div class="flex-1" />
+              <UButton variant="outline" @click="router.push('/finances')">Cancelar</UButton>
+              <UButton type="submit" :loading="saving">Actualizar</UButton>
+            </div>
+          </form>
+        </PageSectionCard>
+      </PageContentNarrow>
     </template>
   </UDashboardPanel>
 </template>

@@ -2,6 +2,7 @@
 import type { Row } from "@tanstack/table-core";
 import type { Quote } from "@freelance/contracts";
 import type { QuotesTableApi, QuotesTableExpose } from "~/types/quotes-table";
+import TableEmptyState from "~/components/ui/TableEmptyState.vue";
 import { useQuotesApi } from "~/composables/quotes/useQuotesApi";
 import { useQuotesTableColumns } from "~/composables/quotes/useQuotesTableColumns";
 
@@ -122,9 +123,7 @@ async function onBatchDelete() {
         }"
       >
         <template #empty>
-          <div class="py-8 text-center text-muted">
-            No hay cotizaciones registradas.
-          </div>
+          <TableEmptyState message="No hay cotizaciones registradas." />
         </template>
       </UTable>
 

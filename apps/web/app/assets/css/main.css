@@ -4,15 +4,54 @@
 @theme static {
   --font-sans: 'Public Sans', sans-serif;
 
-  --color-green-50: #EFFDF5;
-  --color-green-100: #D9FBE8;
-  --color-green-200: #B3F5D1;
-  --color-green-300: #75EDAE;
-  --color-green-400: #00DC82;
-  --color-green-500: #00C16A;
-  --color-green-600: #00A155;
-  --color-green-700: #007F45;
-  --color-green-800: #016538;
-  --color-green-900: #0A5331;
-  --color-green-950: #052E16;
+  --color-brand-50: #F1FAF9;
+  --color-brand-100: #D7F0EC;
+  --color-brand-200: #B0E0D8;
+  --color-brand-300: #7CC8BF;
+  --color-brand-400: #4AAFA7;
+  --color-brand-500: #2F908C;
+  --color-brand-600: #237472;
+  --color-brand-700: #1D5D5D;
+  --color-brand-800: #1A4A4B;
+  --color-brand-900: #173E3F;
+  --color-brand-950: #0C2325;
+}
+
+:root {
+  color-scheme: light dark;
+  --ui-primary: var(--ui-color-primary-600);
+  --ui-bg: var(--ui-color-neutral-50);
+  --ui-text: var(--ui-color-neutral-900);
+  --ui-border: var(--ui-color-neutral-200);
+  --ui-border-muted: var(--ui-color-neutral-200);
+  --ui-border-accented: var(--ui-color-neutral-300);
+  accent-color: var(--ui-primary);
+}
+
+.dark {
+  --ui-primary: var(--ui-color-primary-400);
+  --ui-bg: var(--ui-color-neutral-950);
+  --ui-text: var(--ui-color-neutral-50);
+  --ui-border: var(--ui-color-neutral-800);
+  --ui-border-muted: var(--ui-color-neutral-800);
+  --ui-border-accented: var(--ui-color-neutral-700);
+}
+
+body {
+  background-image:
+    radial-gradient(circle at top left, color-mix(in srgb, var(--ui-color-primary-200) 32%, transparent) 0, transparent 28rem),
+    radial-gradient(circle at top right, color-mix(in srgb, var(--ui-color-secondary-300) 18%, transparent) 0, transparent 20rem),
+    linear-gradient(180deg, color-mix(in srgb, var(--ui-bg) 96%, white) 0%, var(--ui-bg) 22%, var(--ui-bg) 100%);
+  background-attachment: fixed;
+}
+
+.dark body {
+  background-image:
+    radial-gradient(circle at top left, color-mix(in srgb, var(--ui-color-primary-900) 34%, transparent) 0, transparent 24rem),
+    radial-gradient(circle at top right, color-mix(in srgb, var(--ui-color-secondary-900) 18%, transparent) 0, transparent 18rem),
+    linear-gradient(180deg, color-mix(in srgb, var(--ui-bg) 88%, black) 0%, var(--ui-bg) 24%, var(--ui-bg) 100%);
+}
+
+::selection {
+  background: color-mix(in srgb, var(--ui-primary) 22%, white);
 }

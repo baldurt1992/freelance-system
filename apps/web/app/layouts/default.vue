@@ -62,30 +62,38 @@ const groups = computed(() => [{
       v-model:open="open"
       collapsible
       resizable
-      class="bg-elevated/25"
-      :ui="{ footer: 'lg:border-t lg:border-default' }"
+      class="bg-transparent"
+      :ui="{ footer: 'lg:border-t lg:border-default/80' }"
     >
       <template #header="{ collapsed }">
         <TeamsMenu :collapsed="collapsed" />
       </template>
 
       <template #default="{ collapsed }">
-        <UDashboardSearchButton :collapsed="collapsed" class="bg-transparent ring-default" />
+        <UDashboardSearchButton
+          :collapsed="collapsed"
+          class="bg-default/70 ring-default/80 backdrop-blur-sm hover:bg-default"
+        />
 
         <UNavigationMenu
           :collapsed="collapsed"
           :items="links[0]"
+          color="primary"
+          highlight
           orientation="vertical"
           tooltip
           popover
+          class="[&_[data-state=open]]:text-primary [&_[data-state=open]]:before:bg-primary/10 [&_[data-state=open]]:shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--ui-primary)_18%,transparent)]"
         />
 
         <UNavigationMenu
           :collapsed="collapsed"
           :items="links[1]"
+          color="primary"
+          highlight
           orientation="vertical"
           tooltip
-          class="mt-auto"
+          class="mt-auto [&_[data-state=open]]:text-primary [&_[data-state=open]]:before:bg-primary/10 [&_[data-state=open]]:shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--ui-primary)_18%,transparent)]"
         />
       </template>
 

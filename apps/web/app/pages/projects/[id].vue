@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import PageContentWide from "~/components/ui/PageContentWide.vue";
+import PageStateCard from "~/components/ui/PageStateCard.vue";
 import type { Project, ProjectPayment, BillingDocument } from "@freelance/contracts";
 
 definePageMeta({ layout: "default" });
@@ -79,16 +81,12 @@ async function onDownloadBilling(billingDocumentId: number) {
     </template>
 
     <template #body>
-      <UCard v-if="status === 'pending'">
-        <div class="text-center py-8 text-muted">Cargando...</div>
-      </UCard>
+      <PageStateCard v-if="status === 'pending'" message="Cargando..." />
 
-      <UCard v-else-if="!project">
-        <div class="text-center py-8 text-muted">Proyecto no encontrado.</div>
-      </UCard>
+      <PageStateCard v-else-if="!project" message="Proyecto no encontrado." />
 
       <div v-else>
-        <div class="max-w-7xl space-y-6">
+        <PageContentWide class="space-y-6">
           <ProjectsSectionsProjectHeader :project="project" />
 
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -112,7 +110,7 @@ async function onDownloadBilling(billingDocumentId: number) {
               />
             </div>
           </div>
-        </div>
+        </PageContentWide>
       </div>
     </template>
   </UDashboardPanel>

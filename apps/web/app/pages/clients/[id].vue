@@ -1,6 +1,10 @@
 <script setup lang="ts">
 definePageMeta({ layout: "default" });
 
+import PageContentNarrow from "~/components/ui/PageContentNarrow.vue";
+import PageSectionCard from "~/components/ui/PageSectionCard.vue";
+import PageStateCard from "~/components/ui/PageStateCard.vue";
+
 const route = useRoute();
 const router = useRouter();
 
@@ -39,42 +43,40 @@ const {
     </template>
 
     <template #body>
-      <UCard v-if="status === 'pending'">
-        <div class="py-8 text-center text-muted">Cargando...</div>
-      </UCard>
+      <PageContentNarrow>
+        <PageStateCard v-if="status === 'pending'" message="Cargando..." />
 
-      <UCard v-else-if="!client">
-        <div class="py-8 text-center text-muted">Cliente no encontrado.</div>
-      </UCard>
+        <PageStateCard v-else-if="!client" message="Cliente no encontrado." />
 
-      <UCard v-else>
-        <ClientsSectionsClientEditForm
-          v-if="editing"
-          :name="form.name.value"
-          :email="form.email.value"
-          :phone="form.phone.value"
-          :tax-id="form.taxId.value"
-          :address="form.address.value"
-          :notes="form.notes.value"
-          :avatar-preview="avatarPreviewUrl"
-          :saving="saving"
-          @update:name="form.name.value = $event"
-          @update:email="form.email.value = $event"
-          @update:phone="form.phone.value = $event"
-          @update:tax-id="form.taxId.value = $event"
-          @update:address="form.address.value = $event"
-          @update:notes="form.notes.value = $event"
-          @save="onSave"
-          @cancel="cancelEdit"
-          @file-change="onFileChange"
-        />
+        <PageSectionCard v-else>
+          <ClientsSectionsClientEditForm
+            v-if="editing"
+            :name="form.name.value"
+            :email="form.email.value"
+            :phone="form.phone.value"
+            :tax-id="form.taxId.value"
+            :address="form.address.value"
+            :notes="form.notes.value"
+            :avatar-preview="avatarPreviewUrl"
+            :saving="saving"
+            @update:name="form.name.value = $event"
+            @update:email="form.email.value = $event"
+            @update:phone="form.phone.value = $event"
+            @update:tax-id="form.taxId.value = $event"
+            @update:address="form.address.value = $event"
+            @update:notes="form.notes.value = $event"
+            @save="onSave"
+            @cancel="cancelEdit"
+            @file-change="onFileChange"
+          />
 
-        <ClientsSectionsClientDetailView
-          v-else
-          :client="client"
-          @edit="startEdit"
-        />
-      </UCard>
+          <ClientsSectionsClientDetailView
+            v-else
+            :client="client"
+            @edit="startEdit"
+          />
+        </PageSectionCard>
+      </PageContentNarrow>
     </template>
   </UDashboardPanel>
 </template>

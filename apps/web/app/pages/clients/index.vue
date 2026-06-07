@@ -2,6 +2,7 @@
   import type { Row } from "@tanstack/table-core";
   import type { Client } from "@freelance/contracts";
   import type { ClientsTableApi, ClientsTableExpose } from "~/types/clients-table";
+  import TableEmptyState from "~/components/ui/TableEmptyState.vue";
   import { useClientsApi } from "~/composables/clients/useClientsApi";
   import { useClientsTableColumns } from "~/composables/clients/useClientsTableColumns";
 
@@ -112,9 +113,7 @@
           separator: 'h-0',
         }">
         <template #empty>
-          <div class="py-8 text-center text-muted">
-            No hay clientes registrados.
-          </div>
+          <TableEmptyState message="No hay clientes registrados." />
         </template>
       </UTable>
 
