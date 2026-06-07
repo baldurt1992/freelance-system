@@ -32,10 +32,12 @@ final class FinanceController extends Controller
     {
         $month = $request->query('month');
         $type = $request->query('type');
+        $search = $request->query('search');
 
         $paginator = $this->financeEntryService->list(
             month: is_string($month) ? $month : null,
             type: is_string($type) ? $type : null,
+            search: is_string($search) ? $search : null,
         );
 
         return $this->paginatedResponse(

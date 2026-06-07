@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { CalendarDate } from "@internationalized/date";
+import FinanceEntryFormFields from "~/components/finances/ui/FinanceEntryFormFields.vue";
+import { useFinanceCategories } from "~/composables/finances/useFinanceCategories";
 import { useFinancesApi } from "~/composables/finances/useFinancesApi";
 
 definePageMeta({ layout: "default" });
@@ -12,26 +13,12 @@ const { findEntry, updateEntry } = useFinancesApi();
 
 const entryId = computed(() => Number(route.params.id));
 const saving = ref(false);
+const type = ref<"income" | "expense">("expense");
 const amount = ref<number | null>(null);
 const occurredOn = ref("");
+const name = ref("");
 const description = ref("");
-const category = ref("");
-
-function calendarDateToString(date: CalendarDate | null | undefined): string | undefined {
-  if (!date) return undefined;
-  const y = String(date.year).padStart(4, "0");
-  const m = String(date.month).padStart(2, "0");
-  const d = String(date.day).padStart(2, "0");
-  return `${y}-${m}-${d}`;
-}
-
-function parseDateToCalendarDate(value?: string): CalendarDate | undefined {
-  if (!value) return undefined;
-  const parts = value.split("-").map((v) => parseInt(v, 10));
-  if (parts.length !== 3 || parts.some((n) => Number.isNaN(n))) return undefined;
-  const [year, month, day] = parts as [number, number, number];
-  return new CalendarDate(year, month, day);
-}
+const categoryId = ref<number | null>(null);
 
 const { data: entry, status } = useAsyncData(
   () => `finance-entry-${entryId.value}`,
@@ -39,12 +26,30 @@ const { data: entry, status } = useAsyncData(
   { watch: [entryId] },
 );
 
+const {
+  categories,
+  createFinanceCategory,
+  updateFinanceCategory,
+  deleteFinanceCategory,
+} = useFinanceCategories(type);
+
+watch(categories, (currentCategories) => {
+  if (categoryId.value === null) return;
+
+  const exists = currentCategories.some((category) => category.id === categoryId.value);
+  if (!exists) {
+    categoryId.value = null;
+  }
+});
+
 watchEffect(() => {
   if (!entry.value) return;
+  type.value = entry.value.type;
   amount.value = entry.value.amount_cents / 100;
   occurredOn.value = entry.value.occurred_on;
+  name.value = entry.value.name;
   description.value = entry.value.description ?? "";
-  category.value = entry.value.category ?? "";
+  categoryId.value = entry.value.category_id;
 });
 
 async function onSubmit() {
@@ -58,13 +63,20 @@ async function onSubmit() {
     return;
   }
 
+  if (!name.value.trim()) {
+    toast.add({ title: "Ingresa un nombre", color: "warning" });
+    return;
+  }
+
   saving.value = true;
   try {
     await updateEntry(entryId.value, {
+      type: type.value,
       amount_cents: Math.round(amount.value * 100),
       occurred_on: occurredOn.value,
-      description: description.value.trim(),
-      category: category.value.trim() || null,
+      name: name.value.trim(),
+      description: description.value.trim() || null,
+      category_id: categoryId.value,
     });
     toast.add({ title: "Movimiento actualizado", color: "success" });
     await router.push("/finances");
@@ -94,28 +106,24 @@ async function onSubmit() {
       </UCard>
       <UCard v-else class="w-full max-w-2xl">
         <form class="space-y-4" @submit.prevent="onSubmit">
-          <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <UFormField label="Fecha" name="occurred_on" required>
-              <UInputDate
-                id="finance-occurred-on"
-                name="occurred_on"
-                :model-value="parseDateToCalendarDate(occurredOn)"
-                @update:model-value="occurredOn = calendarDateToString($event as CalendarDate | undefined) ?? occurredOn"
-              />
-            </UFormField>
-
-            <UFormField label="Monto" name="amount" required>
-              <UInput id="finance-amount" v-model="amount" name="amount" type="number" :min="0" :step="0.01" />
-            </UFormField>
-
-            <UFormField label="Categoría" name="category">
-              <UInput id="finance-category" v-model="category" name="category" />
-            </UFormField>
-
-            <UFormField label="Descripción" name="description" required class="md:col-span-2">
-              <UTextarea id="finance-description" v-model="description" name="description" />
-            </UFormField>
-          </div>
+          <FinanceEntryFormFields
+            :type="type"
+            :amount="amount"
+            :occurred-on="occurredOn"
+            :name="name"
+            :description="description"
+            :category-id="categoryId"
+            :categories="categories"
+            :create-finance-category="createFinanceCategory"
+            :update-finance-category="updateFinanceCategory"
+            :delete-finance-category="deleteFinanceCategory"
+            @update:type="type = $event"
+            @update:amount="amount = $event"
+            @update:occurred-on="occurredOn = $event"
+            @update:name="name = $event"
+            @update:description="description = $event"
+            @update:category-id="categoryId = $event"
+          />
 
           <div class="flex items-center gap-2">
             <div class="flex-1" />

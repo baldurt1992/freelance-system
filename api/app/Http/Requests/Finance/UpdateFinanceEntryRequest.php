@@ -14,10 +14,12 @@ final class UpdateFinanceEntryRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'type' => ['sometimes', 'string', 'in:income,expense'],
             'amount_cents' => ['sometimes', 'integer', 'min:1'],
             'occurred_on' => ['sometimes', 'date_format:Y-m-d'],
-            'description' => ['sometimes', 'string', 'max:255'],
-            'category' => ['nullable', 'string', 'max:100'],
+            'name' => ['sometimes', 'string', 'min:1', 'max:255'],
+            'description' => ['nullable', 'string', 'max:1000'],
+            'category_id' => ['nullable', 'integer', 'exists:finance_categories,id'],
         ];
     }
 }

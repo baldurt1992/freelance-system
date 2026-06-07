@@ -62,7 +62,7 @@ git push -u origin feature/finances-fase-7
 `packages/contracts/src/finances.ts`:
 
 - `FinanceEntrySchema` — campos según FINANCES.md §3
-- `FinanceEntryCreateSchema` — manual: `type`, `amount_cents`, `occurred_on`, `description`, `category`
+- `FinanceEntryCreateSchema` — manual: `type`, `amount_cents`, `occurred_on`, `name`, `description?`, `category`
 - `FinanceSummarySchema` — `month`, `total_income_cents`, `total_expense_cents`, `net_cents`, label `surplus|shortfall|balanced`
 - Filtros listado: `month`, `type` optional
 - `id` y `source_id` tipados según convención actual de enteros positivos
@@ -197,11 +197,11 @@ Título: `feat: finances module with monthly summary (phase 7)`
 - [x] Entradas automáticas inmutables
 - [x] Idempotencia por `project_payment`
 - [x] Tests + typecheck + validación OK en local
-- [ ] Merge a `main`
+- [x] Merge a `main`
 
 ## Estado actual
 
-Implementado localmente en `feature/finances-fase-7` a fecha **2026-05-25**.
+Implementado en `feature/finances-fase-7` y mergeado a `main` a fecha **2026-05-25**.
 
 Validación ejecutada en local:
 
@@ -212,7 +212,7 @@ cd api && php artisan test --filter=Project
 pnpm --filter @freelance/web exec nuxi typecheck
 ```
 
-Pendiente únicamente el merge a `main` por parte del usuario.
+Fase cerrada en `main` mediante PR `#5`.
 
 ---
 

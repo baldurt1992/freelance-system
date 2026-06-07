@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import type { Row } from "@tanstack/table-core";
+import type { FinanceEntry } from "@freelance/contracts";
+import type { FinancesTableApi, FinancesTableExpose } from "~/types/finances-table";
+import FinancesListToolbar from "~/components/finances/FinancesListToolbar.vue";
 import FinancesUiMonthPicker from "~/components/finances/ui/MonthPicker.vue";
 import { formatMoney } from "~/utils/formatMoney";
 import { useFinancesApi } from "~/composables/finances/useFinancesApi";
@@ -16,7 +20,41 @@ const { toastApiError } = useApiError();
 const { getSummary, listEntries, removeEntry } = useFinancesApi();
 const { getNetLabelText } = useFinanceSummary();
 const { month, tab, page, activeType, monthInputDefault } = useFinancesListState();
-const { columns, entriesTableTitle } = useFinancesTableColumns();
+const searchQuery = ref("");
+const debouncedSearch = ref("");
+const columnVisibility = ref();
+const table = useTemplateRef<FinancesTableExpose>("table");
+
+watchDebounced(
+  searchQuery,
+  (value) => {
+    debouncedSearch.value = value;
+    page.value = 1;
+  },
+  { debounce: 300 },
+);
+
+function navigateToDetail(id: number) {
+  router.push(`/finances/entries/${id}`);
+}
+
+async function onDelete(row: Row<FinanceEntry>) {
+  loadingDelete.value = row.original.id;
+  try {
+    await removeEntry(row.original.id);
+    await Promise.all([refreshEntries(), refreshSummary()]);
+  } catch (error) {
+    toastApiError(error, { fallback: "No se pudo eliminar el movimiento." });
+  } finally {
+    loadingDelete.value = null;
+  }
+}
+
+const { columns, entriesTableTitle } = useFinancesTableColumns({
+  onNavigateDetail: navigateToDetail,
+  onEdit: (id) => router.push(`/finances/entries/${id}/edit`),
+  onDelete,
+});
 
 const loadingDelete = ref<number | null>(null);
 
@@ -31,27 +69,16 @@ const { data: entriesData, status, refresh: refreshEntries } = useAsyncData(
   () => listEntries(
     page.value,
     tab.value === "summary"
-      ? { month: month.value }
-      : { month: month.value, type: activeType.value },
+      ? { month: month.value, search: debouncedSearch.value }
+      : { month: month.value, type: activeType.value, search: debouncedSearch.value },
   ),
-  { watch: [tab, month, page] },
+  { watch: [tab, month, page, debouncedSearch] },
 );
 
 const entries = computed(() => entriesData.value?.data ?? []);
 const meta = computed(() => entriesData.value?.meta);
 const loading = computed(() => status.value === "pending");
-
-async function onDelete(entryId: number) {
-  loadingDelete.value = entryId;
-  try {
-    await removeEntry(entryId);
-    await Promise.all([refreshEntries(), refreshSummary()]);
-  } catch (error) {
-    toastApiError(error, { fallback: "No se pudo eliminar el movimiento." });
-  } finally {
-    loadingDelete.value = null;
-  }
-}
+const tableApi = computed((): FinancesTableApi | null => table.value?.tableApi ?? null);
 </script>
 
 <template>
@@ -72,6 +99,8 @@ async function onDelete(entryId: number) {
     </template>
 
     <template #body>
+      <FinancesListToolbar v-model:search-query="searchQuery" :table-api="tableApi" />
+
       <div class="flex flex-wrap items-center gap-3">
         <UTabs v-model="tab" :items="[...financesTabItems]" />
 
@@ -113,7 +142,22 @@ async function onDelete(entryId: number) {
           </h3>
         </template>
 
-        <UTable :data="entries" :loading="loading" :columns="columns">
+        <UTable
+          ref="table"
+          v-model:column-visibility="columnVisibility"
+          class="shrink-0"
+          :data="entries"
+          :loading="loading"
+          :columns="columns"
+          :ui="{
+            base: 'table-fixed border-separate border-spacing-0',
+            thead: '[&>tr]:bg-elevated/50 [&>tr]:after:content-none',
+            tbody: '[&>tr]:last:[&>td]:border-b-0',
+            th: 'py-2 first:rounded-l-lg last:rounded-r-lg border-y border-default first:border-l last:border-r',
+            td: 'border-b border-default',
+            separator: 'h-0',
+          }"
+        >
           <template #amount_cents-cell="{ row }">
             {{ formatMoney(row.original.amount_cents, 'COP') }}
           </template>
@@ -134,32 +178,12 @@ async function onDelete(entryId: number) {
             />
           </template>
 
-          <template #actions-cell="{ row }">
-            <div class="flex justify-end gap-2">
-              <UButton
-                v-if="row.original.is_manual"
-                icon="i-lucide-pencil"
-                color="neutral"
-                variant="ghost"
-                @click="router.push(`/finances/entries/${row.original.id}/edit`)"
-              />
-              <UButton
-                v-if="row.original.is_manual"
-                icon="i-lucide-trash"
-                color="error"
-                variant="ghost"
-                :loading="loadingDelete === row.original.id"
-                @click="onDelete(row.original.id)"
-              />
-            </div>
-          </template>
-
           <template #empty>
             <div class="py-8 text-center text-muted">No hay movimientos para este filtro.</div>
           </template>
         </UTable>
 
-        <div v-if="meta" class="mt-4 flex justify-end">
+        <div v-if="meta" class="mt-4 flex items-center justify-end gap-3 border-t border-default pt-4">
           <UPagination
             :default-page="page"
             :items-per-page="meta.per_page"

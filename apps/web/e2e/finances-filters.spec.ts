@@ -21,24 +21,24 @@ test.describe("Finance filters by month/type", () => {
       type: "income",
       amount_cents: 100_000,
       occurred_on: `${target.isoMonth}-15`,
+      name: incomeDescription,
       description: incomeDescription,
-      category: "E2E",
     });
 
     await createFinanceEntry(token, {
       type: "expense",
       amount_cents: 50_000,
       occurred_on: `${target.isoMonth}-20`,
+      name: expenseDescription,
       description: expenseDescription,
-      category: "E2E",
     });
 
     await createFinanceEntry(token, {
       type: "income",
       amount_cents: 99_999,
       occurred_on: `${target.otherIsoMonth}-10`,
+      name: otherMonthDescription,
       description: otherMonthDescription,
-      category: "E2E",
     });
 
     await page.goto("/finances");

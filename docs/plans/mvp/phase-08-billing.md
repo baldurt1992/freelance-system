@@ -182,7 +182,9 @@ Título: `feat: billing document on project complete (phase 8)`
 - [x] Snapshot persistido usado en PDF
 - [x] `number` único por tenant
 - [x] Tests verdes
-- [ ] Merge a `main`
+- [x] Merge a `main`
+
+Fase cerrada en `main` el **2026-05-25** mediante PR `#6`.
 
 ---
 

@@ -137,7 +137,7 @@ final class DashboardService
                 'id' => 'finance-entry-' . $entry->id,
                 'kind' => 'finance_entry',
                 'title' => $entry->type === 'income' ? 'Ingreso registrado' : 'Gasto registrado',
-                'description' => $entry->description ?: ($entry->category ?: 'Movimiento financiero'),
+                'description' => $entry->name ?: ($entry->description ?: ($entry->category ?: 'Movimiento financiero')),
                 'occurred_at' => $entry->created_at->toIso8601String(),
                 'to' => '/finances',
             ]);
